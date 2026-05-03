@@ -25,13 +25,10 @@ function AboutPage() {
   return (
     <article className="bg-paper">
       <header className="px-6 pt-20 pb-12 text-center max-w-3xl mx-auto relative">
-        <Sun className="absolute -top-2 -left-2 w-16 h-16 text-yellow-crayon animate-float" />
-        <Clover className="absolute -top-4 -right-2 w-14 h-14 text-clover animate-float" style={{ animationDelay: "1s" }} />
         <p className="font-marker text-2xl text-clover mb-2">our story</p>
         <h1 className="text-5xl md:text-7xl font-display text-brown leading-tight">
           From garden, to cup, to little hands
         </h1>
-        <Squiggle className="mx-auto mt-6 w-40 text-clover" />
       </header>
 
       <section className="px-6 py-12 max-w-5xl mx-auto grid md:grid-cols-5 gap-10 items-start">

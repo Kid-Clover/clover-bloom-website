@@ -1,7 +1,12 @@
-import clover from "@/assets/product-clover.jpg";
-import dreamy from "@/assets/product-dreamy.jpg";
-import sunny from "@/assets/product-sunny.jpg";
 import tummy from "@/assets/product-tummy.jpg";
+import pinkPopPotion from "@/assets/product-pink-pop-potion.jpg";
+import dayDreamers from "@/assets/product-day-dreamers.jpg";
+import tinyRecess from "@/assets/product-tiny-recess.jpg";
+import tigersEye from "@/assets/product-tigers-eye.jpg";
+import crystalCauldron from "@/assets/product-crystal-cauldron.jpg";
+import dragonflies from "@/assets/product-dragonflies.jpg";
+import griffinsGold from "@/assets/product-griffins-gold.jpg";
+import ogressLantern from "@/assets/product-ogress-lantern.jpg";
 
 export type Product = {
   id: string;
@@ -21,96 +26,96 @@ export const products: Product[] = [
   {
     id: "pink-pop-potion",
     name: "Pink Pop Potion!",
-    tagline: "Our signature sip",
+    tagline: "Smart sips for little lips",
     description:
-      "A gentle, slightly sweet blend built around hand-harvested red clover. Soothing, joyful, and just the thing for an after-school snack.",
-    ingredients: ["Red clover blossoms", "Lemon balm", "Rose hips", "A whisper of honeybush"],
+      "Our signature pink blend — gently sweet, fruity, and floral. A joyful herbal tisane that's just the thing for an after-school sip.",
+    ingredients: ["Chamomile", "Apple", "Strawberry", "Hibiscus"],
     price: 15,
-    image: clover,
+    image: pinkPopPotion,
     squareUrl: `${SQUARE}/pink-pop-potion-/YDHH3TSGMLYR47EYL2FJCF5X`,
     color: "clover",
   },
   {
     id: "day-dreamer",
-    name: "Day Dreamer",
-    tagline: "For sleepy little ones",
+    name: "Day Dreamers",
+    tagline: "Smart sips for little lips",
     description:
-      "A soft, calming bedtime tea with chamomile and lavender. Pour, snuggle, story, sleep.",
-    ingredients: ["Chamomile", "Lavender", "Catnip leaf", "Oat straw"],
+      "A soft, calming herbal tisane to ease busy little minds. Pour, snuggle, story, sleep.",
+    ingredients: ["Lemon Balm", "Chamomile"],
     price: 15,
-    image: dreamy,
+    image: dayDreamers,
     squareUrl: `${SQUARE}/day-dreamer/44HRVATRJFX6LOBCLKSOEU4H`,
     color: "lavender",
   },
   {
     id: "tiny-recess",
     name: "Tiny Recess",
-    tagline: "Bright + zingy",
+    tagline: "Smart sips for little lips",
     description:
-      "A tangy citrus and rosehip blend that tastes like a sunshine high-five. Great iced.",
-    ingredients: ["Orange peel", "Rosehip", "Hibiscus", "Lemon verbena"],
+      "A bright, refreshing herbal tisane — a green little pick-me-up that's lovely hot or iced.",
+    ingredients: ["Nettle", "Apple", "Spearmint"],
     price: 15,
-    image: sunny,
+    image: tinyRecess,
     squareUrl: `${SQUARE}/tiny-recess/VT264GRFK33HVTBUEDNKE3H3`,
     color: "yellow-crayon",
   },
   {
     id: "tigers-eye-ginger",
-    name: "Tiger's Eye Ginger",
-    tagline: "A fiery little simple",
+    name: "Tiger's Eye",
+    tagline: "Warm & ease",
     description:
-      "A single-herb ginger simple — warming, zippy, and great for chilly mornings or queasy bellies.",
+      "A ginger tisane for warming and easing. Cars, boats & planes — know I've got your back.",
     ingredients: ["Ginger root"],
     price: 6,
-    image: sunny,
+    image: tigersEye,
     squareUrl: `${SQUARE}/tiger-s-eye-ginger/O6D3XV36UPKTPCVOFSGRKPAG`,
     color: "yellow-crayon",
   },
   {
     id: "crystal-cauldron-chamomile",
-    name: "Crystal Cauldron Chamomile",
-    tagline: "A calm little simple",
+    name: "Crystal Cauldron",
+    tagline: "Calm & soothe",
     description:
-      "A single-herb chamomile simple. Soft, floral, and the gentlest way to wind down.",
-    ingredients: ["Chamomile flowers"],
+      "A chamomile tisane for calming and soothing. Small but mighty, like the elves.",
+    ingredients: ["Chamomile"],
     price: 6,
-    image: dreamy,
+    image: crystalCauldron,
     squareUrl: `${SQUARE}/crystal-cauldron-chamomile/ABGPBDV4RIZGEFQRW7X6KRCN`,
     color: "lavender",
   },
   {
     id: "dragonflies-society-rose-hips",
-    name: "Dragonflies Society Rose Hips",
-    tagline: "A bright little simple",
+    name: "Dragonflies Society",
+    tagline: "Nutritive & supportive",
     description:
-      "A single-herb rose hips simple — tart, ruby-red, and packed with sunshine.",
+      "A rose hip tisane that's nutritive and supportive. So much vitamin C, even the lemons are jealous.",
     ingredients: ["Rose hips"],
     price: 6,
-    image: clover,
+    image: dragonflies,
     squareUrl: `${SQUARE}/dragonflies-society-rose-hips/VCDEPYATSGESA3A56CLTBAK6`,
     color: "clover",
   },
   {
     id: "griffins-gold-lemon-verbena",
-    name: "Griffin's Gold Lemon Verbena",
-    tagline: "A sunny little simple",
+    name: "Griffin's Gold",
+    tagline: "Brighten & calm",
     description:
-      "A single-herb lemon verbena simple — bright citrus aroma, smooth and uplifting.",
+      "A lemon verbena tisane for brightening and calming. Calls the sun on cloudy days!",
     ingredients: ["Lemon verbena"],
     price: 6,
-    image: sunny,
+    image: griffinsGold,
     squareUrl: `${SQUARE}/griffin-s-gold-lemon-verbena/CL7DUASHVFUOJNB3PUZT6HBB`,
     color: "yellow-crayon",
   },
   {
     id: "ogress-lantern-lemon-balm",
-    name: "Ogress's Lantern Lemon Balm",
-    tagline: "A soothing little simple",
+    name: "Ogress's Lantern",
+    tagline: "Relax & comfort",
     description:
-      "A single-herb lemon balm simple — gently citrusy and calming. A friend for big feelings.",
+      "A lemon balm tisane for relaxing and comforting. Sweetens the day — all the bees agree!",
     ingredients: ["Lemon balm"],
     price: 6,
-    image: dreamy,
+    image: ogressLantern,
     squareUrl: `${SQUARE}/ogress-s-lantern-lemon-balm/OHT4MA2H5XFX2EOOVOIRUHK6`,
     color: "olive",
   },
@@ -134,7 +139,7 @@ export const products: Product[] = [
       "Pick any three of our single-herb simples and save 15%. A lovely way to sample the apothecary.",
     ingredients: ["Choose any 3 simples at checkout"],
     price: 15,
-    image: clover,
+    image: crystalCauldron,
     squareUrl: `${SQUARE}/3-simples/2HLU44IDTC32I6IKTATNR2SE`,
     color: "lavender",
   },
@@ -146,7 +151,7 @@ export const products: Product[] = [
       "Pick any six of our single-herb simples and save 20%. The full apothecary shelf in one go.",
     ingredients: ["Choose any 6 simples at checkout"],
     price: 28,
-    image: tummy,
+    image: dragonflies,
     squareUrl: `${SQUARE}/6-simples/IBC4MZLR4QULZ6N465MOQZR7`,
     color: "clover",
   },

@@ -63,7 +63,7 @@ function EventsPage() {
         <h1 className="text-5xl md:text-7xl font-display text-brown leading-tight">
           Where to meet Kid Clover
         </h1>
-        <Squiggle className="mx-auto mt-6 w-40 text-clover" />
+        
         <p className="mt-6 text-lg text-foreground/75 max-w-2xl mx-auto">
           Markets, popups, and hands-on classes for tiny plant lovers. Tap any
           event for details.

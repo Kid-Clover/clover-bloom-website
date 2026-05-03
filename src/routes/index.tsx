@@ -10,11 +10,12 @@ import { useRef } from "react";
 import { products } from "@/data/products";
 import { events } from "@/data/events";
 import { Squiggle, Sparkle, Sun, Clover, Leaf } from "@/components/doodles";
-import hero2 from "@/assets/hero-2.jpg";
-import gallery2 from "@/assets/gallery-2.jpg";
-import gallery3 from "@/assets/gallery-3.jpg";
-import gallery4 from "@/assets/gallery-4.jpg";
-import gallery6 from "@/assets/gallery-6.jpg";
+import heroIcedTea from "@/assets/photo-iced-tea.png";
+import heroSunset from "@/assets/photo-sunset.png";
+import heroClover from "@/assets/photo-clover.png";
+import galleryBush from "@/assets/photo-bush.png";
+import galleryDesert from "@/assets/photo-desert.png";
+import galleryCalendula from "@/assets/photo-calendula.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({

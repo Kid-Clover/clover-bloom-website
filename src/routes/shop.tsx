@@ -3,7 +3,7 @@ import { useState } from "react";
 import { products, type Product } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Squiggle, Clover } from "@/components/doodles";
+
 import { ExternalLink, X } from "lucide-react";
 
 export const Route = createFileRoute("/shop")({

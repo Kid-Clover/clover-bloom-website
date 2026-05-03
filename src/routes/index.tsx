@@ -80,7 +80,8 @@ function HomePage() {
                     className="absolute inset-0 h-full w-full object-cover"
                     {...(i === 0 ? {} : { loading: "lazy" })}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-brown/30 via-transparent to-brown/60" />
+                   <div className="absolute inset-0 bg-black/30" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-brown/50 via-brown/20 to-brown/70" />
                 </div>
               </CarouselItem>
             ))}

@@ -78,17 +78,14 @@ function AboutPage() {
 
       <section className="px-6 pb-20 max-w-3xl mx-auto space-y-6 text-lg leading-relaxed text-foreground/85">
         <h2 className="font-display text-4xl text-brown">What we believe</h2>
-        <ul className="space-y-4">
-          <li className="flex gap-3">
-            <Clover className="w-7 h-7 text-clover flex-shrink-0 mt-1" />
+        <ul className="space-y-4 list-disc pl-6 marker:text-clover">
+          <li>
             <span><strong className="text-brown">Sourced with care.</strong> We work with small organic farms — many in our own backyard — to source every herb we use.</span>
           </li>
-          <li className="flex gap-3">
-            <Clover className="w-7 h-7 text-olive flex-shrink-0 mt-1" />
+          <li>
             <span><strong className="text-brown">Gentle by design.</strong> Every blend is formulated specifically for kids: low-tannin, naturally caffeine-free, and lightly sweet.</span>
           </li>
-          <li className="flex gap-3">
-            <Clover className="w-7 h-7 text-orange-crayon flex-shrink-0 mt-1" />
+          <li>
             <span><strong className="text-brown">Made to spark wonder.</strong> Our packaging, our classes, and our farmers market booths are all built to invite kids in.</span>
           </li>
         </ul>

@@ -32,7 +32,7 @@ function ShopPage() {
         <h1 className="text-5xl md:text-7xl font-display text-brown leading-tight">
           The Kid Clover shop
         </h1>
-        <Squiggle className="mx-auto mt-6 w-40 text-clover" />
+        
         <p className="mt-6 text-lg text-foreground/75 max-w-2xl mx-auto">
           Each pouch makes about 30 cups. Tap a tea to see ingredients and
           brewing notes — Buy Now opens our Square shop in a new tab.

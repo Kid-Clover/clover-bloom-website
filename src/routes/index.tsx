@@ -10,9 +10,14 @@ import { useRef } from "react";
 import { products } from "@/data/products";
 import { events } from "@/data/events";
 import { Squiggle, Sparkle, Sun, Clover, Leaf } from "@/components/doodles";
-import heroIcedTea from "@/assets/photo-iced-tea.png";
-import heroSunset from "@/assets/photo-sunset.png";
-import heroClover from "@/assets/photo-clover.png";
+import heroBasket from "@/assets/hero-basket.jpg";
+import heroHerbs from "@/assets/hero-herbs.jpg";
+import heroKidFlower1 from "@/assets/hero-kid-flower-1.jpg";
+import heroKidFlower2 from "@/assets/hero-kid-flower-2.jpg";
+import heroKidFlower3 from "@/assets/hero-kid-flower-3.jpg";
+import heroKidFlower4 from "@/assets/hero-kid-flower-4.jpg";
+import heroMomKid1 from "@/assets/hero-mom-kid-1.jpg";
+import heroSunTea from "@/assets/hero-suntea.jpg";
 import galleryBush from "@/assets/photo-bush.png";
 import galleryDesert from "@/assets/photo-desert.png";
 import galleryCalendula from "@/assets/photo-calendula.png";
@@ -42,9 +47,14 @@ export const Route = createFileRoute("/")({
 });
 
 const heroImages = [
-  { src: heroIcedTea, alt: "A mason jar of fresh strawberry-mint iced tea by the lake" },
-  { src: heroSunset, alt: "Open meadow at golden hour on the farm" },
-  { src: heroClover, alt: "A hand-picked red clover blossom" },
+  { src: heroBasket, alt: "Basket of freshly harvested herbs" },
+  { src: heroHerbs, alt: "Dried herbs being measured for blending" },
+  { src: heroKidFlower1, alt: "Child holding a yellow flower" },
+  { src: heroKidFlower2, alt: "Child reaching for purple flowers in the garden" },
+  { src: heroKidFlower3, alt: "Child holding freshly picked purple flowers" },
+  { src: heroKidFlower4, alt: "Child holding peach flowers in the garden" },
+  { src: heroMomKid1, alt: "Founder and child together in the herb rows" },
+  { src: heroSunTea, alt: "Jar of sun tea with strawberries and herbs" },
 ];
 
 function HomePage() {

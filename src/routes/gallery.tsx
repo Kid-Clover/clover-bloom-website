@@ -8,6 +8,12 @@ import g3 from "@/assets/gallery-3.jpg";
 import g4 from "@/assets/gallery-4.jpg";
 import g6 from "@/assets/gallery-6.jpg";
 import h2 from "@/assets/hero-2.jpg";
+import pBush from "@/assets/photo-bush.png";
+import pSunset from "@/assets/photo-sunset.png";
+import pIcedTea from "@/assets/photo-iced-tea.png";
+import pDesert from "@/assets/photo-desert.png";
+import pClover from "@/assets/photo-clover.png";
+import pCalendula from "@/assets/photo-calendula.png";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -26,6 +32,12 @@ export const Route = createFileRoute("/gallery")({
 });
 
 const photos: { src: string; alt: string }[] = [
+  { src: pClover, alt: "A hand-picked red clover blossom" },
+  { src: pCalendula, alt: "A bright orange calendula flower in the garden" },
+  { src: pIcedTea, alt: "Mason jar of strawberry-mint iced tea by the lake" },
+  { src: pBush, alt: "Motherwort in bloom in the herb garden" },
+  { src: pSunset, alt: "Wildflower meadow at golden hour" },
+  { src: pDesert, alt: "Elecampane silhouettes against a cloudy summer sky" },
   { src: g1, alt: "Holy basil leaves with morning dew" },
   { src: g4, alt: "Red clover blossoms in a meadow" },
   { src: g2, alt: "Lavender field at sunset" },

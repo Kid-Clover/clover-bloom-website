@@ -25,6 +25,13 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const [active, setActive] = useState<Product | null>(null);
 
+  const colorBg: Record<Product["color"], string> = {
+    clover: "bg-clover/25",
+    lavender: "bg-lavender/40",
+    "yellow-crayon": "bg-yellow-crayon/40",
+    olive: "bg-olive/25",
+  };
+
   return (
     <div className="bg-paper min-h-screen">
       <header className="px-6 pt-20 pb-12 text-center max-w-4xl mx-auto">
@@ -45,7 +52,7 @@ function ShopPage() {
             <button
               key={p.id}
               onClick={() => setActive(p)}
-              className="group text-left bg-card border-2 border-brown rounded-3xl overflow-hidden shadow-doodle hover:-translate-y-1 transition-transform"
+              className={`group text-left border-2 border-brown rounded-3xl overflow-hidden shadow-doodle hover:-translate-y-1 transition-transform flex flex-col ${colorBg[p.color]}`}
             >
               <div className="aspect-square overflow-hidden">
                 <img
@@ -55,17 +62,17 @@ function ShopPage() {
                   className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
-              <div className="p-5">
-                <p className="font-marker text-lg text-clover">{p.tagline}</p>
+              <div className="p-5 flex-1 flex flex-col">
+                <p className="font-marker text-lg text-brown/70">{p.tagline}</p>
                 <h3 className="font-display text-3xl text-brown leading-tight mb-2">
                   {p.name}
                 </h3>
-                <p className="text-sm text-foreground/70 line-clamp-2">
+                <p className="text-sm text-brown/75 line-clamp-2">
                   {p.description}
                 </p>
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-auto pt-4 flex items-center justify-between">
                   <span className="font-display text-2xl text-brown">${p.price}</span>
-                  <span className="font-marker text-clover">view →</span>
+                  <span className="font-marker text-brown">view →</span>
                 </div>
               </div>
             </button>

@@ -111,7 +111,7 @@ function ShopPage() {
                   <ul className="space-y-1.5">
                     {active.ingredients.map((ing) => (
                       <li key={ing} className="flex items-center gap-2 text-sm">
-                        <Clover className="w-4 h-4 text-olive flex-shrink-0" />
+                        <span className="text-olive">•</span>
                         {ing}
                       </li>
                     ))}

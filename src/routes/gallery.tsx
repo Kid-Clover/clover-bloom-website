@@ -77,7 +77,7 @@ function GalleryPage() {
         <h1 className="text-5xl md:text-7xl font-display text-brown leading-tight">
           Where the magic grows
         </h1>
-        <Squiggle className="mx-auto mt-6 w-40 text-clover" />
+        
         <p className="mt-6 text-lg text-foreground/75 max-w-2xl mx-auto">
           A peek at the farms, gardens, and tiny hands that make every Kid
           Clover blend possible.

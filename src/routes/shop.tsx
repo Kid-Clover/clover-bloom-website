@@ -81,7 +81,7 @@ function ShopPage() {
       </section>
 
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
-        <DialogContent className="max-w-3xl p-0 overflow-hidden bg-card border-2 border-brown rounded-3xl [&>button]:hidden">
+        <DialogContent className="max-w-3xl p-0 overflow-hidden bg-card border-2 border-brown rounded-3xl [&>button]:hidden max-h-[90vh] overflow-y-auto">
           {active && (
             <div className="grid md:grid-cols-2">
               <div className="aspect-square md:aspect-auto bg-cream">

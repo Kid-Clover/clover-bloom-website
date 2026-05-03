@@ -25,6 +25,13 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const [active, setActive] = useState<Product | null>(null);
 
+  const colorBg: Record<Product["color"], string> = {
+    clover: "bg-clover/25",
+    lavender: "bg-lavender/40",
+    "yellow-crayon": "bg-yellow-crayon/40",
+    olive: "bg-olive/25",
+  };
+
   return (
     <div className="bg-paper min-h-screen">
       <header className="px-6 pt-20 pb-12 text-center max-w-4xl mx-auto">

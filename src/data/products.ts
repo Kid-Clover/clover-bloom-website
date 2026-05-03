@@ -54,8 +54,6 @@ export const products: Product[] = [
     squareUrl: `${SQUARE}/tiny-recess/VT264GRFK33HVTBUEDNKE3H3`,
     color: "yellow-crayon",
   },
-  {
-    id: "glendy-the-aunties",
     name: "Glendy & the Aunties",
     tagline: "A cozy house blend",
     description:

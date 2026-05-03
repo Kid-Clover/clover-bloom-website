@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/logo.png";
+import logoStacked from "@/assets/logo-stacked.png";
+import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -18,7 +19,7 @@ export function Header() {
     <header className="sticky top-0 z-40 bg-cream/85 backdrop-blur-md border-b border-border/60">
       <div className="mx-auto max-w-7xl px-5 md:px-8 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 hover-wiggle" aria-label="Kid Clover home">
-          <img src={logo} alt="Kid Clover" className="h-12 w-auto" />
+          <img src={logoHorizontal} alt="Kid Clover" className="h-10 md:h-12 w-auto" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -69,7 +70,7 @@ export function Footer() {
     <footer className="mt-24 border-t border-border/60 bg-cream">
       <div className="mx-auto max-w-7xl px-5 md:px-8 py-12 grid gap-8 md:grid-cols-3 items-start">
         <div>
-          <img src={logo} alt="Kid Clover" className="h-14 w-auto mb-4" />
+          <img src={logoStacked} alt="Kid Clover" className="h-20 w-auto mb-4" />
           <p className="text-sm text-muted-foreground max-w-xs">
             Connecting kids to the magic of plants, one tiny cup at a time.
           </p>

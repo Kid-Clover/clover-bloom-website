@@ -16,6 +16,11 @@ import heroClover from "@/assets/photo-clover.png";
 import galleryBush from "@/assets/photo-bush.png";
 import galleryDesert from "@/assets/photo-desert.png";
 import galleryCalendula from "@/assets/photo-calendula.png";
+import badgeTeaMagic from "@/assets/badge-tea-magic.png";
+import doodleCup from "@/assets/doodle-cup.png";
+import doodleFlowerPink from "@/assets/doodle-flower-pink.png";
+import doodleFlowerYellow from "@/assets/doodle-flower-yellow.png";
+import doodleFairy from "@/assets/doodle-fairy.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -73,9 +78,10 @@ function HomePage() {
         </Carousel>
 
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-          <Sparkle className="absolute top-[18%] left-[12%] w-8 h-8 text-yellow-crayon animate-float" />
-          <Clover className="absolute bottom-[22%] right-[10%] w-12 h-12 text-clover animate-float" style={{ animationDelay: "1.5s" }} />
-          <Sun className="absolute top-[14%] right-[18%] w-14 h-14 text-orange-crayon animate-float" style={{ animationDelay: "0.5s" }} />
+          <img src={doodleFlowerYellow} alt="" className="absolute top-[10%] left-[8%] w-20 md:w-28 animate-float drop-shadow-lg" />
+          <img src={doodleFlowerPink} alt="" className="absolute bottom-[16%] left-[6%] w-24 md:w-32 animate-float drop-shadow-lg" style={{ animationDelay: "1s" }} />
+          <img src={doodleFairy} alt="" className="absolute top-[14%] right-[8%] w-24 md:w-32 animate-float drop-shadow-lg" style={{ animationDelay: "0.6s" }} />
+          <img src={doodleCup} alt="" className="absolute bottom-[14%] right-[10%] w-28 md:w-40 animate-float drop-shadow-lg" style={{ animationDelay: "1.4s" }} />
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-display text-cream drop-shadow-[0_4px_0_rgba(0,0,0,0.3)] max-w-5xl leading-[1.05]">
             tea for tiny <span className="text-yellow-crayon">plant lovers</span>
@@ -96,10 +102,11 @@ function HomePage() {
 
       {/* MISSION */}
       <section className="bg-paper py-24 px-6 text-center relative overflow-hidden">
-        <Leaf className="absolute -left-6 top-12 w-24 h-24 text-olive/30 -rotate-12" />
-        <Leaf className="absolute -right-8 bottom-8 w-32 h-32 text-clover/20 rotate-45" />
+        <img src={doodleFlowerPink} alt="" className="absolute -left-6 top-10 w-28 -rotate-12 opacity-90" />
+        <img src={doodleFlowerYellow} alt="" className="absolute -right-4 bottom-8 w-32 rotate-12 opacity-90" />
 
         <div className="max-w-3xl mx-auto relative">
+          <img src={badgeTeaMagic} alt="Tea Magic" className="mx-auto w-32 md:w-40 mb-6 hover-wiggle" />
           <p className="font-marker text-2xl text-clover mb-3">our mission</p>
           <h2 className="text-4xl md:text-5xl font-display text-brown mb-6">
             Big love for little plants

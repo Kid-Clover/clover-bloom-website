@@ -62,6 +62,9 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: DefaultErrorComponent,
+    defaultPendingComponent: () => <DoodleLoader />,
+    defaultPendingMs: 200,
+    defaultPendingMinMs: 600,
   });
 
   return router;

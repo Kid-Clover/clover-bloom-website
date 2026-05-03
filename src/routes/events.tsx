@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { events, type KCEvent } from "@/data/events";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Squiggle } from "@/components/doodles";
+
 import { ChevronLeft, ChevronRight, MapPin, Clock, X } from "lucide-react";
 
 export const Route = createFileRoute("/events")({

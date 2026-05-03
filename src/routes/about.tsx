@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import portrait from "@/assets/gallery-3.jpg";
+import portrait from "@/assets/photo-clover.png";
 import { Squiggle, Clover, Sun } from "@/components/doodles";
 import { Button } from "@/components/ui/button";
 

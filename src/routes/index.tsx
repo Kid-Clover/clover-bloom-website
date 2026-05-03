@@ -9,7 +9,6 @@ import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
 import { products } from "@/data/products";
 import { events } from "@/data/events";
-import { Squiggle, Sparkle, Sun, Clover, Leaf } from "@/components/doodles";
 import heroBasket from "@/assets/hero-basket.jpg";
 import heroHerbs from "@/assets/hero-herbs.jpg";
 import heroKidFlower1 from "@/assets/hero-kid-flower-1.jpg";
@@ -21,11 +20,6 @@ import heroSunTea from "@/assets/hero-suntea.jpg";
 import galleryBush from "@/assets/photo-bush.png";
 import galleryDesert from "@/assets/photo-desert.png";
 import galleryCalendula from "@/assets/photo-calendula.png";
-import badgeTeaMagic from "@/assets/badge-tea-magic.png";
-import doodleCup from "@/assets/doodle-cup.png";
-import doodleFlowerPink from "@/assets/doodle-flower-pink.png";
-import doodleFlowerYellow from "@/assets/doodle-flower-yellow.png";
-import doodleFairy from "@/assets/doodle-fairy.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({

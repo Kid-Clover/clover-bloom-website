@@ -37,9 +37,9 @@ export const Route = createFileRoute("/")({
 });
 
 const heroImages = [
-  { src: gallery2, alt: "A lavender field at sunset" },
-  { src: hero2, alt: "A teacup with golden herbal tea, chamomile and lavender" },
-  { src: gallery4, alt: "Red clover blossoms in a sunny meadow" },
+  { src: heroIcedTea, alt: "A mason jar of fresh strawberry-mint iced tea by the lake" },
+  { src: heroSunset, alt: "Open meadow at golden hour on the farm" },
+  { src: heroClover, alt: "A hand-picked red clover blossom" },
 ];
 
 function HomePage() {
@@ -215,7 +215,7 @@ function HomePage() {
             </h2>
           </div>
           <div className="grid grid-cols-3 gap-3 md:gap-5 h-[280px] md:h-[420px]">
-            {[gallery2, gallery3, gallery6].map((src, i) => (
+            {[galleryBush, galleryDesert, galleryCalendula].map((src, i) => (
               <Link
                 key={i}
                 to="/gallery"

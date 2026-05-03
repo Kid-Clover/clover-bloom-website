@@ -90,7 +90,9 @@ export function Footer() {
         <div>
           <h4 className="font-marker text-2xl text-primary mb-3">Say hi</h4>
           <p className="text-sm text-muted-foreground">
-            hello@drinkkidclover.com
+            <a href="mailto:lesley@drinkkidclover.com" className="hover:text-primary">
+              lesley@drinkkidclover.com
+            </a>
             <br />
             Find us at the farmers market every Saturday.
           </p>

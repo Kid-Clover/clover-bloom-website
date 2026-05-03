@@ -1,14 +1,14 @@
-import pinkPopPotion from "@/assets/product-pink-pop-potion.jpg";
-import pixieDust from "@/assets/product-pixie-dust.jpg";
-import threeSimples from "@/assets/product-3-simples.jpg";
-import sixSimples from "@/assets/product-6-simples.jpg";
-import dayDreamers from "@/assets/product-day-dreamers.jpg";
-import tinyRecess from "@/assets/product-tiny-recess.jpg";
-import tigersEye from "@/assets/product-tigers-eye.jpg";
-import crystalCauldron from "@/assets/product-crystal-cauldron.jpg";
-import dragonflies from "@/assets/product-dragonflies.jpg";
-import griffinsGold from "@/assets/product-griffins-gold.jpg";
-import ogressLantern from "@/assets/product-ogress-lantern.jpg";
+import pinkPopPotion from "@/assets/product-pink-pop-potion.png";
+import pixieDust from "@/assets/product-pixie-dust.png";
+import threeSimples from "@/assets/product-3-simples.png";
+import sixSimples from "@/assets/product-6-simples.png";
+import dayDreamers from "@/assets/product-day-dreamers.png";
+import tinyRecess from "@/assets/product-tiny-recess.png";
+import tigersEye from "@/assets/product-tigers-eye.png";
+import crystalCauldron from "@/assets/product-crystal-cauldron.png";
+import dragonflies from "@/assets/product-dragonflies.png";
+import griffinsGold from "@/assets/product-griffins-gold.png";
+import ogressLantern from "@/assets/product-ogress-lantern.png";
 
 export type Product = {
   id: string;

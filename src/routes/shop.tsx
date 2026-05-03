@@ -52,7 +52,7 @@ function ShopPage() {
             <button
               key={p.id}
               onClick={() => setActive(p)}
-              className={`group text-left border-2 border-brown rounded-3xl overflow-hidden shadow-doodle hover:-translate-y-1 transition-transform flex flex-col bg-${p.color}/30`}
+              className={`group text-left border-2 border-brown rounded-3xl overflow-hidden shadow-doodle hover:-translate-y-1 transition-transform flex flex-col ${colorBg[p.color]}`}
             >
               <div className="aspect-square overflow-hidden">
                 <img

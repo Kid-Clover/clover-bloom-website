@@ -15,6 +15,8 @@ export type Product = {
   color: "clover" | "lavender" | "yellow-crayon" | "olive";
 };
 
+const SQUARE = "https://drinkkidclover.square.site/product";
+
 export const products: Product[] = [
   {
     id: "pink-pop-potion",
@@ -25,7 +27,7 @@ export const products: Product[] = [
     ingredients: ["Red clover blossoms", "Lemon balm", "Rose hips", "A whisper of honeybush"],
     price: 15,
     image: clover,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/pink-pop-potion`,
     color: "clover",
   },
   {
@@ -37,7 +39,7 @@ export const products: Product[] = [
     ingredients: ["Chamomile", "Lavender", "Catnip leaf", "Oat straw"],
     price: 15,
     image: dreamy,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/day-dreamer`,
     color: "lavender",
   },
   {
@@ -49,8 +51,56 @@ export const products: Product[] = [
     ingredients: ["Orange peel", "Rosehip", "Hibiscus", "Lemon verbena"],
     price: 15,
     image: sunny,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/tiny-recess`,
     color: "yellow-crayon",
+  },
+  {
+    id: "glendy-the-aunties",
+    name: "Glendy & the Aunties",
+    tagline: "A cozy house blend",
+    description:
+      "A warm, welcoming blend named for the aunties — comforting and full of love. Steep, sip, share.",
+    ingredients: ["House blend of garden herbs"],
+    price: 15,
+    image: clover,
+    squareUrl: `${SQUARE}/glendy-the-aunties`,
+    color: "clover",
+  },
+  {
+    id: "thunder",
+    name: "Thunder",
+    tagline: "Bold + brave",
+    description:
+      "A bold, lively blend for the spirited ones. A little zing, a little rumble, a lot of fun.",
+    ingredients: ["Spirited herbal blend"],
+    price: 15,
+    image: sunny,
+    squareUrl: `${SQUARE}/thunder`,
+    color: "yellow-crayon",
+  },
+  {
+    id: "shashi-la-blooms",
+    name: "Shashi La Blooms",
+    tagline: "Floral + dreamy",
+    description:
+      "A soft, floral blend that tastes like a garden in bloom. Pretty in the cup, gentle in the belly.",
+    ingredients: ["Floral garden blend"],
+    price: 15,
+    image: dreamy,
+    squareUrl: `${SQUARE}/shashi-la-blooms`,
+    color: "lavender",
+  },
+  {
+    id: "lil-chill-tissane",
+    name: "Lil Chill Tisane",
+    tagline: "Easy does it",
+    description:
+      "A mellow tisane for winding down — the perfect after-dinner sip before stories and stars.",
+    ingredients: ["Calming tisane blend"],
+    price: 15,
+    image: dreamy,
+    squareUrl: `${SQUARE}/lil-chill-tissane`,
+    color: "olive",
   },
   {
     id: "tigers-eye-ginger",
@@ -61,7 +111,7 @@ export const products: Product[] = [
     ingredients: ["Ginger root"],
     price: 6,
     image: sunny,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/tiger-s-eye-ginger`,
     color: "yellow-crayon",
   },
   {
@@ -73,7 +123,7 @@ export const products: Product[] = [
     ingredients: ["Chamomile flowers"],
     price: 6,
     image: dreamy,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/crystal-cauldron-chamomile`,
     color: "lavender",
   },
   {
@@ -85,7 +135,7 @@ export const products: Product[] = [
     ingredients: ["Rose hips"],
     price: 6,
     image: clover,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/dragonflies-society-rose-hips`,
     color: "clover",
   },
   {
@@ -97,7 +147,7 @@ export const products: Product[] = [
     ingredients: ["Lemon verbena"],
     price: 6,
     image: sunny,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/griffin-s-gold-lemon-verbena`,
     color: "yellow-crayon",
   },
   {
@@ -109,7 +159,7 @@ export const products: Product[] = [
     ingredients: ["Lemon balm"],
     price: 6,
     image: dreamy,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/ogress-s-lantern-lemon-balm`,
     color: "olive",
   },
   {
@@ -121,7 +171,7 @@ export const products: Product[] = [
     ingredients: ["Peppermint"],
     price: 6,
     image: tummy,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/pixie-dust-peppermint`,
     color: "olive",
   },
   {
@@ -133,7 +183,7 @@ export const products: Product[] = [
     ingredients: ["Choose any 3 simples at checkout"],
     price: 15,
     image: clover,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/3-simples`,
     color: "lavender",
   },
   {
@@ -145,7 +195,19 @@ export const products: Product[] = [
     ingredients: ["Choose any 6 simples at checkout"],
     price: 28,
     image: tummy,
-    squareUrl: "https://drinkkidclover.square.site/",
+    squareUrl: `${SQUARE}/6-simples`,
     color: "clover",
+  },
+  {
+    id: "buy-2-get-1-for-10",
+    name: "Buy 2, Get 1 for $10",
+    tagline: "A little bundle deal",
+    description:
+      "Grab two of your favorite blends and add a third for just $10. The easiest way to stock the tea shelf.",
+    ingredients: ["Choose any 3 teas at checkout"],
+    price: 40,
+    image: sunny,
+    squareUrl: `${SQUARE}/buy-2-get-1-for-10`,
+    color: "yellow-crayon",
   },
 ];

@@ -6,12 +6,8 @@ import g1 from "@/assets/gallery-1.jpg";
 import g2 from "@/assets/gallery-2.jpg";
 import g3 from "@/assets/gallery-3.jpg";
 import g4 from "@/assets/gallery-4.jpg";
-import g5 from "@/assets/gallery-5.jpg";
 import g6 from "@/assets/gallery-6.jpg";
-import g7 from "@/assets/gallery-7.jpg";
-import h1 from "@/assets/hero-1.jpg";
 import h2 from "@/assets/hero-2.jpg";
-import h3 from "@/assets/hero-3.jpg";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -32,11 +28,7 @@ export const Route = createFileRoute("/gallery")({
 const photos: { src: string; alt: string }[] = [
   { src: g1, alt: "Holy basil leaves with morning dew" },
   { src: g4, alt: "Red clover blossoms in a meadow" },
-  { src: h1, alt: "A child holding fresh herbs in a sunny field" },
   { src: g2, alt: "Lavender field at sunset" },
-  { src: g7, alt: "Macro of dewy mint leaves" },
-  { src: h3, alt: "Mom and child laughing in the garden" },
-  { src: g5, alt: "Hands sprinkling chamomile into a jar" },
   { src: g3, alt: "Wicker basket of fresh harvested herbs" },
   { src: g6, alt: "Rolling herb farm at dawn" },
   { src: h2, alt: "Cup of herbal tea surrounded by botanicals" },

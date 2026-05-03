@@ -12,7 +12,6 @@ import { events } from "@/data/events";
 import { Squiggle, Sparkle, Sun, Clover, Leaf } from "@/components/doodles";
 import hero1 from "@/assets/hero-1.jpg";
 import hero2 from "@/assets/hero-2.jpg";
-import hero3 from "@/assets/hero-3.jpg";
 import gallery2 from "@/assets/gallery-2.jpg";
 import gallery3 from "@/assets/gallery-3.jpg";
 import gallery6 from "@/assets/gallery-6.jpg";
@@ -37,9 +36,9 @@ export const Route = createFileRoute("/")({
 });
 
 const heroImages = [
-  { src: hero1, alt: "A child holds fresh herbs in a sunlit field" },
+  { src: hero1, alt: "Fresh herbs in a sunlit field" },
   { src: hero2, alt: "A teacup with golden herbal tea, chamomile and lavender" },
-  { src: hero3, alt: "A mom and child laughing together in an herb garden" },
+  { src: gallery2, alt: "A lavender field at sunset" },
 ];
 
 function HomePage() {

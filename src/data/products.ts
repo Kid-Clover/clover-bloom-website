@@ -1,5 +1,7 @@
-import tummy from "@/assets/product-tummy.jpg";
 import pinkPopPotion from "@/assets/product-pink-pop-potion.jpg";
+import pixieDust from "@/assets/product-pixie-dust.jpg";
+import threeSimples from "@/assets/product-3-simples.jpg";
+import sixSimples from "@/assets/product-6-simples.jpg";
 import dayDreamers from "@/assets/product-day-dreamers.jpg";
 import tinyRecess from "@/assets/product-tiny-recess.jpg";
 import tigersEye from "@/assets/product-tigers-eye.jpg";
@@ -121,13 +123,13 @@ export const products: Product[] = [
   },
   {
     id: "pixie-dust-peppermint",
-    name: "Pixie Dust Peppermint",
-    tagline: "A cool little simple",
+    name: "Pixie Dust",
+    tagline: "Rejuvenate & invigorate",
     description:
-      "A single-herb peppermint simple for tummies that need a little hug. Cool, crisp, classic.",
+      "A peppermint tisane for rejuvenating and invigorating. Find me in the garden, just like the faries.",
     ingredients: ["Peppermint"],
     price: 6,
-    image: tummy,
+    image: pixieDust,
     squareUrl: `${SQUARE}/pixie-dust-peppermint/5ETM363IZ5UHDPUOCJ3BS5AL`,
     color: "olive",
   },
@@ -139,7 +141,7 @@ export const products: Product[] = [
       "Pick any three of our single-herb simples and save 15%. A lovely way to sample the apothecary.",
     ingredients: ["Choose any 3 simples at checkout"],
     price: 15,
-    image: crystalCauldron,
+    image: threeSimples,
     squareUrl: `${SQUARE}/3-simples/2HLU44IDTC32I6IKTATNR2SE`,
     color: "lavender",
   },
@@ -151,7 +153,7 @@ export const products: Product[] = [
       "Pick any six of our single-herb simples and save 20%. The full apothecary shelf in one go.",
     ingredients: ["Choose any 6 simples at checkout"],
     price: 28,
-    image: dragonflies,
+    image: sixSimples,
     squareUrl: `${SQUARE}/6-simples/IBC4MZLR4QULZ6N465MOQZR7`,
     color: "clover",
   },

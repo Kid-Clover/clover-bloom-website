@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useCallback, useEffect } from "react";
-import { Squiggle } from "@/components/doodles";
+
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import g1 from "@/assets/gallery-1.jpg";
 import g2 from "@/assets/gallery-2.jpg";

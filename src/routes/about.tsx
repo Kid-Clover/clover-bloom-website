@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import portrait from "@/assets/photo-clover.png";
-import { Squiggle, Clover, Sun } from "@/components/doodles";
+import { Button } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/about")({

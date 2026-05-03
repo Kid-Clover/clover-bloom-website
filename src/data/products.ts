@@ -27,7 +27,7 @@ export const products: Product[] = [
     ingredients: ["Red clover blossoms", "Lemon balm", "Rose hips", "A whisper of honeybush"],
     price: 15,
     image: clover,
-    squareUrl: `${SQUARE}/pink-pop-potion`,
+    squareUrl: `${SQUARE}/pink-pop-potion-/YDHH3TSGMLYR47EYL2FJCF5X`,
     color: "clover",
   },
   {
@@ -39,7 +39,7 @@ export const products: Product[] = [
     ingredients: ["Chamomile", "Lavender", "Catnip leaf", "Oat straw"],
     price: 15,
     image: dreamy,
-    squareUrl: `${SQUARE}/day-dreamer`,
+    squareUrl: `${SQUARE}/day-dreamer/44HRVATRJFX6LOBCLKSOEU4H`,
     color: "lavender",
   },
   {
@@ -51,7 +51,7 @@ export const products: Product[] = [
     ingredients: ["Orange peel", "Rosehip", "Hibiscus", "Lemon verbena"],
     price: 15,
     image: sunny,
-    squareUrl: `${SQUARE}/tiny-recess`,
+    squareUrl: `${SQUARE}/tiny-recess/VT264GRFK33HVTBUEDNKE3H3`,
     color: "yellow-crayon",
   },
   {
@@ -63,7 +63,7 @@ export const products: Product[] = [
     ingredients: ["House blend of garden herbs"],
     price: 15,
     image: clover,
-    squareUrl: `${SQUARE}/glendy-the-aunties`,
+    squareUrl: `${SQUARE}/glendy-the-aunties/2FKLRPD3TYDUUITSE5F77JPK`,
     color: "clover",
   },
   {
@@ -75,7 +75,7 @@ export const products: Product[] = [
     ingredients: ["Spirited herbal blend"],
     price: 15,
     image: sunny,
-    squareUrl: `${SQUARE}/thunder`,
+    squareUrl: `${SQUARE}/thunder-/WFV7GUSLQZFGDRPD5IESSTDZ`,
     color: "yellow-crayon",
   },
   {
@@ -87,7 +87,7 @@ export const products: Product[] = [
     ingredients: ["Floral garden blend"],
     price: 15,
     image: dreamy,
-    squareUrl: `${SQUARE}/shashi-la-blooms`,
+    squareUrl: `${SQUARE}/shashi-la-blooms/WFVQMBYGZQ2QUVPCJDXKW7O5`,
     color: "lavender",
   },
   {
@@ -99,7 +99,7 @@ export const products: Product[] = [
     ingredients: ["Calming tisane blend"],
     price: 15,
     image: dreamy,
-    squareUrl: `${SQUARE}/lil-chill-tissane`,
+    squareUrl: `${SQUARE}/lil-chill-tissane/2TI4CZ7PNJUX6V3MAKMIIPZ5`,
     color: "olive",
   },
   {
@@ -111,7 +111,7 @@ export const products: Product[] = [
     ingredients: ["Ginger root"],
     price: 6,
     image: sunny,
-    squareUrl: `${SQUARE}/tiger-s-eye-ginger`,
+    squareUrl: `${SQUARE}/tiger-s-eye-ginger/O6D3XV36UPKTPCVOFSGRKPAG`,
     color: "yellow-crayon",
   },
   {
@@ -123,7 +123,7 @@ export const products: Product[] = [
     ingredients: ["Chamomile flowers"],
     price: 6,
     image: dreamy,
-    squareUrl: `${SQUARE}/crystal-cauldron-chamomile`,
+    squareUrl: `${SQUARE}/crystal-cauldron-chamomile/ABGPBDV4RIZGEFQRW7X6KRCN`,
     color: "lavender",
   },
   {
@@ -135,7 +135,7 @@ export const products: Product[] = [
     ingredients: ["Rose hips"],
     price: 6,
     image: clover,
-    squareUrl: `${SQUARE}/dragonflies-society-rose-hips`,
+    squareUrl: `${SQUARE}/dragonflies-society-rose-hips/VCDEPYATSGESA3A56CLTBAK6`,
     color: "clover",
   },
   {
@@ -147,7 +147,7 @@ export const products: Product[] = [
     ingredients: ["Lemon verbena"],
     price: 6,
     image: sunny,
-    squareUrl: `${SQUARE}/griffin-s-gold-lemon-verbena`,
+    squareUrl: `${SQUARE}/griffin-s-gold-lemon-verbena/CL7DUASHVFUOJNB3PUZT6HBB`,
     color: "yellow-crayon",
   },
   {
@@ -159,7 +159,7 @@ export const products: Product[] = [
     ingredients: ["Lemon balm"],
     price: 6,
     image: dreamy,
-    squareUrl: `${SQUARE}/ogress-s-lantern-lemon-balm`,
+    squareUrl: `${SQUARE}/ogress-s-lantern-lemon-balm/OHT4MA2H5XFX2EOOVOIRUHK6`,
     color: "olive",
   },
   {
@@ -171,7 +171,7 @@ export const products: Product[] = [
     ingredients: ["Peppermint"],
     price: 6,
     image: tummy,
-    squareUrl: `${SQUARE}/pixie-dust-peppermint`,
+    squareUrl: `${SQUARE}/pixie-dust-peppermint/5ETM363IZ5UHDPUOCJ3BS5AL`,
     color: "olive",
   },
   {
@@ -183,7 +183,7 @@ export const products: Product[] = [
     ingredients: ["Choose any 3 simples at checkout"],
     price: 15,
     image: clover,
-    squareUrl: `${SQUARE}/3-simples`,
+    squareUrl: `${SQUARE}/3-simples/2HLU44IDTC32I6IKTATNR2SE`,
     color: "lavender",
   },
   {
@@ -195,7 +195,7 @@ export const products: Product[] = [
     ingredients: ["Choose any 6 simples at checkout"],
     price: 28,
     image: tummy,
-    squareUrl: `${SQUARE}/6-simples`,
+    squareUrl: `${SQUARE}/6-simples/IBC4MZLR4QULZ6N465MOQZR7`,
     color: "clover",
   },
   {
@@ -207,7 +207,7 @@ export const products: Product[] = [
     ingredients: ["Choose any 3 teas at checkout"],
     price: 40,
     image: sunny,
-    squareUrl: `${SQUARE}/buy-2-get-1-for-10`,
+    squareUrl: `${SQUARE}/buy-2-get-1-for-10/7Q6UOIYWARGC5SR7PYUWH6FQ`,
     color: "yellow-crayon",
   },
 ];

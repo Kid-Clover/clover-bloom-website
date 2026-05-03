@@ -161,7 +161,7 @@ function HomePage() {
 
       {/* UPCOMING EVENTS */}
       <section className="bg-lavender/30 py-24 px-6 relative overflow-hidden">
-        <Sparkle className="absolute top-10 right-12 w-10 h-10 text-yellow-crayon animate-float" />
+        
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between flex-wrap gap-4 mb-12">
             <div>

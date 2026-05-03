@@ -83,10 +83,6 @@ function HomePage() {
         </Carousel>
 
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-          <img src={doodleFlowerYellow} alt="" className="absolute top-[10%] left-[8%] w-20 md:w-28 animate-float drop-shadow-lg" />
-          <img src={doodleFlowerPink} alt="" className="absolute bottom-[16%] left-[6%] w-24 md:w-32 animate-float drop-shadow-lg" style={{ animationDelay: "1s" }} />
-          <img src={doodleFairy} alt="" className="absolute top-[14%] right-[8%] w-24 md:w-32 animate-float drop-shadow-lg" style={{ animationDelay: "0.6s" }} />
-          <img src={doodleCup} alt="" className="absolute bottom-[14%] right-[10%] w-28 md:w-40 animate-float drop-shadow-lg" style={{ animationDelay: "1.4s" }} />
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-display text-cream drop-shadow-[0_4px_0_rgba(0,0,0,0.3)] max-w-5xl leading-[1.05]">
             tea for tiny <span className="text-yellow-crayon">plant lovers</span>

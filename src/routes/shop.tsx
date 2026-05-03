@@ -3,7 +3,7 @@ import { useState } from "react";
 import { products, type Product } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Squiggle, Clover } from "@/components/doodles";
+
 import { ExternalLink, X } from "lucide-react";
 
 export const Route = createFileRoute("/shop")({
@@ -32,7 +32,7 @@ function ShopPage() {
         <h1 className="text-5xl md:text-7xl font-display text-brown leading-tight">
           The Kid Clover shop
         </h1>
-        <Squiggle className="mx-auto mt-6 w-40 text-clover" />
+        
         <p className="mt-6 text-lg text-foreground/75 max-w-2xl mx-auto">
           Each pouch makes about 30 cups. Tap a tea to see ingredients and
           brewing notes — Buy Now opens our Square shop in a new tab.
@@ -111,7 +111,7 @@ function ShopPage() {
                   <ul className="space-y-1.5">
                     {active.ingredients.map((ing) => (
                       <li key={ing} className="flex items-center gap-2 text-sm">
-                        <Clover className="w-4 h-4 text-olive flex-shrink-0" />
+                        <span className="text-olive">•</span>
                         {ing}
                       </li>
                     ))}

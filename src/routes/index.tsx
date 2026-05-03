@@ -9,7 +9,6 @@ import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
 import { products } from "@/data/products";
 import { events } from "@/data/events";
-import { Squiggle, Sparkle, Sun, Clover, Leaf } from "@/components/doodles";
 import heroBasket from "@/assets/hero-basket.jpg";
 import heroHerbs from "@/assets/hero-herbs.jpg";
 import heroKidFlower1 from "@/assets/hero-kid-flower-1.jpg";
@@ -21,11 +20,6 @@ import heroSunTea from "@/assets/hero-suntea.jpg";
 import galleryBush from "@/assets/photo-bush.png";
 import galleryDesert from "@/assets/photo-desert.png";
 import galleryCalendula from "@/assets/photo-calendula.png";
-import badgeTeaMagic from "@/assets/badge-tea-magic.png";
-import doodleCup from "@/assets/doodle-cup.png";
-import doodleFlowerPink from "@/assets/doodle-flower-pink.png";
-import doodleFlowerYellow from "@/assets/doodle-flower-yellow.png";
-import doodleFairy from "@/assets/doodle-fairy.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -89,10 +83,6 @@ function HomePage() {
         </Carousel>
 
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-          <img src={doodleFlowerYellow} alt="" className="absolute top-[10%] left-[8%] w-20 md:w-28 animate-float drop-shadow-lg" />
-          <img src={doodleFlowerPink} alt="" className="absolute bottom-[16%] left-[6%] w-24 md:w-32 animate-float drop-shadow-lg" style={{ animationDelay: "1s" }} />
-          <img src={doodleFairy} alt="" className="absolute top-[14%] right-[8%] w-24 md:w-32 animate-float drop-shadow-lg" style={{ animationDelay: "0.6s" }} />
-          <img src={doodleCup} alt="" className="absolute bottom-[14%] right-[10%] w-28 md:w-40 animate-float drop-shadow-lg" style={{ animationDelay: "1.4s" }} />
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-display text-cream drop-shadow-[0_4px_0_rgba(0,0,0,0.3)] max-w-5xl leading-[1.05]">
             tea for tiny <span className="text-yellow-crayon">plant lovers</span>
@@ -113,16 +103,11 @@ function HomePage() {
 
       {/* MISSION */}
       <section className="bg-paper py-24 px-6 text-center relative overflow-hidden">
-        <img src={doodleFlowerPink} alt="" className="absolute -left-6 top-10 w-28 -rotate-12 opacity-90" />
-        <img src={doodleFlowerYellow} alt="" className="absolute -right-4 bottom-8 w-32 rotate-12 opacity-90" />
-
         <div className="max-w-3xl mx-auto relative">
-          <img src={badgeTeaMagic} alt="Tea Magic" className="mx-auto w-32 md:w-40 mb-6 hover-wiggle" />
           <p className="font-marker text-2xl text-clover mb-3">our mission</p>
           <h2 className="text-4xl md:text-5xl font-display text-brown mb-6">
             Big love for little plants
           </h2>
-          <Squiggle className="mx-auto w-40 text-clover mb-8" />
           <p className="text-lg md:text-xl leading-relaxed text-foreground/80">
             Kid Clover began in our backyard, in tiny hands and dirt-stained
             aprons. We blend gentle, kid-friendly herbal teas that are equal
@@ -176,7 +161,7 @@ function HomePage() {
 
       {/* UPCOMING EVENTS */}
       <section className="bg-lavender/30 py-24 px-6 relative overflow-hidden">
-        <Sparkle className="absolute top-10 right-12 w-10 h-10 text-yellow-crayon animate-float" />
+        
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between flex-wrap gap-4 mb-12">
             <div>

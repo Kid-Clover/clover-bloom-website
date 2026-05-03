@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import portrait from "@/assets/photo-clover.png";
-import { Squiggle, Clover, Sun } from "@/components/doodles";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/about")({
@@ -26,13 +25,10 @@ function AboutPage() {
   return (
     <article className="bg-paper">
       <header className="px-6 pt-20 pb-12 text-center max-w-3xl mx-auto relative">
-        <Sun className="absolute -top-2 -left-2 w-16 h-16 text-yellow-crayon animate-float" />
-        <Clover className="absolute -top-4 -right-2 w-14 h-14 text-clover animate-float" style={{ animationDelay: "1s" }} />
         <p className="font-marker text-2xl text-clover mb-2">our story</p>
         <h1 className="text-5xl md:text-7xl font-display text-brown leading-tight">
           From garden, to cup, to little hands
         </h1>
-        <Squiggle className="mx-auto mt-6 w-40 text-clover" />
       </header>
 
       <section className="px-6 py-12 max-w-5xl mx-auto grid md:grid-cols-5 gap-10 items-start">
@@ -82,17 +78,14 @@ function AboutPage() {
 
       <section className="px-6 pb-20 max-w-3xl mx-auto space-y-6 text-lg leading-relaxed text-foreground/85">
         <h2 className="font-display text-4xl text-brown">What we believe</h2>
-        <ul className="space-y-4">
-          <li className="flex gap-3">
-            <Clover className="w-7 h-7 text-clover flex-shrink-0 mt-1" />
+        <ul className="space-y-4 list-disc pl-6 marker:text-clover">
+          <li>
             <span><strong className="text-brown">Sourced with care.</strong> We work with small organic farms — many in our own backyard — to source every herb we use.</span>
           </li>
-          <li className="flex gap-3">
-            <Clover className="w-7 h-7 text-olive flex-shrink-0 mt-1" />
+          <li>
             <span><strong className="text-brown">Gentle by design.</strong> Every blend is formulated specifically for kids: low-tannin, naturally caffeine-free, and lightly sweet.</span>
           </li>
-          <li className="flex gap-3">
-            <Clover className="w-7 h-7 text-orange-crayon flex-shrink-0 mt-1" />
+          <li>
             <span><strong className="text-brown">Made to spark wonder.</strong> Our packaging, our classes, and our farmers market booths are all built to invite kids in.</span>
           </li>
         </ul>

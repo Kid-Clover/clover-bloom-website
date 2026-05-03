@@ -103,16 +103,11 @@ function HomePage() {
 
       {/* MISSION */}
       <section className="bg-paper py-24 px-6 text-center relative overflow-hidden">
-        <img src={doodleFlowerPink} alt="" className="absolute -left-6 top-10 w-28 -rotate-12 opacity-90" />
-        <img src={doodleFlowerYellow} alt="" className="absolute -right-4 bottom-8 w-32 rotate-12 opacity-90" />
-
         <div className="max-w-3xl mx-auto relative">
-          <img src={badgeTeaMagic} alt="Tea Magic" className="mx-auto w-32 md:w-40 mb-6 hover-wiggle" />
           <p className="font-marker text-2xl text-clover mb-3">our mission</p>
           <h2 className="text-4xl md:text-5xl font-display text-brown mb-6">
             Big love for little plants
           </h2>
-          <Squiggle className="mx-auto w-40 text-clover mb-8" />
           <p className="text-lg md:text-xl leading-relaxed text-foreground/80">
             Kid Clover began in our backyard, in tiny hands and dirt-stained
             aprons. We blend gentle, kid-friendly herbal teas that are equal

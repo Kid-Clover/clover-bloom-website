@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import portrait from "@/assets/about-portrait.jpg";
+import portrait from "@/assets/gallery-3.jpg";
 import { Squiggle, Clover, Sun } from "@/components/doodles";
 import { Button } from "@/components/ui/button";
 
@@ -40,12 +40,12 @@ function AboutPage() {
           <div className="rounded-3xl overflow-hidden border-2 border-brown shadow-doodle">
             <img
               src={portrait}
-              alt="The herbalist behind Kid Clover, holding a bundle of fresh herbs"
+              alt="A basket of freshly harvested herbs and flowers"
               className="w-full h-auto"
             />
           </div>
           <p className="font-marker text-xl text-center mt-4 text-clover">
-            ✿ the herbalist mama ✿
+            ✿ photo of the herbalist coming soon ✿
           </p>
         </div>
 

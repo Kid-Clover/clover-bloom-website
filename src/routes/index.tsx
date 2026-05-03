@@ -10,11 +10,10 @@ import { useRef } from "react";
 import { products } from "@/data/products";
 import { events } from "@/data/events";
 import { Squiggle, Sparkle, Sun, Clover, Leaf } from "@/components/doodles";
-import hero1 from "@/assets/hero-1.jpg";
 import hero2 from "@/assets/hero-2.jpg";
-import hero3 from "@/assets/hero-3.jpg";
 import gallery2 from "@/assets/gallery-2.jpg";
 import gallery3 from "@/assets/gallery-3.jpg";
+import gallery4 from "@/assets/gallery-4.jpg";
 import gallery6 from "@/assets/gallery-6.jpg";
 
 export const Route = createFileRoute("/")({
@@ -37,9 +36,9 @@ export const Route = createFileRoute("/")({
 });
 
 const heroImages = [
-  { src: hero1, alt: "A child holds fresh herbs in a sunlit field" },
+  { src: gallery2, alt: "A lavender field at sunset" },
   { src: hero2, alt: "A teacup with golden herbal tea, chamomile and lavender" },
-  { src: hero3, alt: "A mom and child laughing together in an herb garden" },
+  { src: gallery4, alt: "Red clover blossoms in a sunny meadow" },
 ];
 
 function HomePage() {

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { getUpcomingEvents, type KCEvent } from "@/server/events";
+import { getUpcomingEvents, type KCEvent } from "@/lib/events.server";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, MapPin, Clock, X } from "lucide-react";

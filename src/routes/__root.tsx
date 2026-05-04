@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { Header, Footer } from "@/components/site-chrome";
+import { getCurrentUser } from "@/lib/auth.server";
 
 import appCss from "../styles.css?url";
 
@@ -26,6 +27,7 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
+  loader: () => getCurrentUser(),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -70,9 +72,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const user = Route.useLoaderData();
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header user={user} />
       <main className="flex-1">
         <Outlet />
       </main>

@@ -3,6 +3,7 @@ import logoStacked from "@/assets/logo-stacked.png";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import type { SessionUser } from "@/lib/session.server";
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -12,7 +13,46 @@ const navItems = [
   { to: "/gallery", label: "Gallery" },
 ] as const;
 
-export function Header() {
+function UserWidget({ user }: { user: SessionUser | null }) {
+  if (!user) {
+    return (
+      <Link
+        to="/auth/login"
+        className="font-marker text-lg text-brown border-2 border-brown rounded-full px-4 py-1 hover:bg-brown hover:text-cream transition-colors shadow-doodle"
+      >
+        Login
+      </Link>
+    );
+  }
+
+  const initials = (user.name ?? user.email)
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div className="flex items-center gap-3">
+      <Link to="/auth/logout" className="font-marker text-sm text-brown/60 hover:text-brown">
+        Sign out
+      </Link>
+      {user.picture ? (
+        <img
+          src={user.picture}
+          alt={user.name ?? user.email}
+          className="h-9 w-9 rounded-full border-2 border-brown object-cover"
+        />
+      ) : (
+        <div className="h-9 w-9 rounded-full border-2 border-brown bg-clover/20 flex items-center justify-center font-marker text-sm text-brown">
+          {initials}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function Header({ user }: { user: SessionUser | null }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -35,6 +75,10 @@ export function Header() {
             </Link>
           ))}
         </nav>
+
+        <div className="hidden md:flex items-center gap-4">
+          <UserWidget user={user} />
+        </div>
 
         <button
           className="md:hidden p-2 text-foreground"
@@ -59,6 +103,9 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <div className="pt-2 border-t border-border/40">
+            <UserWidget user={user} />
+          </div>
         </nav>
       )}
     </header>

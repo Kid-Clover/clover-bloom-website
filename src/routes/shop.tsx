@@ -54,12 +54,14 @@ function ShopPage() {
               onClick={() => setActive(p)}
               className={`group flex flex-col overflow-hidden rounded-3xl border-2 border-brown text-left shadow-doodle transition-transform hover:-translate-y-1 ${colorBg[p.color]}`}
             >
-              <div className={`aspect-square p-6 sm:p-7 ${colorBg[p.color]}`}>
+              <div
+                className={`flex aspect-square items-center justify-center p-8 min-[390px]:p-7 sm:p-7 ${colorBg[p.color]}`}
+              >
                 <img
                   src={p.image}
                   alt={p.name}
                   loading="lazy"
-                  className="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
+                  className="h-full max-h-[84%] w-full max-w-[84%] object-contain object-center transition-transform duration-500 group-hover:scale-105 min-[390px]:max-h-[88%] min-[390px]:max-w-[88%] sm:max-h-full sm:max-w-full"
                 />
               </div>
               <div className="flex flex-1 flex-col bg-paper p-5">
@@ -84,7 +86,7 @@ function ShopPage() {
                 <img
                   src={active.image}
                   alt={active.name}
-                  className="h-full max-h-[28rem] w-full object-contain object-center"
+                  className="h-full max-h-[22rem] w-full max-w-[84%] object-contain object-center min-[390px]:max-w-[88%] sm:max-h-[28rem] sm:max-w-full"
                 />
               </div>
               <div className="relative p-6 md:p-8">

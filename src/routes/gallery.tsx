@@ -10,6 +10,13 @@ import shashiBasket from "@/assets/gallery-shashi-basket.jpg";
 import pouchRoses from "@/assets/gallery-pouch-roses.jpg";
 import bowlTea from "@/assets/gallery-bowl-tea.jpg";
 import pouchLace from "@/assets/gallery-pouch-lace.jpg";
+import cloverHand from "@/assets/gallery-clover-hand.png";
+import calendula from "@/assets/gallery-calendula.png";
+import elecampaneSky from "@/assets/gallery-elecampane-sky.png";
+import elderflower from "@/assets/gallery-elderflower.png";
+import icedTeaJar from "@/assets/gallery-iced-tea-jar.png";
+import magentaClover from "@/assets/gallery-magenta-clover.png";
+import meadowSunset from "@/assets/gallery-meadow-sunset.png";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -36,6 +43,13 @@ const photos: { src: string; alt: string }[] = [
   { src: pouchRoses, alt: "Kid Clover tea pouch and glass cup beside pink roses and herbs" },
   { src: bowlTea, alt: "Wooden bowl of loose herbal tea blend beside a glass cup of brewed tea" },
   { src: pouchLace, alt: "Kid Clover pouch and a wooden bowl of herbal tea on lace tablecloth" },
+  { src: cloverHand, alt: "Hand-picked red clover blossoms held in a sunlit palm" },
+  { src: calendula, alt: "Bright orange calendula flower in the herb garden" },
+  { src: elecampaneSky, alt: "Elecampane silhouettes against a cloudy summer sky" },
+  { src: elderflower, alt: "Freshly harvested elderflower blossoms drying on paper" },
+  { src: icedTeaJar, alt: "Mason jar of strawberry-mint iced tea by the lake" },
+  { src: magentaClover, alt: "A vivid magenta red clover blossom in the meadow" },
+  { src: meadowSunset, alt: "Wildflower meadow glowing at golden hour" },
 ];
 
 function GalleryPage() {

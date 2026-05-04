@@ -1,6 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { getRequest } from "@tanstack/react-start/server";
-import { env } from "cloudflare:workers";
 import {
   createAuth0Client,
   getOAuthCookies,
@@ -37,9 +36,7 @@ export const Route = createFileRoute("/auth/callback")({
         picture?: string;
       };
 
-      const db = (env as Cloudflare.Env).DB;
       const userId = await upsertUser(
-        db,
         claims.sub,
         claims.email,
         claims.name ?? null,

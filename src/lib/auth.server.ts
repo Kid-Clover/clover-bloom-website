@@ -22,12 +22,12 @@ export function getOAuthCookies(): { state: string | undefined; codeVerifier: st
 }
 
 export async function upsertUser(
-  db: D1Database,
   auth0Id: string,
   email: string,
   name: string | null,
   picture: string | null
 ): Promise<number> {
+  const db = (env as Cloudflare.Env).DB;
   await db
     .prepare(
       `INSERT INTO users (auth0_id, email, name, picture)
@@ -44,6 +44,11 @@ export async function upsertUser(
     .bind(auth0Id)
     .first<{ id: number }>();
   return row!.id;
+}
+
+export function getAuth0LogoutUrl(returnTo: string): string {
+  const e = env as Cloudflare.Env;
+  return `https://${e.AUTH0_DOMAIN}/v2/logout?client_id=${e.AUTH0_CLIENT_ID}&returnTo=${encodeURIComponent(returnTo)}`;
 }
 
 export { setSessionUser };

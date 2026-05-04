@@ -88,7 +88,7 @@ function HomePage() {
             tea for tiny <span className="text-yellow-crayon">plant lovers</span>
           </h1>
           <p className="mt-6 font-marker text-2xl md:text-3xl text-cream max-w-2xl">
-            connecting kids to the magic of plants
+            smart sips for little lips
           </p>
           <div className="mt-10 pointer-events-auto flex flex-wrap gap-4 justify-center">
             <Button asChild size="lg" className="rounded-full text-lg h-14 px-8 shadow-doodle border-2 border-brown">

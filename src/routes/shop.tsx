@@ -52,16 +52,16 @@ function ShopPage() {
             <button
               key={p.id}
               onClick={() => setActive(p)}
-              className={`group flex flex-col overflow-hidden rounded-3xl border-2 border-brown text-left shadow-doodle transition-transform hover:-translate-y-1 ${colorBg[p.color]}`}
+              className={`group flex w-full min-w-0 flex-col overflow-hidden rounded-3xl border-2 border-brown text-left shadow-doodle transition-transform hover:-translate-y-1 ${colorBg[p.color]}`}
             >
               <div
-                className={`flex aspect-square items-center justify-center p-8 min-[390px]:p-7 sm:p-7 ${colorBg[p.color]}`}
+                className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden ${colorBg[p.color]}`}
               >
                 <img
                   src={p.image}
                   alt={p.name}
                   loading="lazy"
-                  className="h-full max-h-[84%] w-full max-w-[84%] object-contain object-center transition-transform duration-500 group-hover:scale-105 min-[390px]:max-h-[88%] min-[390px]:max-w-[88%] sm:max-h-full sm:max-w-full"
+                  className="block h-auto w-[90%] max-w-[90%] object-contain object-center transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex flex-1 flex-col bg-paper p-5">
@@ -82,11 +82,11 @@ function ShopPage() {
         <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto rounded-3xl border-2 border-brown bg-card p-0 [&>button]:hidden">
           {active && (
             <div className="grid md:grid-cols-2">
-              <div className={`flex aspect-square items-center justify-center p-8 md:aspect-auto md:p-10 ${colorBg[active.color]}`}>
+              <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden md:aspect-auto ${colorBg[active.color]}`}>
                 <img
                   src={active.image}
                   alt={active.name}
-                  className="h-full max-h-[22rem] w-full max-w-[84%] object-contain object-center min-[390px]:max-w-[88%] sm:max-h-[28rem] sm:max-w-full"
+                  className="block h-auto w-[90%] max-w-[90%] object-contain object-center md:max-h-[28rem] md:w-[90%] md:max-w-[90%]"
                 />
               </div>
               <div className="relative p-6 md:p-8">

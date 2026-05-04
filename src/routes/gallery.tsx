@@ -43,6 +43,13 @@ const photos: { src: string; alt: string }[] = [
   { src: pouchRoses, alt: "Kid Clover tea pouch and glass cup beside pink roses and herbs" },
   { src: bowlTea, alt: "Wooden bowl of loose herbal tea blend beside a glass cup of brewed tea" },
   { src: pouchLace, alt: "Kid Clover pouch and a wooden bowl of herbal tea on lace tablecloth" },
+  { src: cloverHand, alt: "Hand-picked red clover blossoms held in a sunlit palm" },
+  { src: calendula, alt: "Bright orange calendula flower in the herb garden" },
+  { src: elecampaneSky, alt: "Elecampane silhouettes against a cloudy summer sky" },
+  { src: elderflower, alt: "Freshly harvested elderflower blossoms drying on paper" },
+  { src: icedTeaJar, alt: "Mason jar of strawberry-mint iced tea by the lake" },
+  { src: magentaClover, alt: "A vivid magenta red clover blossom in the meadow" },
+  { src: meadowSunset, alt: "Wildflower meadow glowing at golden hour" },
 ];
 
 function GalleryPage() {

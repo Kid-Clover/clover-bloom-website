@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useMemo, useState, useEffect } from "react";
+import { z } from "zod";
 import { getUpcomingEvents, type KCEvent } from "@/lib/events.server";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -20,6 +21,9 @@ export const Route = createFileRoute("/events")({
         content: "Markets, popups, and kids' herbal classes.",
       },
     ],
+  }),
+  validateSearch: z.object({
+    event: z.number().optional(),
   }),
   loader: () => getUpcomingEvents(),
   component: EventsPage,
@@ -46,9 +50,28 @@ function formatTimeRange(start: string, end: string | null): string {
 
 function EventsPage() {
   const events = Route.useLoaderData();
+  const { event: eventId } = Route.useSearch();
+  const navigate = useNavigate({ from: "/events" });
   const today = new Date();
   const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() });
   const [active, setActive] = useState<KCEvent | null>(null);
+
+  useEffect(() => {
+    if (eventId) {
+      const found = events.find((e) => e.id === eventId) ?? null;
+      setActive(found);
+    }
+  }, [eventId, events]);
+
+  const openEvent = (e: KCEvent) => {
+    setActive(e);
+    navigate({ search: { event: e.id } });
+  };
+
+  const closeEvent = () => {
+    setActive(null);
+    navigate({ search: {} });
+  };
 
   const days = useMemo(() => buildMonth(view.y, view.m), [view]);
 
@@ -143,7 +166,7 @@ function EventsPage() {
                         {dayEvents.map((e) => (
                           <button
                             key={e.id}
-                            onClick={() => setActive(e)}
+                            onClick={() => openEvent(e)}
                             className={`w-full text-left text-[10px] md:text-xs px-1.5 py-1 rounded font-bold ${typeColor[e.type]} hover:opacity-90 transition-opacity truncate`}
                             title={e.title}
                           >
@@ -167,7 +190,7 @@ function EventsPage() {
               return (
                 <button
                   key={e.id}
-                  onClick={() => setActive(e)}
+                  onClick={() => openEvent(e)}
                   className="text-left bg-card border-2 border-brown rounded-2xl p-5 shadow-doodle hover:-translate-y-1 transition-transform"
                 >
                   <div className="flex items-start gap-4">
@@ -200,12 +223,12 @@ function EventsPage() {
         </div>
       </section>
 
-      <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
+      <Dialog open={!!active} onOpenChange={(o) => !o && closeEvent()}>
         <DialogContent className="max-w-lg bg-card border-2 border-brown rounded-3xl [&>button]:hidden">
           {active && (
             <div className="relative">
               <button
-                onClick={() => setActive(null)}
+                onClick={() => closeEvent()}
                 className="absolute -top-2 -right-2 p-1 rounded-full hover:bg-muted"
                 aria-label="Close"
               >

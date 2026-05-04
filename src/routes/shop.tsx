@@ -86,7 +86,7 @@ function ShopPage() {
                 <img
                   src={active.image}
                   alt={active.name}
-                  className="block h-auto w-[80%] max-w-[80%] object-contain object-center md:max-h-[28rem] md:w-[90%] md:max-w-[90%]"
+                  className="block h-auto w-[80%] max-w-[80%] object-contain object-center md:max-h-[28rem] md:w-[80%] md:max-w-[80%]"
                 />
               </div>
               <div className="relative p-6 md:p-8">

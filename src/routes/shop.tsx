@@ -61,7 +61,7 @@ function ShopPage() {
                   src={p.image}
                   alt={p.name}
                   loading="lazy"
-                  className="block h-auto w-[90%] max-w-[90%] object-contain object-center transition-transform duration-500 group-hover:scale-105"
+                  className="block h-auto w-[80%] max-w-[80%] object-contain object-center transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex flex-1 flex-col bg-paper p-5">
@@ -86,7 +86,7 @@ function ShopPage() {
                 <img
                   src={active.image}
                   alt={active.name}
-                  className="block h-auto w-[90%] max-w-[90%] object-contain object-center md:max-h-[28rem] md:w-[90%] md:max-w-[90%]"
+                  className="block h-auto w-[80%] max-w-[80%] object-contain object-center md:max-h-[28rem] md:w-[90%] md:max-w-[90%]"
                 />
               </div>
               <div className="relative p-6 md:p-8">

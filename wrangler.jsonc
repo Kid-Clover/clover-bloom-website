@@ -7,5 +7,12 @@
   "routes": [
     { "pattern": "drinkkidclover.com/*", "zone_name": "drinkkidclover.com" },
     { "pattern": "www.drinkkidclover.com/*", "zone_name": "drinkkidclover.com" }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kid-clover-db",
+      "database_id": "6266c54c-d28a-46d6-8c0c-38900420a620"
+    }
   ]
 }

@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { events, type KCEvent } from "@/data/events";
+import { getUpcomingEvents, type KCEvent } from "@/server/events";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-
 import { ChevronLeft, ChevronRight, MapPin, Clock, X } from "lucide-react";
 
 export const Route = createFileRoute("/events")({
@@ -22,6 +21,7 @@ export const Route = createFileRoute("/events")({
       },
     ],
   }),
+  loader: () => getUpcomingEvents(),
   component: EventsPage,
 });
 
@@ -32,19 +32,34 @@ const typeColor: Record<KCEvent["type"], string> = {
   Appearance: "bg-olive text-cream",
 };
 
+function localDate(isoUtc: string): string {
+  return new Date(isoUtc).toLocaleDateString("en-CA"); // yyyy-mm-dd
+}
+
+function formatTimeRange(start: string, end: string | null): string {
+  const fmt = (iso: string) =>
+    new Date(iso)
+      .toLocaleTimeString("en", { hour: "numeric", minute: "2-digit" })
+      .toLowerCase();
+  return end ? `${fmt(start)} – ${fmt(end)}` : fmt(start);
+}
+
 function EventsPage() {
+  const events = Route.useLoaderData();
   const today = new Date();
   const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() });
   const [active, setActive] = useState<KCEvent | null>(null);
 
   const days = useMemo(() => buildMonth(view.y, view.m), [view]);
+
   const eventsByDate = useMemo(() => {
     const map: Record<string, KCEvent[]> = {};
     for (const e of events) {
-      (map[e.date] ||= []).push(e);
+      const key = localDate(e.start_time);
+      (map[key] ||= []).push(e);
     }
     return map;
-  }, []);
+  }, [events]);
 
   const monthLabel = new Date(view.y, view.m, 1).toLocaleString("en", {
     month: "long",
@@ -63,7 +78,6 @@ function EventsPage() {
         <h1 className="text-5xl md:text-7xl font-display text-brown leading-tight">
           Where to meet Kid Clover
         </h1>
-        
         <p className="mt-6 text-lg text-foreground/75 max-w-2xl mx-auto">
           Markets, popups, and hands-on classes for tiny plant lovers. Tap any
           event for details.
@@ -145,12 +159,11 @@ function EventsPage() {
           </div>
         </div>
 
-        {/* Upcoming list (mobile-friendly) */}
         <div className="mt-12">
           <h2 className="font-display text-3xl text-brown mb-6">All upcoming</h2>
           <div className="grid md:grid-cols-2 gap-4">
             {events.map((e) => {
-              const dt = new Date(e.date + "T00:00:00");
+              const dt = new Date(e.start_time);
               return (
                 <button
                   key={e.id}
@@ -176,7 +189,7 @@ function EventsPage() {
                         {e.title}
                       </h3>
                       <p className="text-sm text-foreground/70 mt-1">
-                        {e.time} · {e.location}
+                        {formatTimeRange(e.start_time, e.end_time)} · {e.location_name}
                       </p>
                     </div>
                   </div>
@@ -207,7 +220,7 @@ function EventsPage() {
                 {active.title}
               </h2>
               <p className="font-marker text-xl text-clover mt-1">
-                {new Date(active.date + "T00:00:00").toLocaleDateString("en", {
+                {new Date(active.start_time).toLocaleDateString("en", {
                   weekday: "long",
                   month: "long",
                   day: "numeric",
@@ -216,10 +229,12 @@ function EventsPage() {
 
               <div className="mt-5 space-y-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <Clock size={16} className="text-clover" /> {active.time}
+                  <Clock size={16} className="text-clover" />
+                  {formatTimeRange(active.start_time, active.end_time)}
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin size={16} className="text-clover" /> {active.location}
+                  <MapPin size={16} className="text-clover" />
+                  {active.location_name}
                 </div>
               </div>
 
@@ -227,13 +242,19 @@ function EventsPage() {
                 {active.description}
               </p>
 
-              <Button
-                size="lg"
-                className="mt-6 w-full rounded-full border-2 border-brown shadow-doodle"
-                onClick={() => alert("RSVP form coming soon — sign-ups will be enabled once the backend is wired up.")}
-              >
-                Sign up
-              </Button>
+              {!!active.requires_sign_up && (
+                <Button
+                  size="lg"
+                  className="mt-6 w-full rounded-full border-2 border-brown shadow-doodle"
+                  onClick={() =>
+                    alert(
+                      "Sign-ups coming soon — login will be required to register for events."
+                    )
+                  }
+                >
+                  Sign up
+                </Button>
+              )}
             </div>
           )}
         </DialogContent>

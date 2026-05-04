@@ -2,18 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useCallback, useEffect } from "react";
 
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import g1 from "@/assets/gallery-1.jpg";
-import g2 from "@/assets/gallery-2.jpg";
-import g3 from "@/assets/gallery-3.jpg";
-import g4 from "@/assets/gallery-4.jpg";
-import g6 from "@/assets/gallery-6.jpg";
-import h2 from "@/assets/hero-2.jpg";
-import pBush from "@/assets/photo-bush.png";
-import pSunset from "@/assets/photo-sunset.png";
-import pIcedTea from "@/assets/photo-iced-tea.png";
-import pDesert from "@/assets/photo-desert.png";
-import pClover from "@/assets/photo-clover.png";
-import pCalendula from "@/assets/photo-calendula.png";
+import teaDoily from "@/assets/gallery-tea-doily.jpg";
+import handsCup from "@/assets/gallery-hands-cup.jpg";
+import glendyPouch from "@/assets/gallery-glendy-pouch.jpg";
+import kidsBridge from "@/assets/gallery-kids-bridge.jpg";
+import shashiBasket from "@/assets/gallery-shashi-basket.jpg";
+import pouchRoses from "@/assets/gallery-pouch-roses.jpg";
+import bowlTea from "@/assets/gallery-bowl-tea.jpg";
+import pouchLace from "@/assets/gallery-pouch-lace.jpg";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -32,18 +28,14 @@ export const Route = createFileRoute("/gallery")({
 });
 
 const photos: { src: string; alt: string }[] = [
-  { src: pClover, alt: "A hand-picked red clover blossom" },
-  { src: pCalendula, alt: "A bright orange calendula flower in the garden" },
-  { src: pIcedTea, alt: "Mason jar of strawberry-mint iced tea by the lake" },
-  { src: pBush, alt: "Motherwort in bloom in the herb garden" },
-  { src: pSunset, alt: "Wildflower meadow at golden hour" },
-  { src: pDesert, alt: "Elecampane silhouettes against a cloudy summer sky" },
-  { src: g1, alt: "Holy basil leaves with morning dew" },
-  { src: g4, alt: "Red clover blossoms in a meadow" },
-  { src: g2, alt: "Lavender field at sunset" },
-  { src: g3, alt: "Wicker basket of fresh harvested herbs" },
-  { src: g6, alt: "Rolling herb farm at dawn" },
-  { src: h2, alt: "Cup of herbal tea surrounded by botanicals" },
+  { src: teaDoily, alt: "Glass cup of pink herbal tea on a lace doily with strawberries and a clay teapot" },
+  { src: handsCup, alt: "Child's hands holding a glass of herbal tea garnished with yellow flowers" },
+  { src: glendyPouch, alt: "Kid Clover Glendy & The Aunties herbal tea pouch with berries" },
+  { src: kidsBridge, alt: "Two children sipping tea on a wooden bridge with a basket of flowers" },
+  { src: shashiBasket, alt: "Shashi La Blooms tea pouch nestled in a basket of roses and wildflowers" },
+  { src: pouchRoses, alt: "Kid Clover tea pouch and glass cup beside pink roses and herbs" },
+  { src: bowlTea, alt: "Wooden bowl of loose herbal tea blend beside a glass cup of brewed tea" },
+  { src: pouchLace, alt: "Kid Clover pouch and a wooden bowl of herbal tea on lace tablecloth" },
 ];
 
 function GalleryPage() {

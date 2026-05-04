@@ -10,6 +10,13 @@ import shashiBasket from "@/assets/gallery-shashi-basket.jpg";
 import pouchRoses from "@/assets/gallery-pouch-roses.jpg";
 import bowlTea from "@/assets/gallery-bowl-tea.jpg";
 import pouchLace from "@/assets/gallery-pouch-lace.jpg";
+import cloverHand from "@/assets/gallery-clover-hand.png";
+import calendula from "@/assets/gallery-calendula.png";
+import elecampaneSky from "@/assets/gallery-elecampane-sky.png";
+import elderflower from "@/assets/gallery-elderflower.png";
+import icedTeaJar from "@/assets/gallery-iced-tea-jar.png";
+import magentaClover from "@/assets/gallery-magenta-clover.png";
+import meadowSunset from "@/assets/gallery-meadow-sunset.png";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({

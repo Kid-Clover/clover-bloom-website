@@ -18,7 +18,7 @@ function UserWidget({ user }: { user: SessionUser | null }) {
     return (
       <Link
         to="/auth/login"
-        className="font-marker text-lg text-brown border-2 border-brown rounded-full px-4 py-1 hover:bg-brown hover:text-cream transition-colors shadow-doodle"
+        className="font-marker text-2xl text-foreground hover:text-primary transition-colors"
       >
         Login
       </Link>
@@ -74,11 +74,8 @@ export function Header({ user }: { user: SessionUser | null }) {
               {item.label}
             </Link>
           ))}
-        </nav>
-
-        <div className="hidden md:flex items-center gap-4">
           <UserWidget user={user} />
-        </div>
+        </nav>
 
         <button
           className="md:hidden p-2 text-foreground"
@@ -103,9 +100,7 @@ export function Header({ user }: { user: SessionUser | null }) {
               {item.label}
             </Link>
           ))}
-          <div className="pt-2 border-t border-border/40">
-            <UserWidget user={user} />
-          </div>
+          <UserWidget user={user} />
         </nav>
       )}
     </header>

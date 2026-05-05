@@ -43,6 +43,7 @@ export const createCheckout = createServerFn()
       order: { location_id: LOCATION_ID, line_items: lineItems },
       checkout_options: {
         redirect_url: "https://drinkkidclover.com/order-confirmed",
+        ask_for_shipping_address: true,
       },
       ...(Object.keys(prePopulatedData).length > 0
         ? { pre_populated_data: prePopulatedData }

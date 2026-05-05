@@ -58,8 +58,8 @@ function DesktopUserWidget({ user }: { user: SessionUser | null }) {
         <Avatar user={user} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem asChild>
-          <Link to="/auth/logout" className="font-marker text-2xl cursor-pointer w-full">
+        <DropdownMenuItem asChild className="!text-2xl font-marker">
+          <Link to="/auth/logout" className="cursor-pointer w-full">
             Sign out
           </Link>
         </DropdownMenuItem>

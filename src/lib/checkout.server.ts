@@ -11,8 +11,7 @@ type CheckoutInput = {
 };
 
 export const createCheckout = createServerFn()
-  .validator((data: CheckoutInput) => data)
-  .handler(async ({ data }): Promise<string> => {
+  .handler(async ({ data }: { data: CheckoutInput }): Promise<string> => {
     const e = env as Cloudflare.Env;
     const user = await getSessionUser();
 

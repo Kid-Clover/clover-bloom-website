@@ -4,6 +4,12 @@ import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import type { SessionUser } from "@/lib/session.server";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -13,7 +19,28 @@ const navItems = [
   { to: "/gallery", label: "Gallery" },
 ] as const;
 
-function UserWidget({ user }: { user: SessionUser | null }) {
+function Avatar({ user }: { user: SessionUser }) {
+  const initials = (user.name ?? user.email)
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+  return user.picture ? (
+    <img
+      src={user.picture}
+      alt={user.name ?? user.email}
+      className="h-9 w-9 rounded-full border-2 border-brown object-cover"
+    />
+  ) : (
+    <div className="h-9 w-9 rounded-full border-2 border-brown bg-clover/20 flex items-center justify-center font-marker text-sm text-brown">
+      {initials}
+    </div>
+  );
+}
+
+function DesktopUserWidget({ user }: { user: SessionUser | null }) {
   if (!user) {
     return (
       <Link
@@ -25,30 +52,44 @@ function UserWidget({ user }: { user: SessionUser | null }) {
     );
   }
 
-  const initials = (user.name ?? user.email)
-    .split(" ")
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="cursor-pointer focus:outline-none">
+        <Avatar user={user} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem asChild>
+          <Link to="/auth/logout" className="font-marker text-lg cursor-pointer w-full">
+            Sign out
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function MobileUserWidget({ user, onClose }: { user: SessionUser | null; onClose: () => void }) {
+  if (!user) {
+    return (
+      <Link
+        to="/auth/login"
+        onClick={onClose}
+        className="font-marker text-2xl text-foreground hover:text-primary"
+      >
+        Login
+      </Link>
+    );
+  }
 
   return (
-    <div className="flex items-center gap-3">
-      <Link to="/auth/logout" className="font-marker text-sm text-brown/60 hover:text-brown">
-        Sign out
-      </Link>
-      {user.picture ? (
-        <img
-          src={user.picture}
-          alt={user.name ?? user.email}
-          className="h-9 w-9 rounded-full border-2 border-brown object-cover"
-        />
-      ) : (
-        <div className="h-9 w-9 rounded-full border-2 border-brown bg-clover/20 flex items-center justify-center font-marker text-sm text-brown">
-          {initials}
-        </div>
-      )}
-    </div>
+    <Link
+      to="/auth/logout"
+      onClick={onClose}
+      className="font-marker text-2xl text-foreground hover:text-primary flex items-center gap-3"
+    >
+      <Avatar user={user} />
+      Sign out
+    </Link>
   );
 }
 
@@ -74,7 +115,7 @@ export function Header({ user }: { user: SessionUser | null }) {
               {item.label}
             </Link>
           ))}
-          <UserWidget user={user} />
+          <DesktopUserWidget user={user} />
         </nav>
 
         <button
@@ -100,7 +141,7 @@ export function Header({ user }: { user: SessionUser | null }) {
               {item.label}
             </Link>
           ))}
-          <UserWidget user={user} />
+          <MobileUserWidget user={user} onClose={() => setOpen(false)} />
         </nav>
       )}
     </header>

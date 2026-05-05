@@ -21,7 +21,7 @@ export const Route = createFileRoute("/shop")({
       { property: "og:description", content: "Hand-blended herbal teas for kids." },
     ],
   }),
-  component: ShopMaintenance, // swap to ShopPage to re-open
+  component: ShopPage, // swap to ShopMaintenance to close
 });
 
 function ShopMaintenance() {

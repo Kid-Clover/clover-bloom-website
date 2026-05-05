@@ -16,12 +16,20 @@ const cloudflareDevStub = {
   load(id: string) {
     if (id !== "\0cloudflare-workers-stub") return;
     return `
+      const mockStatement = {
+        bind: () => mockStatement,
+        all: async () => ({ results: [] }),
+        first: async () => null,
+        run: async () => ({}),
+      };
+      const mockDb = { prepare: () => mockStatement };
+
       export const env = {
         AUTH0_DOMAIN: import.meta.env.VITE_AUTH0_DOMAIN ?? "",
         AUTH0_CLIENT_ID: import.meta.env.VITE_AUTH0_CLIENT_ID ?? "",
         AUTH0_CLIENT_SECRET: import.meta.env.VITE_AUTH0_CLIENT_SECRET ?? "",
         SESSION_SECRET: import.meta.env.VITE_SESSION_SECRET ?? "dev-secret",
-        DB: null,
+        DB: mockDb,
       };
     `;
   },

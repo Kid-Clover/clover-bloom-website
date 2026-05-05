@@ -59,7 +59,7 @@ function DesktopUserWidget({ user }: { user: SessionUser | null }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link to="/auth/logout" className="font-marker text-lg cursor-pointer w-full">
+          <Link to="/auth/logout" className="font-marker text-2xl cursor-pointer w-full">
             Sign out
           </Link>
         </DropdownMenuItem>

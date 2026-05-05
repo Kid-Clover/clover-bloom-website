@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMemo } from "react";
+import { z } from "zod";
 import { getProducts, type Product } from "@/lib/products.server";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -34,6 +35,9 @@ const productImages: Record<string, string> = {
 };
 
 export const Route = createFileRoute("/shop")({
+  validateSearch: z.object({
+    product: z.string().optional(),
+  }),
   loader: () => getProducts(),
   head: () => ({
     meta: [
@@ -81,7 +85,16 @@ function ShopMaintenance() {
 
 function ShopPage() {
   const products = Route.useLoaderData();
-  const [active, setActive] = useState<Product | null>(null);
+  const { product: productId } = Route.useSearch();
+  const navigate = useNavigate({ from: "/shop" });
+
+  const active = useMemo(
+    () => products.find((p) => p.id === productId) ?? null,
+    [products, productId]
+  );
+
+  const openProduct = (p: Product) => navigate({ search: { product: p.id } });
+  const closeProduct = () => navigate({ search: {} });
 
   const colorBg: Record<Product["color"], string> = {
     clover: "bg-clover/25",
@@ -108,7 +121,7 @@ function ShopPage() {
           {products.map((p) => (
             <button
               key={p.id}
-              onClick={() => setActive(p)}
+              onClick={() => openProduct(p)}
               className={`group flex w-full min-w-0 flex-col overflow-hidden rounded-3xl border-2 border-brown text-left shadow-doodle transition-transform hover:-translate-y-1 ${colorBg[p.color]}`}
             >
               <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden ${colorBg[p.color]}`}>
@@ -133,7 +146,7 @@ function ShopPage() {
         </div>
       </section>
 
-      <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
+      <Dialog open={!!active} onOpenChange={(o) => !o && closeProduct()}>
         <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto rounded-3xl border-2 border-brown bg-card p-0 [&>button]:hidden">
           {active && (
             <div className="grid md:grid-cols-2">
@@ -146,7 +159,7 @@ function ShopPage() {
               </div>
               <div className="relative p-6 md:p-8">
                 <button
-                  onClick={() => setActive(null)}
+                  onClick={() => closeProduct()}
                   aria-label="Close"
                   className="absolute right-4 top-4 rounded-full p-1 hover:bg-muted"
                 >

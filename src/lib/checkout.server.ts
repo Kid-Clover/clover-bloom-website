@@ -41,6 +41,9 @@ export const createCheckout = createServerFn()
     const body = {
       idempotency_key: crypto.randomUUID(),
       order: { location_id: LOCATION_ID, line_items: lineItems },
+      checkout_options: {
+        redirect_url: "https://drinkkidclover.com/order-confirmed",
+      },
       ...(Object.keys(prePopulatedData).length > 0
         ? { pre_populated_data: prePopulatedData }
         : {}),

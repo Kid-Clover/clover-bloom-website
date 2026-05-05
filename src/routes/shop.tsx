@@ -1,14 +1,40 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { products, type Product } from "@/data/products";
+import { getProducts, type Product } from "@/lib/products.server";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ExternalLink, X } from "lucide-react";
 import logoStacked from "@/assets/logo-stacked.png";
 import doodleCup from "@/assets/doodle-cup.png";
 
+import pinkPopPotion from "@/assets/product-pink-pop-potion.png";
+import pixieDust from "@/assets/product-pixie-dust.png";
+import threeSimples from "@/assets/product-3-simples.png";
+import sixSimples from "@/assets/product-6-simples.png";
+import dayDreamers from "@/assets/product-day-dreamers.png";
+import tinyRecess from "@/assets/product-tiny-recess.png";
+import tigersEye from "@/assets/product-tigers-eye.png";
+import crystalCauldron from "@/assets/product-crystal-cauldron.png";
+import dragonflies from "@/assets/product-dragonflies.png";
+import griffinsGold from "@/assets/product-griffins-gold.png";
+import ogressLantern from "@/assets/product-ogress-lantern.png";
+
+const productImages: Record<string, string> = {
+  "pink-pop-potion": pinkPopPotion,
+  "day-dreamer": dayDreamers,
+  "tiny-recess": tinyRecess,
+  "tigers-eye-ginger": tigersEye,
+  "crystal-cauldron-chamomile": crystalCauldron,
+  "dragonflies-society-rose-hips": dragonflies,
+  "griffins-gold-lemon-verbena": griffinsGold,
+  "ogress-lantern-lemon-balm": ogressLantern,
+  "pixie-dust-peppermint": pixieDust,
+  "3-simples": threeSimples,
+  "6-simples": sixSimples,
+};
+
 export const Route = createFileRoute("/shop")({
+  loader: () => getProducts(),
   head: () => ({
     meta: [
       { title: "Shop — Kid Clover Teas" },
@@ -28,38 +54,33 @@ function ShopMaintenance() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-24 text-center">
       <img src={logoStacked} alt="Kid Clover" className="h-32 w-auto mb-8" />
-
       <p className="font-marker text-2xl text-clover mb-3">oops, we stepped away for a moment</p>
-
       <h1 className="font-display text-5xl md:text-6xl text-brown leading-tight max-w-xl mb-6">
         Our shop is taking a little tea break
       </h1>
-
       <p className="text-lg text-foreground/75 max-w-md mb-4">
         We're working behind the scenes to make sure every order gets to you just right.
         Check back soon — the teas aren't going anywhere!
       </p>
-
       <p className="text-sm text-muted-foreground max-w-sm mb-10">
         In the meantime, find us at the farmers market every Saturday or reach out at{" "}
         <a href="mailto:lesley@drinkkidclover.com" className="text-clover hover:underline">
           lesley@drinkkidclover.com
         </a>
       </p>
-
       <Link
         to="/events"
         className="font-marker text-xl text-brown border-2 border-brown rounded-full px-6 py-2 hover:bg-brown hover:text-cream transition-colors shadow-doodle"
       >
         Find us at an event →
       </Link>
-
       <img src={doodleCup} alt="" aria-hidden className="h-32 w-auto mt-16 opacity-60" />
     </div>
   );
 }
 
 function ShopPage() {
+  const products = Route.useLoaderData();
   const [active, setActive] = useState<Product | null>(null);
 
   const colorBg: Record<Product["color"], string> = {
@@ -92,7 +113,7 @@ function ShopPage() {
             >
               <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden ${colorBg[p.color]}`}>
                 <img
-                  src={p.image}
+                  src={productImages[p.imageKey]}
                   alt={p.name}
                   loading="lazy"
                   className="block h-auto w-[80%] max-w-[80%] object-contain object-center transition-transform duration-500 group-hover:scale-105"
@@ -118,7 +139,7 @@ function ShopPage() {
             <div className="grid md:grid-cols-2">
               <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden md:aspect-auto ${colorBg[active.color]}`}>
                 <img
-                  src={active.image}
+                  src={productImages[active.imageKey]}
                   alt={active.name}
                   className="block h-auto w-[80%] max-w-[80%] object-contain object-center md:max-h-[28rem] md:w-[80%] md:max-w-[80%]"
                 />

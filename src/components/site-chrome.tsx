@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import logoStacked from "@/assets/logo-stacked.png";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useState } from "react";
-import { Menu, ShoppingCart, X } from "lucide-react";
+import { Menu, ShoppingCart, User, X } from "lucide-react";
 import type { SessionUser } from "@/lib/session.server";
 import { useCart } from "@/context/cart";
 import {
@@ -42,27 +42,22 @@ function Avatar({ user }: { user: SessionUser }) {
 }
 
 function DesktopUserWidget({ user }: { user: SessionUser | null }) {
-  if (!user) {
-    return (
-      <Link
-        to="/auth/login"
-        className="font-marker text-2xl text-foreground hover:text-primary transition-colors"
-      >
-        Login
-      </Link>
-    );
-  }
-
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="cursor-pointer focus:outline-none">
-        <Avatar user={user} />
+      <DropdownMenuTrigger className="cursor-pointer focus:outline-none text-foreground hover:text-primary transition-colors">
+        {user ? <Avatar user={user} /> : <User size={24} />}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild className="!text-2xl font-marker">
-          <Link to="/auth/logout" className="cursor-pointer w-full">
-            Sign out
-          </Link>
+          {user ? (
+            <Link to="/auth/logout" className="cursor-pointer w-full">
+              Sign out
+            </Link>
+          ) : (
+            <Link to="/auth/login" className="cursor-pointer w-full">
+              Login / Sign up
+            </Link>
+          )}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -94,9 +89,10 @@ function MobileUserWidget({ user, onClose }: { user: SessionUser | null; onClose
       <Link
         to="/auth/login"
         onClick={onClose}
-        className="font-marker text-2xl text-foreground hover:text-primary"
+        className="font-marker text-2xl text-foreground hover:text-primary flex items-center gap-3"
       >
-        Login
+        <User size={22} />
+        Login / Sign up
       </Link>
     );
   }

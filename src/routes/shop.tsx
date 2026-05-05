@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { z } from "zod";
 import { getProducts, type Product } from "@/lib/products.server";
+import { type CartModifiers } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ExternalLink, X } from "lucide-react";
+import { Minus, Plus, ShoppingCart, X } from "lucide-react";
+import { useCart } from "@/context/cart";
 import logoStacked from "@/assets/logo-stacked.png";
 import doodleCup from "@/assets/doodle-cup.png";
 
@@ -44,8 +46,7 @@ export const Route = createFileRoute("/shop")({
       { title: "Shop — Kid Clover Teas" },
       {
         name: "description",
-        content:
-          "Browse our hand-blended herbal teas for kids. Buy individual pouches via Square checkout.",
+        content: "Browse our hand-blended herbal teas for kids.",
       },
       { property: "og:title", content: "Shop Kid Clover" },
       { property: "og:description", content: "Hand-blended herbal teas for kids." },
@@ -83,6 +84,158 @@ function ShopMaintenance() {
   );
 }
 
+function ModifierSelector({
+  product,
+  modifiers,
+  onChange,
+}: {
+  product: Product;
+  modifiers: CartModifiers;
+  onChange: (m: CartModifiers) => void;
+}) {
+  const group = product.modifiers!;
+  const selected = Object.values(modifiers).reduce((a, b) => a + b, 0);
+  const remaining = group.requiredCount - selected;
+
+  function adjust(optionId: string, delta: number) {
+    const current = modifiers[optionId] ?? 0;
+    const next = Math.max(0, current + delta);
+    if (delta > 0 && remaining <= 0) return;
+    onChange({ ...modifiers, [optionId]: next });
+  }
+
+  return (
+    <div className="mb-6">
+      <div className="flex items-center justify-between mb-2">
+        <p className="font-marker text-lg text-clover">pick your simples</p>
+        <span className={`font-marker text-sm ${remaining === 0 ? "text-olive" : "text-brown/60"}`}>
+          {selected}/{group.requiredCount} selected
+        </span>
+      </div>
+      <div className="space-y-2">
+        {group.options.map((opt) => {
+          const count = modifiers[opt.productId] ?? 0;
+          return (
+            <div key={opt.productId} className="flex items-center justify-between">
+              <span className="text-sm text-foreground/80">{opt.name}</span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => adjust(opt.productId, -1)}
+                  disabled={count === 0}
+                  className="h-6 w-6 rounded-full border border-brown flex items-center justify-center hover:bg-brown hover:text-cream transition-colors disabled:opacity-30"
+                >
+                  <Minus size={10} />
+                </button>
+                <span className="font-marker text-base text-brown w-4 text-center">{count}</span>
+                <button
+                  onClick={() => adjust(opt.productId, 1)}
+                  disabled={remaining <= 0}
+                  className="h-6 w-6 rounded-full border border-brown flex items-center justify-center hover:bg-brown hover:text-cream transition-colors disabled:opacity-30"
+                >
+                  <Plus size={10} />
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ProductModal({
+  product,
+  colorBg,
+  onClose,
+}: {
+  product: Product;
+  colorBg: string;
+  onClose: () => void;
+}) {
+  const { addItem } = useCart();
+  const [modifiers, setModifiers] = useState<CartModifiers>({});
+  const [added, setAdded] = useState(false);
+
+  const needsModifiers = !!product.modifiers;
+  const modifierTotal = Object.values(modifiers).reduce((a, b) => a + b, 0);
+  const canAdd = !needsModifiers || modifierTotal === product.modifiers!.requiredCount;
+
+  function handleAdd() {
+    addItem({
+      productId: product.id,
+      quantity: 1,
+      ...(needsModifiers ? { modifiers } : {}),
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  }
+
+  return (
+    <div className="grid md:grid-cols-2">
+      <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden md:aspect-auto ${colorBg}`}>
+        <img
+          src={productImages[product.imageKey]}
+          alt={product.name}
+          className="block h-auto w-[80%] max-w-[80%] object-contain object-center md:max-h-[28rem]"
+        />
+      </div>
+      <div className="relative p-6 md:p-8 overflow-y-auto max-h-[70vh] md:max-h-none">
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 rounded-full p-1 hover:bg-muted"
+        >
+          <X size={22} />
+        </button>
+        <p className="font-marker text-xl text-clover">{product.tagline}</p>
+        <h2 className="mb-2 font-display text-4xl text-brown">{product.name}</h2>
+        <p className="mb-4 font-display text-3xl text-brown">${product.price}</p>
+        <p className="mb-5 leading-relaxed text-foreground/80">{product.description}</p>
+
+        {!needsModifiers && (
+          <div className="mb-6">
+            <p className="mb-2 font-marker text-lg text-clover">what's inside</p>
+            <ul className="space-y-1.5">
+              {product.ingredients.map((ing) => (
+                <li key={ing} className="flex items-center gap-2 text-sm">
+                  <span className="text-olive">•</span>
+                  {ing}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {needsModifiers && (
+          <ModifierSelector
+            product={product}
+            modifiers={modifiers}
+            onChange={setModifiers}
+          />
+        )}
+
+        <Button
+          onClick={handleAdd}
+          disabled={!canAdd}
+          size="lg"
+          className="h-12 w-full rounded-full border-2 border-brown text-base shadow-doodle"
+        >
+          <ShoppingCart className="mr-2 h-4 w-4" />
+          {added ? "Added!" : needsModifiers && !canAdd ? `Choose ${product.modifiers!.requiredCount} simples` : "Add to cart"}
+        </Button>
+
+        {added && (
+          <div className="mt-3 text-center">
+            <Link to="/cart" className="font-marker text-sm text-clover hover:underline">
+              View cart →
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ShopPage() {
   const products = Route.useLoaderData();
   const { product: productId } = Route.useSearch();
@@ -111,8 +264,7 @@ function ShopPage() {
           The Kid Clover shop
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-foreground/75">
-          Each pouch makes about 30 cups. Tap a tea to see ingredients and brewing notes — Buy
-          Now opens our Square shop in a new tab.
+          Each pouch makes about 30 cups. Tap a tea to learn more and add it to your cart.
         </p>
       </header>
 
@@ -138,7 +290,7 @@ function ShopPage() {
                 <p className="line-clamp-2 text-sm text-brown/75">{p.description}</p>
                 <div className="mt-auto flex items-center justify-between pt-4">
                   <span className="font-display text-2xl text-brown">${p.price}</span>
-                  <span className="font-marker text-brown">view →</span>
+                  <span className="font-marker text-brown">add to cart →</span>
                 </div>
               </div>
             </button>
@@ -149,51 +301,11 @@ function ShopPage() {
       <Dialog open={!!active} onOpenChange={(o) => !o && closeProduct()}>
         <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto rounded-3xl border-2 border-brown bg-card p-0 [&>button]:hidden">
           {active && (
-            <div className="grid md:grid-cols-2">
-              <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden md:aspect-auto ${colorBg[active.color]}`}>
-                <img
-                  src={productImages[active.imageKey]}
-                  alt={active.name}
-                  className="block h-auto w-[80%] max-w-[80%] object-contain object-center md:max-h-[28rem] md:w-[80%] md:max-w-[80%]"
-                />
-              </div>
-              <div className="relative p-6 md:p-8">
-                <button
-                  onClick={() => closeProduct()}
-                  aria-label="Close"
-                  className="absolute right-4 top-4 rounded-full p-1 hover:bg-muted"
-                >
-                  <X size={22} />
-                </button>
-                <p className="font-marker text-xl text-clover">{active.tagline}</p>
-                <h2 className="mb-2 font-display text-4xl text-brown">{active.name}</h2>
-                <p className="mb-4 font-display text-3xl text-brown">${active.price}</p>
-                <p className="mb-5 leading-relaxed text-foreground/80">{active.description}</p>
-                <div className="mb-6">
-                  <p className="mb-2 font-marker text-lg text-clover">what's inside</p>
-                  <ul className="space-y-1.5">
-                    {active.ingredients.map((ing) => (
-                      <li key={ing} className="flex items-center gap-2 text-sm">
-                        <span className="text-olive">•</span>
-                        {ing}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <Button
-                  asChild
-                  size="lg"
-                  className="h-12 w-full rounded-full border-2 border-brown text-base shadow-doodle"
-                >
-                  <a href={active.squareUrl} target="_blank" rel="noopener noreferrer">
-                    Buy now <ExternalLink className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-                <p className="mt-3 text-center text-xs text-muted-foreground">
-                  Checkout happens securely on our Square shop.
-                </p>
-              </div>
-            </div>
+            <ProductModal
+              product={active}
+              colorBg={colorBg[active.color]}
+              onClose={closeProduct}
+            />
           )}
         </DialogContent>
       </Dialog>

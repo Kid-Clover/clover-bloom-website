@@ -8,6 +8,7 @@ declare namespace Cloudflare {
 		AUTH0_CLIENT_ID: string;
 		AUTH0_CLIENT_SECRET: string;
 		SESSION_SECRET: string;
+		SQUARE_ACCESS_TOKEN: string;
 	}
 }
 interface Env extends Cloudflare.Env {}

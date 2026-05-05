@@ -2,8 +2,9 @@ import { Link } from "@tanstack/react-router";
 import logoStacked from "@/assets/logo-stacked.png";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, ShoppingCart, X } from "lucide-react";
 import type { SessionUser } from "@/lib/session.server";
+import { useCart } from "@/context/cart";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,6 +69,25 @@ function DesktopUserWidget({ user }: { user: SessionUser | null }) {
   );
 }
 
+function CartIcon({ onClick }: { onClick?: () => void }) {
+  const { itemCount } = useCart();
+  return (
+    <Link
+      to="/cart"
+      onClick={onClick}
+      className="relative flex items-center text-foreground hover:text-primary transition-colors"
+      aria-label={`Cart (${itemCount} items)`}
+    >
+      <ShoppingCart size={24} />
+      {itemCount > 0 && (
+        <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-clover text-cream text-xs font-marker flex items-center justify-center leading-none">
+          {itemCount}
+        </span>
+      )}
+    </Link>
+  );
+}
+
 function MobileUserWidget({ user, onClose }: { user: SessionUser | null; onClose: () => void }) {
   if (!user) {
     return (
@@ -115,16 +135,20 @@ export function Header({ user }: { user: SessionUser | null }) {
               {item.label}
             </Link>
           ))}
+          <CartIcon />
           <DesktopUserWidget user={user} />
         </nav>
 
-        <button
-          className="md:hidden p-2 text-foreground"
-          onClick={() => setOpen((o) => !o)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X size={28} /> : <Menu size={28} />}
-        </button>
+        <div className="md:hidden flex items-center gap-3">
+          <CartIcon />
+          <button
+            className="p-2 text-foreground"
+            onClick={() => setOpen((o) => !o)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </div>
 
       {open && (

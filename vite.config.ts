@@ -29,6 +29,7 @@ const cloudflareDevStub = {
         AUTH0_CLIENT_ID: import.meta.env.VITE_AUTH0_CLIENT_ID ?? "",
         AUTH0_CLIENT_SECRET: import.meta.env.VITE_AUTH0_CLIENT_SECRET ?? "",
         SESSION_SECRET: import.meta.env.VITE_SESSION_SECRET ?? "dev-secret",
+        SQUARE_ACCESS_TOKEN: import.meta.env.VITE_SQUARE_ACCESS_TOKEN ?? "",
         DB: mockDb,
       };
     `;

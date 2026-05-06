@@ -13,9 +13,10 @@ export const Route = createFileRoute("/order-confirmed")({
     orderId: z.string().optional(),
     checkoutId: z.string().optional(),
   }),
-  loader: async ({ search }) => {
+  loaderDeps: ({ search }) => ({ orderId: search.orderId }),
+  loader: async ({ deps: { orderId } }) => {
     const [order, user] = await Promise.all([
-      search.orderId ? getOrder({ data: { orderId: search.orderId } }) : Promise.resolve(null),
+      orderId ? getOrder({ data: { orderId } }) : Promise.resolve(null),
       getCurrentUser(),
     ]);
     return { order, user };

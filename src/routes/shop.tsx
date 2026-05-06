@@ -261,7 +261,7 @@ function ShopPage() {
       <header className="mx-auto max-w-4xl px-6 pb-12 pt-20 text-center">
         <p className="mb-2 font-marker text-2xl text-clover">all blends</p>
         <h1 className="font-display text-5xl leading-tight text-brown md:text-7xl">
-          The Kid Clover shop
+          The Kid Clover Shop
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-foreground/75">
           Each pouch makes about 30 cups. Tap a tea to learn more and add it to your cart.

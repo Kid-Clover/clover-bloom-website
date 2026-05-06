@@ -100,6 +100,11 @@ export const getOrdersByEmail = createServerFn().handler(
       }),
     });
     const ordersJson = (await ordersRes.json()) as { orders?: any[] };
+    const fulfillmentData = (ordersJson.orders ?? []).map((o: any) => ({
+      orderId: o.id,
+      fulfillments: o.fulfillments,
+    }));
+    console.log("FULFILLMENTS:", JSON.stringify(fulfillmentData, null, 2));
     return (ordersJson.orders ?? []).map(mapOrder);
   }
 );

@@ -99,6 +99,7 @@ export const getOrdersByEmail = createServerFn().handler(
       }),
     });
     const ordersJson = (await ordersRes.json()) as { orders?: any[] };
+    console.log("RAW ORDERS:", JSON.stringify(ordersJson.orders ?? [], null, 2));
     return (ordersJson.orders ?? []).map(mapOrder);
   }
 );

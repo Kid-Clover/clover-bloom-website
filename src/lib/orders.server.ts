@@ -66,6 +66,7 @@ export const getOrder = createServerFn().handler(
       headers: headers(e.SQUARE_ACCESS_TOKEN),
     });
     const json = (await res.json()) as { order?: any };
+    console.log("RAW ORDER:", JSON.stringify(json.order, null, 2));
     return json.order ? mapOrder(json.order) : null;
   }
 );

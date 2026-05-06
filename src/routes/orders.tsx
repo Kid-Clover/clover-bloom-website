@@ -1,7 +1,23 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { useState } from "react";
 import { getCurrentUser } from "@/lib/auth.server";
 import { getOrdersByEmail, type SquareOrder } from "@/lib/orders.server";
 import { Package } from "lucide-react";
+
+type Filter = "30d" | "3m" | "all";
+
+const FILTERS: { value: Filter; label: string }[] = [
+  { value: "30d", label: "Last 30 days" },
+  { value: "3m", label: "Last 3 months" },
+  { value: "all", label: "All time" },
+];
+
+function filterOrders(orders: SquareOrder[], filter: Filter): SquareOrder[] {
+  if (filter === "all") return orders;
+  const now = Date.now();
+  const ms = filter === "30d" ? 30 * 24 * 60 * 60 * 1000 : 90 * 24 * 60 * 60 * 1000;
+  return orders.filter((o) => now - new Date(o.createdAt).getTime() <= ms);
+}
 
 export const Route = createFileRoute("/orders")({
   head: () => ({ meta: [{ title: "My Orders — Kid Clover" }] }),
@@ -16,12 +32,30 @@ export const Route = createFileRoute("/orders")({
 
 function OrdersPage() {
   const { orders } = Route.useLoaderData();
+  const [filter, setFilter] = useState<Filter>("30d");
+  const filtered = filterOrders(orders, filter);
 
   return (
     <div className="min-h-screen bg-paper">
       <div className="mx-auto max-w-3xl px-6 py-16">
         <p className="font-marker text-2xl text-clover mb-2">brewed with love</p>
-        <h1 className="font-display text-5xl text-brown mb-10">My Orders</h1>
+        <h1 className="font-display text-5xl text-brown mb-6">My Orders</h1>
+
+        <div className="flex gap-2 mb-8">
+          {FILTERS.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setFilter(f.value)}
+              className={`font-marker text-sm rounded-full px-4 py-1.5 border-2 transition-colors ${
+                filter === f.value
+                  ? "bg-brown text-cream border-brown"
+                  : "border-brown text-brown hover:bg-brown hover:text-cream"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
 
         {orders.length === 0 ? (
           <div className="text-center py-16">
@@ -37,9 +71,13 @@ function OrdersPage() {
               Shop now →
             </Link>
           </div>
+        ) : filtered.length === 0 ? (
+          <p className="text-center text-muted-foreground py-12">
+            No orders in this time period.
+          </p>
         ) : (
           <div className="space-y-4">
-            {orders.map((order) => (
+            {filtered.map((order) => (
               <OrderCard key={order.id} order={order} />
             ))}
           </div>

@@ -172,14 +172,14 @@ function ProductModal({
 
   return (
     <div className="grid md:grid-cols-2">
-      <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden md:aspect-auto ${colorBg}`}>
+      <div className={`flex w-full min-w-0 items-center justify-center overflow-hidden aspect-[4/3] md:aspect-auto ${colorBg}`}>
         <img
           src={productImages[product.imageKey]}
           alt={product.name}
-          className="block h-auto w-[80%] max-w-[80%] object-contain object-center md:max-h-[28rem]"
+          className="block h-auto w-[70%] max-w-[70%] object-contain object-center md:max-h-[28rem]"
         />
       </div>
-      <div className="relative p-6 md:p-8 overflow-y-auto max-h-[70vh] md:max-h-none">
+      <div className="relative p-6 md:p-8 md:overflow-y-auto md:max-h-[70vh]">
         <button
           onClick={onClose}
           aria-label="Close"

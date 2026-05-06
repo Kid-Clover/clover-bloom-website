@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, getRouteApi } from "@tanstack/react-router";
 import { getProducts, type Product } from "@/lib/products.server";
 import { useCart } from "@/context/cart";
 import { createCheckout } from "@/lib/checkout.server";
@@ -38,8 +38,11 @@ export const Route = createFileRoute("/cart")({
   component: CartPage,
 });
 
+const rootRoute = getRouteApi("__root__");
+
 function CartPage() {
   const products = Route.useLoaderData();
+  const user = rootRoute.useLoaderData();
   const { cart, itemCount, setQuantity, remove } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -174,6 +177,15 @@ function CartPage() {
           >
             {loading ? "Preparing checkout…" : "Proceed to checkout →"}
           </Button>
+
+          {!user && (
+            <p className="text-center text-xs text-muted-foreground">
+              <Link to="/auth/login" className="text-clover hover:underline">
+                Log in
+              </Link>{" "}
+              before checkout to save your order history.
+            </p>
+          )}
 
           <div className="text-center">
             <Link

@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import logoStacked from "@/assets/logo-stacked.png";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useState } from "react";
-import { Menu, ShoppingCart, User, X } from "lucide-react";
+import { Menu, Package, ShoppingCart, User, X } from "lucide-react";
 import type { SessionUser } from "@/lib/session.server";
 import { useCart } from "@/context/cart";
 import {
@@ -48,17 +48,26 @@ function DesktopUserWidget({ user }: { user: SessionUser | null }) {
         {user ? <Avatar user={user} /> : <User size={24} />}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem asChild className="!text-2xl font-marker">
-          {user ? (
-            <Link to="/auth/logout" className="cursor-pointer w-full">
-              Sign out
-            </Link>
-          ) : (
+        {user ? (
+          <>
+            <DropdownMenuItem asChild className="!text-2xl font-marker">
+              <Link to="/orders" className="cursor-pointer w-full">
+                My Orders
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="!text-2xl font-marker">
+              <Link to="/auth/logout" className="cursor-pointer w-full">
+                Sign out
+              </Link>
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <DropdownMenuItem asChild className="!text-2xl font-marker">
             <Link to="/auth/login" className="cursor-pointer w-full">
               Login / Sign up
             </Link>
-          )}
-        </DropdownMenuItem>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -98,14 +107,24 @@ function MobileUserWidget({ user, onClose }: { user: SessionUser | null; onClose
   }
 
   return (
-    <Link
-      to="/auth/logout"
-      onClick={onClose}
-      className="font-marker text-2xl text-foreground hover:text-primary flex items-center gap-3"
-    >
-      <Avatar user={user} />
-      Sign out
-    </Link>
+    <div className="flex flex-col gap-3">
+      <Link
+        to="/orders"
+        onClick={onClose}
+        className="font-marker text-2xl text-foreground hover:text-primary flex items-center gap-3"
+      >
+        <Package size={22} />
+        My Orders
+      </Link>
+      <Link
+        to="/auth/logout"
+        onClick={onClose}
+        className="font-marker text-2xl text-foreground hover:text-primary flex items-center gap-3"
+      >
+        <Avatar user={user} />
+        Sign out
+      </Link>
+    </div>
   );
 }
 

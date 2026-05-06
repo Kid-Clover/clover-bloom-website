@@ -37,15 +37,6 @@ export const createCheckout = createServerFn()
 
     const prePopulatedData: Record<string, unknown> = {};
     if (user?.email) prePopulatedData.buyer_email = user.email;
-    if (user?.name) {
-      const parts = user.name.trim().split(/\s+/);
-      const firstName = parts[0];
-      const lastName = parts.slice(1).join(" ");
-      prePopulatedData.buyer_address = {
-        ...(firstName ? { first_name: firstName } : {}),
-        ...(lastName ? { last_name: lastName } : {}),
-      };
-    }
 
     const body = {
       idempotency_key: crypto.randomUUID(),

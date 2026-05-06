@@ -14,6 +14,8 @@ export type SquareLineItem = {
 export type SquareOrder = {
   id: string;
   createdAt: string;
+  state: "OPEN" | "COMPLETED" | "CANCELED";
+  isRefunded: boolean;
   lineItems: SquareLineItem[];
   totalMoney: { amount: number; currency: string };
   fulfillmentName?: string;
@@ -38,6 +40,8 @@ function mapOrder(o: any): SquareOrder {
   return {
     id: o.id,
     createdAt: o.created_at,
+    state: o.state ?? "COMPLETED",
+    isRefunded: Array.isArray(o.returns) && o.returns.length > 0,
     lineItems: (o.line_items ?? []).map((item: any) => ({
       name: item.name,
       quantity: item.quantity,

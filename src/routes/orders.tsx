@@ -65,9 +65,21 @@ function OrderCard({ order }: { order: SquareOrder }) {
             #{order.id.slice(-8).toUpperCase()}
           </p>
         </div>
-        <p className="font-display text-xl text-brown">
-          ${(order.totalMoney.amount / 100).toFixed(2)}
-        </p>
+        <div className="flex flex-col items-end gap-1">
+          <p className="font-display text-xl text-brown">
+            ${(order.totalMoney.amount / 100).toFixed(2)}
+          </p>
+          {order.isRefunded && (
+            <span className="text-xs font-marker text-white bg-brown/60 rounded-full px-2 py-0.5">
+              Refunded
+            </span>
+          )}
+          {order.state === "CANCELED" && (
+            <span className="text-xs font-marker text-white bg-brown/40 rounded-full px-2 py-0.5">
+              Cancelled
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="space-y-1.5">

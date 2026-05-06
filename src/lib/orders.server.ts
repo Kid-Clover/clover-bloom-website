@@ -37,11 +37,12 @@ function formatAddress(addr: any): string | undefined {
 
 function mapOrder(o: any): SquareOrder {
   const fulfillment = o.fulfillments?.[0]?.shipment_details;
+  const isCancelled = o.fulfillments?.some((f: any) => f.state === "CANCELED") ?? false;
   return {
     id: o.id,
     createdAt: o.created_at,
     state: o.state ?? "COMPLETED",
-    isRefunded: Array.isArray(o.returns) && o.returns.length > 0,
+    isRefunded: isCancelled,
     lineItems: (o.line_items ?? []).map((item: any) => ({
       name: item.name,
       quantity: item.quantity,
@@ -99,7 +100,6 @@ export const getOrdersByEmail = createServerFn().handler(
       }),
     });
     const ordersJson = (await ordersRes.json()) as { orders?: any[] };
-    console.log("RAW ORDERS:", JSON.stringify(ordersJson.orders ?? [], null, 2));
     return (ordersJson.orders ?? []).map(mapOrder);
   }
 );

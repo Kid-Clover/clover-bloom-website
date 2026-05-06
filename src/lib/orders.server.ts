@@ -20,6 +20,12 @@ export type SquareOrder = {
   totalMoney: { amount: number; currency: string };
   fulfillmentName?: string;
   fulfillmentAddress?: string;
+  fulfillmentState?: string;
+  carrier?: string;
+  shippingType?: string;
+  trackingNumber?: string;
+  trackingUrl?: string;
+  shippedAt?: string;
 };
 
 function formatAddress(addr: any): string | undefined {
@@ -36,13 +42,14 @@ function formatAddress(addr: any): string | undefined {
 }
 
 function mapOrder(o: any): SquareOrder {
-  const fulfillment = o.fulfillments?.[0]?.shipment_details;
-  const isCancelled = o.fulfillments?.some((f: any) => f.state === "CANCELED") ?? false;
+  const fulfillmentObj = o.fulfillments?.[0];
+  const shipment = fulfillmentObj?.shipment_details;
+  const fulfillmentState: string = fulfillmentObj?.state ?? "PROPOSED";
   return {
     id: o.id,
     createdAt: o.created_at,
     state: o.state ?? "COMPLETED",
-    isRefunded: isCancelled,
+    isRefunded: fulfillmentState === "CANCELED",
     lineItems: (o.line_items ?? []).map((item: any) => ({
       name: item.name,
       quantity: item.quantity,
@@ -50,8 +57,14 @@ function mapOrder(o: any): SquareOrder {
       note: item.note,
     })),
     totalMoney: o.total_money,
-    fulfillmentName: fulfillment?.recipient?.display_name,
-    fulfillmentAddress: formatAddress(fulfillment?.recipient?.address),
+    fulfillmentName: shipment?.recipient?.display_name,
+    fulfillmentAddress: formatAddress(shipment?.recipient?.address),
+    fulfillmentState,
+    carrier: shipment?.carrier,
+    shippingType: shipment?.shipping_type,
+    trackingNumber: shipment?.tracking_number,
+    trackingUrl: shipment?.tracking_url,
+    shippedAt: shipment?.shipped_at,
   };
 }
 
@@ -66,7 +79,6 @@ export const getOrder = createServerFn().handler(
       headers: headers(e.SQUARE_ACCESS_TOKEN),
     });
     const json = (await res.json()) as { order?: any };
-    console.log("RAW ORDER:", JSON.stringify(json.order, null, 2));
     return json.order ? mapOrder(json.order) : null;
   }
 );
@@ -101,11 +113,6 @@ export const getOrdersByEmail = createServerFn().handler(
       }),
     });
     const ordersJson = (await ordersRes.json()) as { orders?: any[] };
-    const fulfillmentData = (ordersJson.orders ?? []).map((o: any) => ({
-      orderId: o.id,
-      fulfillments: o.fulfillments,
-    }));
-    console.log("FULFILLMENTS:", JSON.stringify(fulfillmentData, null, 2));
     return (ordersJson.orders ?? []).map(mapOrder);
   }
 );

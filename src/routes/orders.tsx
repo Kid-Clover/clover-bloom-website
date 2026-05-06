@@ -2,7 +2,7 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { getCurrentUser } from "@/lib/auth.server";
 import { getOrdersByEmail, type SquareOrder } from "@/lib/orders.server";
-import { Package } from "lucide-react";
+import { Package, Truck } from "lucide-react";
 
 type Filter = "30d" | "3m" | "all";
 
@@ -138,6 +138,50 @@ function OrderCard({ order }: { order: SquareOrder }) {
         <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/60">
           Shipped to {order.fulfillmentAddress}
         </p>
+      )}
+
+      {!order.isRefunded && (
+        <div className="mt-3 pt-3 border-t border-border/60">
+          {order.fulfillmentState === "COMPLETED" ? (
+            <div className="flex items-start gap-2">
+              <Truck size={15} className="text-clover mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="font-marker text-sm text-clover">
+                  Shipped{order.shippedAt
+                    ? ` · ${new Date(order.shippedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`
+                    : ""}
+                </p>
+                {(order.carrier || order.shippingType) && (
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {[order.carrier, order.shippingType].filter(Boolean).join(" · ")}
+                  </p>
+                )}
+                {order.trackingNumber && (
+                  <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                    {order.trackingNumber}
+                  </p>
+                )}
+                {order.trackingUrl && (
+                  <a
+                    href={order.trackingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-marker text-sm text-clover hover:underline mt-1 inline-block"
+                  >
+                    Track package →
+                  </a>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Package size={15} className="text-brown/40 flex-shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                Processing — your order is being prepared for shipment.
+              </p>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

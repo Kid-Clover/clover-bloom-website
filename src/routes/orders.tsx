@@ -134,7 +134,7 @@ function OrderCard({ order }: { order: SquareOrder }) {
         ))}
       </div>
 
-      {order.fulfillmentAddress && (
+      {!order.isRefunded && order.fulfillmentAddress && (
         <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/60">
           Shipped to {order.fulfillmentAddress}
         </p>

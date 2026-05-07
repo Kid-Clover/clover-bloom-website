@@ -5,6 +5,8 @@ import { getSessionUser } from "./session.server";
 const LOCATION_ID = "L4TWM1M1RC52V";
 const SQUARE_API = "https://connect.squareup.com/v2";
 
+export type Filter = "30d" | "3m" | "all";
+
 export type SquareLineItem = {
   name: string;
   quantity: string;
@@ -69,19 +71,26 @@ function mapOrder(o: any): SquareOrder {
   };
 }
 
+function filterByDate(orders: SquareOrder[], filter: Filter): SquareOrder[] {
+  if (filter === "all") return orders;
+  const now = Date.now();
+  const ms = filter === "30d" ? 30 * 24 * 60 * 60 * 1000 : 90 * 24 * 60 * 60 * 1000;
+  return orders.filter((o) => now - new Date(o.createdAt).getTime() <= ms);
+}
+
 function headers(token: string) {
   return { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
 }
 
 export const saveUserOrder = createServerFn().handler(
-  async ({ data }: { data: { orderId: string } }) => {
+  async ({ data }: { data: { orderId: string; createdAt?: string } }) => {
     const user = await getSessionUser();
     if (!user) return;
     const e = env as Cloudflare.Env;
     await e.DB.prepare(
-      "INSERT OR IGNORE INTO user_orders (user_id, order_id) VALUES (?, ?)"
+      "INSERT OR IGNORE INTO user_orders (user_id, order_id, created_at) VALUES (?, ?, ?)"
     )
-      .bind(user.id, data.orderId)
+      .bind(user.id, data.orderId, data.createdAt ?? null)
       .run();
   }
 );
@@ -98,19 +107,30 @@ export const getOrder = createServerFn().handler(
 );
 
 export const getOrdersByEmail = createServerFn().handler(
-  async ({ data }: { data: { email: string; userId: number } }): Promise<SquareOrder[]> => {
+  async ({
+    data,
+  }: {
+    data: { email: string; userId: number; filter: Filter };
+  }): Promise<SquareOrder[]> => {
     const e = env as Cloudflare.Env;
     const h = headers(e.SQUARE_ACCESS_TOKEN);
+    const { filter } = data;
 
-    // Fetch stored order IDs for this user
+    // Build date threshold for DB query
+    const dateClause =
+      filter === "30d"
+        ? "AND (created_at IS NULL OR created_at >= datetime('now', '-30 days'))"
+        : filter === "3m"
+          ? "AND (created_at IS NULL OR created_at >= datetime('now', '-90 days'))"
+          : "";
+
     const storedRows = await e.DB.prepare(
-      "SELECT order_id FROM user_orders WHERE user_id = ?"
+      `SELECT order_id FROM user_orders WHERE user_id = ? ${dateClause}`
     )
       .bind(data.userId)
       .all<{ order_id: string }>();
     const storedOrderIds = storedRows.results.map((r) => r.order_id);
 
-    // Also check for stored Square customer ID
     const userRow = await e.DB.prepare(
       "SELECT square_customer_id FROM users WHERE id = ?"
     )
@@ -120,7 +140,6 @@ export const getOrdersByEmail = createServerFn().handler(
     const allOrders: SquareOrder[] = [];
     const seenIds = new Set<string>();
 
-    // Batch-fetch stored order IDs
     if (storedOrderIds.length > 0) {
       const batchRes = await fetch(`${SQUARE_API}/orders/batch-retrieve`, {
         method: "POST",
@@ -134,7 +153,6 @@ export const getOrdersByEmail = createServerFn().handler(
       }
     }
 
-    // Search by stored customer ID or fall back to email
     let customerIds: string[] = [];
     if (userRow?.square_customer_id) {
       customerIds = [userRow.square_customer_id];
@@ -171,7 +189,7 @@ export const getOrdersByEmail = createServerFn().handler(
       }
     }
 
-    return allOrders.sort(
+    return filterByDate(allOrders, filter).sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }

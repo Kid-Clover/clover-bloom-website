@@ -1,10 +1,8 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth.server";
-import { getOrdersByEmail, type SquareOrder } from "@/lib/orders.server";
+import { getOrdersByEmail, type Filter, type SquareOrder } from "@/lib/orders.server";
 import { Package, Truck } from "lucide-react";
-
-type Filter = "30d" | "3m" | "all";
 
 const FILTERS: { value: Filter; label: string }[] = [
   { value: "30d", label: "Last 30 days" },
@@ -12,19 +10,14 @@ const FILTERS: { value: Filter; label: string }[] = [
   { value: "all", label: "All time" },
 ];
 
-function filterOrders(orders: SquareOrder[], filter: Filter): SquareOrder[] {
-  if (filter === "all") return orders;
-  const now = Date.now();
-  const ms = filter === "30d" ? 30 * 24 * 60 * 60 * 1000 : 90 * 24 * 60 * 60 * 1000;
-  return orders.filter((o) => now - new Date(o.createdAt).getTime() <= ms);
-}
-
 export const Route = createFileRoute("/orders")({
   head: () => ({ meta: [{ title: "My Orders — Kid Clover" }] }),
-  loader: async () => {
+  validateSearch: z.object({ filter: z.enum(["30d", "3m", "all"]).catch("30d") }),
+  loaderDeps: ({ search }) => ({ filter: search.filter }),
+  loader: async ({ deps: { filter } }) => {
     const user = await getCurrentUser();
     if (!user) throw redirect({ to: "/auth/login", statusCode: 302 });
-    const orders = await getOrdersByEmail({ data: { email: user.email, userId: user.id } });
+    const orders = await getOrdersByEmail({ data: { email: user.email, userId: user.id, filter } });
     return { orders };
   },
   component: OrdersPage,
@@ -32,8 +25,8 @@ export const Route = createFileRoute("/orders")({
 
 function OrdersPage() {
   const { orders } = Route.useLoaderData();
-  const [filter, setFilter] = useState<Filter>("30d");
-  const filtered = filterOrders(orders, filter);
+  const { filter } = Route.useSearch();
+  const navigate = useNavigate({ from: "/orders" });
 
   return (
     <div className="min-h-screen bg-paper">
@@ -45,7 +38,7 @@ function OrdersPage() {
           {FILTERS.map((f) => (
             <button
               key={f.value}
-              onClick={() => setFilter(f.value)}
+              onClick={() => navigate({ search: { filter: f.value } })}
               className={`font-marker text-sm rounded-full px-4 py-1.5 border-2 transition-colors ${
                 filter === f.value
                   ? "bg-brown text-cream border-brown"
@@ -57,7 +50,7 @@ function OrdersPage() {
           ))}
         </div>
 
-        {orders.length === 0 ? (
+        {orders.length === 0 && filter === "30d" ? (
           <div className="text-center py-16">
             <Package size={64} className="text-brown/20 mx-auto mb-6" />
             <p className="font-display text-2xl text-brown mb-2">No orders yet</p>
@@ -71,13 +64,13 @@ function OrdersPage() {
               Shop now →
             </Link>
           </div>
-        ) : filtered.length === 0 ? (
+        ) : orders.length === 0 ? (
           <p className="text-center text-muted-foreground py-12">
             No orders in this time period.
           </p>
         ) : (
           <div className="space-y-4">
-            {filtered.map((order) => (
+            {orders.map((order) => (
               <OrderCard key={order.id} order={order} />
             ))}
           </div>

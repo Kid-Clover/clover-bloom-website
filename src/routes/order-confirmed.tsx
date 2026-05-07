@@ -19,8 +19,8 @@ export const Route = createFileRoute("/order-confirmed")({
       orderId ? getOrder({ data: { orderId } }) : Promise.resolve(null),
       getCurrentUser(),
     ]);
-    if (user && orderId) {
-      await saveUserOrder({ data: { orderId } });
+    if (user && orderId && order) {
+      await saveUserOrder({ data: { orderId, createdAt: order.createdAt } });
     }
     return { order, user };
   },

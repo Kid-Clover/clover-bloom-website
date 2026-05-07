@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useCart } from "@/context/cart";
 import { useEffect } from "react";
 import { getCurrentUser } from "@/lib/auth.server";
-import { getOrder, saveSquareCustomerId, type SquareOrder } from "@/lib/orders.server";
+import { getOrder, saveUserOrder, type SquareOrder } from "@/lib/orders.server";
 import doodleCup from "@/assets/doodle-cup.png";
 import { Printer, User } from "lucide-react";
 
@@ -19,8 +19,8 @@ export const Route = createFileRoute("/order-confirmed")({
       orderId ? getOrder({ data: { orderId } }) : Promise.resolve(null),
       getCurrentUser(),
     ]);
-    if (user && order?.customerId) {
-      await saveSquareCustomerId({ data: { squareCustomerId: order.customerId } });
+    if (user && orderId) {
+      await saveUserOrder({ data: { orderId } });
     }
     return { order, user };
   },

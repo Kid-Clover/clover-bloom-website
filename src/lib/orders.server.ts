@@ -27,7 +27,6 @@ export type SquareOrder = {
   trackingNumber?: string;
   trackingUrl?: string;
   shippedAt?: string;
-  customerId?: string;
 };
 
 function formatAddress(addr: any): string | undefined {
@@ -67,7 +66,6 @@ function mapOrder(o: any): SquareOrder {
     trackingNumber: shipment?.tracking_number,
     trackingUrl: shipment?.tracking_url,
     shippedAt: shipment?.shipped_at,
-    customerId: o.customer_id,
   };
 }
 
@@ -75,15 +73,15 @@ function headers(token: string) {
   return { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
 }
 
-export const saveSquareCustomerId = createServerFn().handler(
-  async ({ data }: { data: { squareCustomerId: string } }) => {
+export const saveUserOrder = createServerFn().handler(
+  async ({ data }: { data: { orderId: string } }) => {
     const user = await getSessionUser();
     if (!user) return;
     const e = env as Cloudflare.Env;
     await e.DB.prepare(
-      "UPDATE users SET square_customer_id = ? WHERE id = ? AND square_customer_id IS NULL"
+      "INSERT OR IGNORE INTO user_orders (user_id, order_id) VALUES (?, ?)"
     )
-      .bind(data.squareCustomerId, user.id)
+      .bind(user.id, data.orderId)
       .run();
   }
 );
@@ -104,15 +102,40 @@ export const getOrdersByEmail = createServerFn().handler(
     const e = env as Cloudflare.Env;
     const h = headers(e.SQUARE_ACCESS_TOKEN);
 
-    // Use stored Square customer ID if available (avoids email mismatch)
+    // Fetch stored order IDs for this user
+    const storedRows = await e.DB.prepare(
+      "SELECT order_id FROM user_orders WHERE user_id = ?"
+    )
+      .bind(data.userId)
+      .all<{ order_id: string }>();
+    const storedOrderIds = storedRows.results.map((r) => r.order_id);
+
+    // Also check for stored Square customer ID
     const userRow = await e.DB.prepare(
       "SELECT square_customer_id FROM users WHERE id = ?"
     )
       .bind(data.userId)
       .first<{ square_customer_id: string | null }>();
 
-    let customerIds: string[];
+    const allOrders: SquareOrder[] = [];
+    const seenIds = new Set<string>();
 
+    // Batch-fetch stored order IDs
+    if (storedOrderIds.length > 0) {
+      const batchRes = await fetch(`${SQUARE_API}/orders/batch-retrieve`, {
+        method: "POST",
+        headers: h,
+        body: JSON.stringify({ order_ids: storedOrderIds }),
+      });
+      const batchJson = (await batchRes.json()) as { orders?: any[] };
+      for (const o of batchJson.orders ?? []) {
+        allOrders.push(mapOrder(o));
+        seenIds.add(o.id);
+      }
+    }
+
+    // Search by stored customer ID or fall back to email
+    let customerIds: string[] = [];
     if (userRow?.square_customer_id) {
       customerIds = [userRow.square_customer_id];
     } else {
@@ -124,23 +147,32 @@ export const getOrdersByEmail = createServerFn().handler(
         }),
       });
       const custJson = (await custRes.json()) as { customers?: any[] };
-      const customers = custJson.customers ?? [];
-      if (customers.length === 0) return [];
-      customerIds = customers.map((c: any) => c.id);
+      customerIds = (custJson.customers ?? []).map((c: any) => c.id);
     }
 
-    const ordersRes = await fetch(`${SQUARE_API}/orders/search`, {
-      method: "POST",
-      headers: h,
-      body: JSON.stringify({
-        location_ids: [LOCATION_ID],
-        query: {
-          filter: { customer_filter: { customer_ids: customerIds } },
-          sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
-        },
-      }),
-    });
-    const ordersJson = (await ordersRes.json()) as { orders?: any[] };
-    return (ordersJson.orders ?? []).map(mapOrder);
+    if (customerIds.length > 0) {
+      const ordersRes = await fetch(`${SQUARE_API}/orders/search`, {
+        method: "POST",
+        headers: h,
+        body: JSON.stringify({
+          location_ids: [LOCATION_ID],
+          query: {
+            filter: { customer_filter: { customer_ids: customerIds } },
+            sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
+          },
+        }),
+      });
+      const ordersJson = (await ordersRes.json()) as { orders?: any[] };
+      for (const o of ordersJson.orders ?? []) {
+        if (!seenIds.has(o.id)) {
+          allOrders.push(mapOrder(o));
+          seenIds.add(o.id);
+        }
+      }
+    }
+
+    return allOrders.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 );

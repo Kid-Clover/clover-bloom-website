@@ -24,7 +24,7 @@ export const Route = createFileRoute("/orders")({
   loader: async () => {
     const user = await getCurrentUser();
     if (!user) throw redirect({ to: "/auth/login", statusCode: 302 });
-    const orders = await getOrdersByEmail({ data: { email: user.email } });
+    const orders = await getOrdersByEmail({ data: { email: user.email, userId: user.id } });
     return { orders };
   },
   component: OrdersPage,

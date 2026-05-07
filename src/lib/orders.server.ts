@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import { getSessionUser } from "./session.server";
 
 const LOCATION_ID = "L4TWM1M1RC52V";
 const SQUARE_API = "https://connect.squareup.com/v2";
@@ -26,6 +27,7 @@ export type SquareOrder = {
   trackingNumber?: string;
   trackingUrl?: string;
   shippedAt?: string;
+  customerId?: string;
 };
 
 function formatAddress(addr: any): string | undefined {
@@ -65,12 +67,26 @@ function mapOrder(o: any): SquareOrder {
     trackingNumber: shipment?.tracking_number,
     trackingUrl: shipment?.tracking_url,
     shippedAt: shipment?.shipped_at,
+    customerId: o.customer_id,
   };
 }
 
 function headers(token: string) {
   return { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
 }
+
+export const saveSquareCustomerId = createServerFn().handler(
+  async ({ data }: { data: { squareCustomerId: string } }) => {
+    const user = await getSessionUser();
+    if (!user) return;
+    const e = env as Cloudflare.Env;
+    await e.DB.prepare(
+      "UPDATE users SET square_customer_id = ? WHERE id = ? AND square_customer_id IS NULL"
+    )
+      .bind(data.squareCustomerId, user.id)
+      .run();
+  }
+);
 
 export const getOrder = createServerFn().handler(
   async ({ data }: { data: { orderId: string } }): Promise<SquareOrder | null> => {
@@ -84,22 +100,34 @@ export const getOrder = createServerFn().handler(
 );
 
 export const getOrdersByEmail = createServerFn().handler(
-  async ({ data }: { data: { email: string } }): Promise<SquareOrder[]> => {
+  async ({ data }: { data: { email: string; userId: number } }): Promise<SquareOrder[]> => {
     const e = env as Cloudflare.Env;
     const h = headers(e.SQUARE_ACCESS_TOKEN);
 
-    const custRes = await fetch(`${SQUARE_API}/customers/search`, {
-      method: "POST",
-      headers: h,
-      body: JSON.stringify({
-        query: { filter: { email_address: { exact: data.email } } },
-      }),
-    });
-    const custJson = (await custRes.json()) as { customers?: any[] };
-    const customers = custJson.customers ?? [];
-    if (customers.length === 0) return [];
+    // Use stored Square customer ID if available (avoids email mismatch)
+    const userRow = await e.DB.prepare(
+      "SELECT square_customer_id FROM users WHERE id = ?"
+    )
+      .bind(data.userId)
+      .first<{ square_customer_id: string | null }>();
 
-    const customerIds = customers.map((c: any) => c.id);
+    let customerIds: string[];
+
+    if (userRow?.square_customer_id) {
+      customerIds = [userRow.square_customer_id];
+    } else {
+      const custRes = await fetch(`${SQUARE_API}/customers/search`, {
+        method: "POST",
+        headers: h,
+        body: JSON.stringify({
+          query: { filter: { email_address: { exact: data.email } } },
+        }),
+      });
+      const custJson = (await custRes.json()) as { customers?: any[] };
+      const customers = custJson.customers ?? [];
+      if (customers.length === 0) return [];
+      customerIds = customers.map((c: any) => c.id);
+    }
 
     const ordersRes = await fetch(`${SQUARE_API}/orders/search`, {
       method: "POST",

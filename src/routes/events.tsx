@@ -4,7 +4,7 @@ import { z } from "zod";
 import { getUpcomingEvents, type KCEvent } from "@/lib/events.server";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, MapPin, Clock, X } from "lucide-react";
+import { CalendarPlus, ChevronLeft, ChevronRight, MapPin, Clock, X } from "lucide-react";
 
 export const Route = createFileRoute("/events")({
   head: () => ({
@@ -265,25 +265,71 @@ function EventsPage() {
                 {active.description}
               </p>
 
-              {!!active.requires_sign_up && (
-                <Button
-                  size="lg"
-                  className="mt-6 w-full rounded-full border-2 border-brown shadow-doodle"
-                  onClick={() =>
-                    alert(
-                      "Sign-ups coming soon — login will be required to register for events."
-                    )
-                  }
+              <div className={`mt-6 flex flex-col gap-3`}>
+                {!!active.requires_sign_up && (
+                  <Button
+                    size="lg"
+                    className="w-full rounded-full border-2 border-brown shadow-doodle"
+                    onClick={() =>
+                      alert(
+                        "Sign-ups coming soon — login will be required to register for events."
+                      )
+                    }
+                  >
+                    Sign up
+                  </Button>
+                )}
+                <button
+                  onClick={() => addToCalendar(active)}
+                  className="flex items-center justify-center gap-2 font-marker text-lg text-brown border-2 border-brown rounded-full px-4 py-2 hover:bg-brown hover:text-cream transition-colors shadow-doodle"
                 >
-                  Sign up
-                </Button>
-              )}
+                  <CalendarPlus size={18} />
+                  Add to calendar
+                </button>
+              </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
     </div>
   );
+}
+
+function toICSDate(iso: string): string {
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`;
+}
+
+function addToCalendar(event: KCEvent) {
+  const start = toICSDate(event.start_time);
+  const end = event.end_time
+    ? toICSDate(event.end_time)
+    : toICSDate(new Date(new Date(event.start_time).getTime() + 60 * 60 * 1000).toISOString());
+  const stamp = toICSDate(new Date().toISOString());
+  const uid = `${event.id}@drinkkidclover.com`;
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Kid Clover//Events//EN",
+    "BEGIN:VEVENT",
+    `UID:${uid}`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:${event.title}`,
+    `LOCATION:${event.location_name}`,
+    ...(event.description ? [`DESCRIPTION:${event.description.replace(/\n/g, "\\n")}`] : []),
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ];
+  const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${event.title.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function buildMonth(year: number, month: number): (number | null)[] {

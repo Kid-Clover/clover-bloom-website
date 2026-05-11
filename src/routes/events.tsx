@@ -256,8 +256,15 @@ function EventsPage() {
                   {formatTimeRange(active.start_time, active.end_time)}
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin size={16} className="text-clover" />
-                  {active.location_name}
+                  <MapPin size={16} className="text-clover flex-shrink-0" />
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(active.location_name)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline text-clover"
+                  >
+                    {active.location_name}
+                  </a>
                 </div>
               </div>
 

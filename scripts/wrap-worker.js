@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 // Post-build script: wraps the TanStack Start worker entry so that
 // /api/calendar/:id is handled directly before React routing kicks in.
-const fs = require("fs");
-const path = require("path");
+import { readFileSync, renameSync, writeFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const serverDir = path.join(__dirname, "..", "dist", "server");
-const indexPath = path.join(serverDir, "index.js");
-const entryPath = path.join(serverDir, "_tanstack_entry.js");
+const serverDir = join(__dirname, "..", "dist", "server");
+const indexPath = join(serverDir, "index.js");
+const entryPath = join(serverDir, "_tanstack_entry.js");
 
-fs.renameSync(indexPath, entryPath);
+renameSync(indexPath, entryPath);
 
 const wrapper = `import { createServerEntry, default as tanstackHandler } from "./_tanstack_entry.js";
 import "cloudflare:workers";
@@ -80,5 +82,5 @@ export { createServerEntry };
 export default worker;
 `;
 
-fs.writeFileSync(indexPath, wrapper);
+writeFileSync(indexPath, wrapper);
 console.log("Worker wrapped with ICS handler at /api/calendar/:id");

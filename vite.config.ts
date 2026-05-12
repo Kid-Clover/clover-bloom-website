@@ -50,7 +50,15 @@ export default defineConfig(({ command, mode }) => {
       ...(command === "build"
         ? [cloudflare({ viteEnvironment: { name: "ssr" } })]
         : [cloudflareDevStub]),
-      tanstackStart(),
+      tanstackStart({
+        importProtection: {
+          behavior: "error",
+          client: {
+            files: ["**/server/**"],
+            specifiers: ["server-only"],
+          },
+        },
+      }),
       react(),
     ],
     resolve: {

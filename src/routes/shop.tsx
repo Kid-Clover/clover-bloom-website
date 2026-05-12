@@ -51,6 +51,7 @@ export const Route = createFileRoute("/shop")({
       { property: "og:title", content: "Shop Kid Clover" },
       { property: "og:description", content: "Hand-blended herbal teas for kids." },
     ],
+    links: [{ rel: "canonical", href: "https://drinkkidclover.com/shop" }],
   }),
   component: ShopPage, // swap to ShopMaintenance to close
 });

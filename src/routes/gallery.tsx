@@ -30,6 +30,7 @@ export const Route = createFileRoute("/gallery")({
       { property: "og:title", content: "Kid Clover Gallery" },
       { property: "og:description", content: "Plants, farms, and tiny hands." },
     ],
+    links: [{ rel: "canonical", href: "https://drinkkidclover.com/gallery" }],
   }),
   component: GalleryPage,
 });

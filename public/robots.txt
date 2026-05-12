@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /orders
+Disallow: /cart
+Disallow: /order-confirmed
+Disallow: /auth/
+
+Sitemap: https://drinkkidclover.com/sitemap.xml

@@ -36,6 +36,7 @@ export const Route = createFileRoute("/")({
         content: "Hand-blended herbal teas for kids.",
       },
     ],
+    links: [{ rel: "canonical", href: "https://drinkkidclover.com/" }],
   }),
   component: HomePage,
 });

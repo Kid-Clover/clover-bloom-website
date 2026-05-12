@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { CalendarPlus, ChevronLeft, ChevronRight, MapPin, Clock, X, Globe, Download } from "lucide-react";
 
 export const Route = createFileRoute("/events")({
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
       { title: "Events — Kid Clover" },
       {
@@ -22,6 +22,41 @@ export const Route = createFileRoute("/events")({
         content: "Markets, popups, and kids' herbal classes.",
       },
     ],
+    links: [{ rel: "canonical", href: "https://drinkkidclover.com/events" }],
+    scripts: loaderData?.length
+      ? [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              itemListElement: loaderData.map((event, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                item: {
+                  "@type": "Event",
+                  name: event.title,
+                  startDate: event.start_time,
+                  ...(event.end_time ? { endDate: event.end_time } : {}),
+                  description: event.description ?? undefined,
+                  location: {
+                    "@type": "Place",
+                    name: event.location_name,
+                  },
+                  organizer: {
+                    "@type": "Organization",
+                    name: "Kid Clover",
+                    url: "https://drinkkidclover.com",
+                  },
+                  eventStatus: "https://schema.org/EventScheduled",
+                  eventAttendanceMode:
+                    "https://schema.org/OfflineEventAttendanceMode",
+                },
+              })),
+            }),
+          },
+        ]
+      : [],
   }),
   validateSearch: z.object({
     event: z.number().optional(),

@@ -17,6 +17,7 @@ export const Route = createFileRoute("/about")({
         content: "The story behind our kid-friendly herbal teas.",
       },
     ],
+    links: [{ rel: "canonical", href: "https://drinkkidclover.com/about" }],
   }),
   component: AboutPage,
 });

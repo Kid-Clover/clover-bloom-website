@@ -293,23 +293,23 @@ function EventsPage() {
                     Add to calendar
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56 border-2 border-brown rounded-2xl shadow-doodle">
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild className="text-base py-3">
                       <a
                         href={buildGoogleCalendarUrl(active)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 font-marker text-base cursor-pointer"
+                        className="flex items-center gap-2 font-marker cursor-pointer"
                       >
-                        <Globe size={16} />
+                        <Globe size={18} />
                         Google Calendar
                       </a>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild className="text-base py-3">
                       <a
                         href={`/api/calendar/${active.id}`}
-                        className="flex items-center gap-2 font-marker text-base cursor-pointer"
+                        className="flex items-center gap-2 font-marker cursor-pointer"
                       >
-                        <Download size={16} />
+                        <Download size={18} />
                         Download .ics file
                       </a>
                     </DropdownMenuItem>

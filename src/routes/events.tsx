@@ -4,7 +4,8 @@ import { z } from "zod";
 import { getUpcomingEvents, type KCEvent } from "@/lib/events.server";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { CalendarPlus, ChevronLeft, ChevronRight, MapPin, Clock, X } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { CalendarPlus, ChevronLeft, ChevronRight, MapPin, Clock, X, Globe, Download } from "lucide-react";
 
 export const Route = createFileRoute("/events")({
   head: () => ({
@@ -286,13 +287,34 @@ function EventsPage() {
                     Sign up
                   </Button>
                 )}
-                <a
-                  href={`/api/calendar/${active.id}`}
-                  className="flex items-center justify-center gap-2 font-marker text-lg text-brown border-2 border-brown rounded-full px-4 py-2 hover:bg-brown hover:text-cream transition-colors shadow-doodle"
-                >
-                  <CalendarPlus size={18} />
-                  Add to calendar
-                </a>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center justify-center gap-2 font-marker text-lg text-brown border-2 border-brown rounded-full px-4 py-2 hover:bg-brown hover:text-cream transition-colors shadow-doodle w-full">
+                    <CalendarPlus size={18} />
+                    Add to calendar
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56 border-2 border-brown rounded-2xl shadow-doodle">
+                    <DropdownMenuItem asChild>
+                      <a
+                        href={buildGoogleCalendarUrl(active)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 font-marker text-base cursor-pointer"
+                      >
+                        <Globe size={16} />
+                        Google Calendar
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a
+                        href={`/api/calendar/${active.id}`}
+                        className="flex items-center gap-2 font-marker text-base cursor-pointer"
+                      >
+                        <Download size={16} />
+                        Download .ics file
+                      </a>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           )}
@@ -300,6 +322,26 @@ function EventsPage() {
       </Dialog>
     </div>
   );
+}
+
+function buildGoogleCalendarUrl(event: KCEvent): string {
+  const fmt = (iso: string) => {
+    const d = new Date(iso);
+    const p = (n: number) => String(n).padStart(2, "0");
+    return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`;
+  };
+  const start = fmt(event.start_time);
+  const end = event.end_time
+    ? fmt(event.end_time)
+    : fmt(new Date(new Date(event.start_time).getTime() + 60 * 60 * 1000).toISOString());
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.title,
+    dates: `${start}/${end}`,
+    location: event.location_name,
+    ...(event.description ? { details: event.description } : {}),
+  });
+  return `https://calendar.google.com/calendar/render?${params}`;
 }
 
 function toICSDate(iso: string): string {

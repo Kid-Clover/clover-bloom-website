@@ -50,6 +50,7 @@ const worker = {
           "BEGIN:VCALENDAR",
           "VERSION:2.0",
           "PRODID:-//Kid Clover//Events//EN",
+          "METHOD:PUBLISH",
           "BEGIN:VEVENT",
           \`UID:\${event.id}@drinkkidclover.com\`,
           \`DTSTAMP:\${stamp}\`,
@@ -66,7 +67,6 @@ const worker = {
         return new Response(lines.join("\\r\\n"), {
           headers: {
             "Content-Type": "text/calendar;charset=utf-8",
-            "Content-Disposition": \`attachment; filename="\${filename}"\`,
           },
         });
       } catch {

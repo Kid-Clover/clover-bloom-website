@@ -25,6 +25,22 @@ function toICSDate(iso) {
   return \`\${d.getUTCFullYear()}\${p(d.getUTCMonth() + 1)}\${p(d.getUTCDate())}T\${p(d.getUTCHours())}\${p(d.getUTCMinutes())}\${p(d.getUTCSeconds())}Z\`;
 }
 
+function foldLine(line) {
+  if (line.length <= 75) return line;
+  const chunks = [];
+  chunks.push(line.slice(0, 75));
+  let i = 75;
+  while (i < line.length) {
+    chunks.push(" " + line.slice(i, i + 74));
+    i += 74;
+  }
+  return chunks.join("\\r\\n");
+}
+
+function escapeICS(str) {
+  return str.replace(/\\\\/g, "\\\\\\\\").replace(/;/g, "\\\\;").replace(/,/g, "\\\\,").replace(/\\n/g, "\\\\n");
+}
+
 const worker = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -56,17 +72,20 @@ const worker = {
           \`DTSTAMP:\${stamp}\`,
           \`DTSTART:\${start}\`,
           \`DTEND:\${end}\`,
-          \`SUMMARY:\${event.title}\`,
-          \`LOCATION:\${event.location_name}\`,
+          \`SUMMARY:\${escapeICS(event.title)}\`,
+          \`LOCATION:\${escapeICS(event.location_name)}\`,
         ];
         if (event.description) {
-          lines.push(\`DESCRIPTION:\${event.description.replace(/\\n/g, "\\\\n")}\`);
+          lines.push(\`DESCRIPTION:\${escapeICS(event.description)}\`);
         }
         lines.push("END:VEVENT", "END:VCALENDAR");
 
-        return new Response(lines.join("\\r\\n"), {
+        const body = lines.map(foldLine).join("\\r\\n") + "\\r\\n";
+
+        return new Response(body, {
           headers: {
             "Content-Type": "text/calendar;charset=utf-8",
+            "Content-Disposition": \`inline; filename="\${filename}"\`,
           },
         });
       } catch {

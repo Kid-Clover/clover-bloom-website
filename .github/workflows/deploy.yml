@@ -21,6 +21,9 @@ jobs:
       - name: Build
         run: bun run build
 
+      - name: Wrap worker with ICS calendar handler
+        run: node scripts/wrap-worker.js
+
       - name: Patch generated wrangler config for v3 compatibility
         run: node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('dist/server/wrangler.json','utf8'));delete c.triggers;fs.writeFileSync('dist/server/wrangler.json',JSON.stringify(c,null,2));"
 

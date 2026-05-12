@@ -286,13 +286,13 @@ function EventsPage() {
                     Sign up
                   </Button>
                 )}
-                <button
-                  onClick={() => addToCalendar(active)}
+                <a
+                  href={`/api/calendar/${active.id}`}
                   className="flex items-center justify-center gap-2 font-marker text-lg text-brown border-2 border-brown rounded-full px-4 py-2 hover:bg-brown hover:text-cream transition-colors shadow-doodle"
                 >
                   <CalendarPlus size={18} />
                   Add to calendar
-                </button>
+                </a>
               </div>
             </div>
           )}

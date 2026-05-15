@@ -186,11 +186,11 @@ function HomePage() {
                   className="block bg-card border-2 border-brown rounded-3xl p-6 shadow-doodle hover:-translate-y-1 transition-transform"
                 >
                   <div className="flex items-baseline gap-3 mb-3">
-                    <span className="font-display text-5xl text-clover leading-none">
-                      {dt.getDate()}
+                    <span className="font-display text-5xl text-clover leading-none" suppressHydrationWarning>
+                      {dt.getUTCDate()}
                     </span>
-                    <span className="font-marker text-xl text-brown/70">
-                      {dt.toLocaleString("en", { month: "short" })}
+                    <span className="font-marker text-xl text-brown/70" suppressHydrationWarning>
+                      {dt.toLocaleString("en", { month: "short", timeZone: "UTC" })}
                     </span>
                   </div>
                   <p className="font-marker text-base text-orange-crayon mb-1">

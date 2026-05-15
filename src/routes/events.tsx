@@ -88,9 +88,12 @@ function EventsPage() {
   const events = Route.useLoaderData();
   const { event: eventId } = Route.useSearch();
   const navigate = useNavigate({ from: "/events" });
-  const today = new Date();
-  const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() });
+  const [today, setToday] = useState<Date | null>(null);
+  const now = new Date();
+  const [view, setView] = useState({ y: now.getFullYear(), m: now.getMonth() });
   const [active, setActive] = useState<KCEvent | null>(null);
+
+  useEffect(() => { setToday(new Date()); }, []);
 
   useEffect(() => {
     if (eventId) {
@@ -153,7 +156,7 @@ function EventsPage() {
             >
               <ChevronLeft />
             </button>
-            <h2 className="font-display text-3xl md:text-4xl text-brown">
+            <h2 className="font-display text-3xl md:text-4xl text-brown" suppressHydrationWarning>
               {monthLabel}
             </h2>
             <button
@@ -181,6 +184,7 @@ function EventsPage() {
               const iso = day ? toISO(view.y, view.m, day) : "";
               const dayEvents = day ? eventsByDate[iso] || [] : [];
               const isToday =
+                !!today &&
                 day &&
                 view.y === today.getFullYear() &&
                 view.m === today.getMonth() &&
@@ -231,11 +235,11 @@ function EventsPage() {
                 >
                   <div className="flex items-start gap-4">
                     <div className="text-center flex-shrink-0">
-                      <div className="font-display text-4xl text-clover leading-none">
-                        {dt.getDate()}
+                      <div className="font-display text-4xl text-clover leading-none" suppressHydrationWarning>
+                        {dt.getUTCDate()}
                       </div>
-                      <div className="font-marker text-brown/70">
-                        {dt.toLocaleString("en", { month: "short" })}
+                      <div className="font-marker text-brown/70" suppressHydrationWarning>
+                        {dt.toLocaleString("en", { month: "short", timeZone: "UTC" })}
                       </div>
                     </div>
                     <div className="flex-1">

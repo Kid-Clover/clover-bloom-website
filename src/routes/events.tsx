@@ -5,7 +5,7 @@ import { getUpcomingEvents, type KCEvent } from "@/lib/events.server";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { CalendarPlus, ChevronLeft, ChevronRight, MapPin, Clock, X, Globe, Download } from "lucide-react";
+import { CalendarPlus, ChevronLeft, ChevronRight, MapPin, Clock, X, Globe, Download, ShoppingBag } from "lucide-react";
 
 export const Route = createFileRoute("/events")({
   head: ({ loaderData }) => ({
@@ -254,6 +254,12 @@ function EventsPage() {
                       <p className="text-sm text-foreground/70 mt-1">
                         {formatTimeRange(e.start_time, e.end_time)} · {e.location_name}
                       </p>
+                      {!!e.pickup_available && (
+                        <p className="flex items-center gap-1 text-xs font-bold text-clover mt-2">
+                          <ShoppingBag size={13} />
+                          Order pickup available!
+                        </p>
+                      )}
                     </div>
                   </div>
                 </button>
@@ -307,6 +313,13 @@ function EventsPage() {
                   </a>
                 </div>
               </div>
+
+              {!!active.pickup_available && (
+                <p className="flex items-center gap-1.5 text-sm font-bold text-clover mt-4">
+                  <ShoppingBag size={15} />
+                  Order pickup available!
+                </p>
+              )}
 
               <p className="mt-4 text-foreground/80 leading-relaxed">
                 {active.description}

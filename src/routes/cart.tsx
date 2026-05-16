@@ -86,11 +86,9 @@ function CartPage() {
         : undefined;
       const url = await createCheckout({ data: { items: cart.items, productMap, pickup } });
       window.location.href = url;
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setCheckoutError(`Checkout error: ${msg}`);
+    } catch {
+      setCheckoutError("Something went wrong starting checkout. Please try again.");
       setLoading(false);
-      console.error("[checkout error]", err);
     }
   }
 

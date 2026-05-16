@@ -228,7 +228,8 @@ function CartPage() {
                         <div className="font-marker text-xs">{dt.toLocaleString("en", { month: "short" })}</div>
                       </div>
                       <div className="min-w-0">
-                        <p className={`font-marker text-base leading-tight ${isSelected ? "text-clover" : "text-brown"}`}>{e.location_name.split(",")[0]}</p>
+                        <p className={`font-marker text-base leading-tight ${isSelected ? "text-clover" : "text-brown"}`}>{e.title}</p>
+                        <p className="text-xs text-muted-foreground">{e.location_name}</p>
                         <p className="text-xs text-muted-foreground">{timeStr}</p>
                       </div>
                       <div className={`ml-auto w-4 h-4 rounded-full border-2 flex-shrink-0 ${isSelected ? "border-clover bg-clover" : "border-brown/40"}`} />

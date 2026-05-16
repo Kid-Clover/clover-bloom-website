@@ -59,6 +59,9 @@ export const createCheckout = createServerFn()
                     schedule_type: "SCHEDULED",
                     pickup_at: data.pickup.pickupAt,
                     note: data.pickup.locationName,
+                    ...(user?.email
+                      ? { recipient: { email_address: user.email } }
+                      : {}),
                   },
                 },
               ],

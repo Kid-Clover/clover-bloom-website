@@ -11,6 +11,17 @@ export type KCEvent = {
   end_time: string | null; // ISO 8601 UTC
   type: "Market" | "Popup" | "Class" | "Appearance";
   requires_sign_up: number; // 0 | 1
+  pickup_available: number; // 0 | 1
+  square_location_id: string | null;
+};
+
+export type PickupEvent = {
+  id: number;
+  title: string;
+  location_name: string;
+  start_time: string;
+  end_time: string | null;
+  square_location_id: string;
 };
 
 export const getUpcomingEventsPreview = createServerFn().handler(async () => {
@@ -28,6 +39,19 @@ export const getUpcomingEventsPreview = createServerFn().handler(async () => {
        LIMIT 3`
     )
     .all<KCEvent>();
+  return results;
+});
+
+export const getPickupEvents = createServerFn().handler(async () => {
+  const db = (env as Cloudflare.Env).DB;
+  const { results } = await db
+    .prepare(
+      `SELECT e.id, e.title, e.location_name, e.start_time, e.end_time, e.square_location_id
+       FROM events e
+       WHERE e.pickup_available = 1 AND e.start_time >= datetime('now')
+       ORDER BY e.start_time`
+    )
+    .all<PickupEvent>();
   return results;
 });
 

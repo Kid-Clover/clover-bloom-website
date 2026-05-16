@@ -5,9 +5,16 @@ import type { CartItem } from "./cart";
 
 const LOCATION_ID = "L4TWM1M1RC52V";
 
+type PickupDetails = {
+  squareLocationId: string;
+  pickupAt: string; // ISO 8601 UTC — event start_time
+  locationName: string;
+};
+
 type CheckoutInput = {
   items: CartItem[];
   productMap: Record<string, { name: string; squareVariationId: string; price: number }>;
+  pickup?: PickupDetails;
 };
 
 export const createCheckout = createServerFn()
@@ -40,10 +47,27 @@ export const createCheckout = createServerFn()
 
     const body = {
       idempotency_key: crypto.randomUUID(),
-      order: { location_id: LOCATION_ID, line_items: lineItems },
+      order: {
+        location_id: data.pickup ? data.pickup.squareLocationId : LOCATION_ID,
+        line_items: lineItems,
+        ...(data.pickup
+          ? {
+              fulfillments: [
+                {
+                  type: "PICKUP",
+                  pickup_details: {
+                    schedule_type: "SCHEDULED",
+                    pickup_at: data.pickup.pickupAt,
+                    note: data.pickup.locationName,
+                  },
+                },
+              ],
+            }
+          : {}),
+      },
       checkout_options: {
         redirect_url: "https://drinkkidclover.com/order-confirmed",
-        ask_for_shipping_address: true,
+        ask_for_shipping_address: !data.pickup,
       },
       ...(Object.keys(prePopulatedData).length > 0
         ? { pre_populated_data: prePopulatedData }

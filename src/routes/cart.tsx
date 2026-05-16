@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate, getRouteApi } from "@tanstack/react-router";
 import { getProducts, type Product } from "@/lib/products.server";
+import { getPickupEvents, type PickupEvent } from "@/lib/events.server";
 import { useCart } from "@/context/cart";
 import { createCheckout } from "@/lib/checkout.server";
 import { Button } from "@/components/ui/button";
-import { Trash2, Minus, Plus, ShoppingBag } from "lucide-react";
+import { Trash2, Minus, Plus, ShoppingBag, Truck, MapPin } from "lucide-react";
 import { useState } from "react";
 
 import pinkPopPotion from "@/assets/product-pink-pop-potion.png";
@@ -33,7 +34,10 @@ const productImages: Record<string, string> = {
 };
 
 export const Route = createFileRoute("/cart")({
-  loader: () => getProducts(),
+  loader: async () => {
+    const [products, pickupEvents] = await Promise.all([getProducts(), getPickupEvents()]);
+    return { products, pickupEvents };
+  },
   head: () => ({ meta: [{ title: "Your Cart — Kid Clover" }] }),
   component: CartPage,
 });
@@ -41,11 +45,15 @@ export const Route = createFileRoute("/cart")({
 const rootRoute = getRouteApi("__root__");
 
 function CartPage() {
-  const products = Route.useLoaderData();
+  const { products, pickupEvents } = Route.useLoaderData();
   const user = rootRoute.useLoaderData();
   const { cart, itemCount, setQuantity, remove } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [fulfillment, setFulfillment] = useState<"ship" | "pickup">("ship");
+  const [selectedPickupId, setSelectedPickupId] = useState<number | null>(null);
+
+  const selectedPickup = pickupEvents.find((e) => e.id === selectedPickupId) ?? null;
 
   const productMap = Object.fromEntries(
     products.map((p) => [
@@ -64,9 +72,17 @@ function CartPage() {
   );
 
   async function handleCheckout() {
+    if (fulfillment === "pickup" && !selectedPickup) return;
     setLoading(true);
     try {
-      const url = await createCheckout({ data: { items: cart.items, productMap } });
+      const pickup = selectedPickup
+        ? {
+            squareLocationId: selectedPickup.square_location_id,
+            pickupAt: selectedPickup.start_time,
+            locationName: selectedPickup.location_name,
+          }
+        : undefined;
+      const url = await createCheckout({ data: { items: cart.items, productMap, pickup } });
       window.location.href = url;
     } catch {
       setLoading(false);
@@ -156,15 +172,88 @@ function CartPage() {
           })}
         </div>
 
+        {/* FULFILLMENT SELECTOR */}
+        <div className="rounded-2xl border-2 border-brown bg-card p-6 shadow-doodle mb-4">
+          <p className="font-marker text-lg text-brown mb-4">How do you want to receive your order?</p>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <button
+              onClick={() => setFulfillment("ship")}
+              className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-colors ${
+                fulfillment === "ship"
+                  ? "border-clover bg-clover/10 text-clover"
+                  : "border-brown/30 text-brown/60 hover:border-brown/60"
+              }`}
+            >
+              <Truck size={24} />
+              <span className="font-marker text-base">Ship to me</span>
+            </button>
+            <button
+              onClick={() => { setFulfillment("pickup"); if (!selectedPickupId && pickupEvents.length > 0) setSelectedPickupId(pickupEvents[0].id); }}
+              className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-colors ${
+                fulfillment === "pickup"
+                  ? "border-clover bg-clover/10 text-clover"
+                  : "border-brown/30 text-brown/60 hover:border-brown/60"
+              }`}
+            >
+              <MapPin size={24} />
+              <span className="font-marker text-base">Pick up at event</span>
+            </button>
+          </div>
+
+          {fulfillment === "pickup" && (
+            <div className="space-y-2">
+              <p className="font-marker text-sm text-brown/70 mb-2">Choose a pickup date:</p>
+              {pickupEvents.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-3">No upcoming pickup events — check back soon!</p>
+              ) : (
+                pickupEvents.map((e) => {
+                  const dt = new Date(e.start_time);
+                  const dateStr = dt.toLocaleDateString("en", { month: "short", day: "numeric", timeZone: "UTC" });
+                  const timeStr = dt.toLocaleTimeString("en", { hour: "numeric", minute: "2-digit", timeZone: "UTC" });
+                  const isSelected = selectedPickupId === e.id;
+                  return (
+                    <button
+                      key={e.id}
+                      onClick={() => setSelectedPickupId(e.id)}
+                      className={`w-full flex items-center gap-4 rounded-xl border-2 p-3 text-left transition-colors ${
+                        isSelected
+                          ? "border-clover bg-clover/10"
+                          : "border-brown/30 hover:border-brown/60"
+                      }`}
+                    >
+                      <div className={`flex-shrink-0 w-12 text-center ${isSelected ? "text-clover" : "text-brown"}`}>
+                        <div className="font-display text-2xl leading-none">{dt.getUTCDate()}</div>
+                        <div className="font-marker text-xs">{dt.toLocaleString("en", { month: "short", timeZone: "UTC" })}</div>
+                      </div>
+                      <div className="min-w-0">
+                        <p className={`font-marker text-base leading-tight ${isSelected ? "text-clover" : "text-brown"}`}>{e.location_name.split(",")[0]}</p>
+                        <p className="text-xs text-muted-foreground">{timeStr}</p>
+                      </div>
+                      <div className={`ml-auto w-4 h-4 rounded-full border-2 flex-shrink-0 ${isSelected ? "border-clover bg-clover" : "border-brown/40"}`} />
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="rounded-2xl border-2 border-brown bg-card p-6 shadow-doodle space-y-3">
           <div className="flex justify-between font-marker text-lg text-brown">
             <span>Subtotal</span>
             <span>${subtotal.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Shipping</span>
-            <span>Calculated at checkout</span>
-          </div>
+          {fulfillment === "ship" ? (
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>Shipping</span>
+              <span>Calculated at checkout</span>
+            </div>
+          ) : (
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>Pickup</span>
+              <span className="text-clover">Free</span>
+            </div>
+          )}
           <div className="border-t border-border/60 pt-3 flex justify-between font-display text-2xl text-brown">
             <span>Total</span>
             <span>${subtotal.toFixed(2)}</span>
@@ -172,7 +261,7 @@ function CartPage() {
 
           <Button
             onClick={handleCheckout}
-            disabled={loading}
+            disabled={loading || (fulfillment === "pickup" && !selectedPickup)}
             className="w-full h-12 rounded-full border-2 border-brown text-base font-marker text-xl shadow-doodle mt-2"
           >
             {loading ? "Preparing checkout…" : "Proceed to checkout →"}

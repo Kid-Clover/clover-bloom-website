@@ -86,7 +86,7 @@ export const createCheckout = createServerFn()
     const json = (await res.json()) as { payment_link?: { url: string }; errors?: unknown[] };
 
     if (!json.payment_link?.url) {
-      throw new Error("Failed to create Square checkout");
+      throw new Error(`Square checkout failed: ${JSON.stringify(json.errors ?? json)}`);
     }
 
     return json.payment_link.url;

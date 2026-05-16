@@ -50,6 +50,7 @@ function CartPage() {
   const { cart, itemCount, setQuantity, remove } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [fulfillment, setFulfillment] = useState<"ship" | "pickup">("ship");
   const [selectedPickupId, setSelectedPickupId] = useState<number | null>(null);
 
@@ -74,6 +75,7 @@ function CartPage() {
   async function handleCheckout() {
     if (fulfillment === "pickup" && !selectedPickup) return;
     setLoading(true);
+    setCheckoutError(null);
     try {
       const pickup = selectedPickup
         ? {
@@ -84,8 +86,11 @@ function CartPage() {
         : undefined;
       const url = await createCheckout({ data: { items: cart.items, productMap, pickup } });
       window.location.href = url;
-    } catch {
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setCheckoutError(`Checkout error: ${msg}`);
       setLoading(false);
+      console.error("[checkout error]", err);
     }
   }
 
@@ -258,6 +263,10 @@ function CartPage() {
             <span>Total</span>
             <span>${subtotal.toFixed(2)}</span>
           </div>
+
+          {checkoutError && (
+            <p className="text-sm text-red-600 text-center">{checkoutError}</p>
+          )}
 
           <Button
             onClick={handleCheckout}

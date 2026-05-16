@@ -8,7 +8,7 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
 import { products } from "@/data/products";
-import { events } from "@/data/events";
+import { getUpcomingEventsPreview } from "@/lib/events.server";
 import heroBasket from "@/assets/hero-basket.jpg";
 import heroHerbs from "@/assets/hero-herbs.jpg";
 import heroKidFlower1 from "@/assets/hero-kid-flower-1.jpg";
@@ -38,6 +38,7 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "https://drinkkidclover.com/" }],
   }),
+  loader: () => getUpcomingEventsPreview(),
   component: HomePage,
 });
 
@@ -54,7 +55,7 @@ const heroImages = [
 
 function HomePage() {
   const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
-  const upcoming = [...events].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 3);
+  const upcoming = Route.useLoaderData();
 
   return (
     <>
@@ -178,11 +179,17 @@ function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {upcoming.map((e) => {
-              const dt = new Date(e.date + "T00:00:00");
+              const dt = new Date(e.start_time);
+              const timeStr = dt.toLocaleTimeString("en", {
+                hour: "numeric",
+                minute: "2-digit",
+                timeZone: "UTC",
+              }).toLowerCase();
               return (
                 <Link
                   key={e.id}
                   to="/events"
+                  search={{ event: e.id }}
                   className="block bg-card border-2 border-brown rounded-3xl p-6 shadow-doodle hover:-translate-y-1 transition-transform"
                 >
                   <div className="flex items-baseline gap-3 mb-3">
@@ -199,8 +206,8 @@ function HomePage() {
                   <h3 className="font-display text-2xl text-brown leading-tight mb-2">
                     {e.title}
                   </h3>
-                  <p className="text-sm text-foreground/70">
-                    {e.time} · {e.location}
+                  <p className="text-sm text-foreground/70" suppressHydrationWarning>
+                    {timeStr} · {e.location_name}
                   </p>
                 </Link>
               );

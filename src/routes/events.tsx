@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState, useEffect } from "react";
 import { z } from "zod";
 import { getUpcomingEvents, type KCEvent } from "@/lib/events.server";
@@ -255,10 +255,14 @@ function EventsPage() {
                         {formatTimeRange(e.start_time, e.end_time)} · {e.location_name}
                       </p>
                       {!!e.pickup_available && (
-                        <p className="flex items-center gap-1 text-xs font-bold text-clover mt-2">
+                        <Link
+                          to="/shop"
+                          onClick={(ev) => ev.stopPropagation()}
+                          className="flex items-center gap-1 text-xs font-bold text-clover mt-2 hover:underline w-fit"
+                        >
                           <ShoppingBag size={13} />
                           Order pickup available!
-                        </p>
+                        </Link>
                       )}
                     </div>
                   </div>
@@ -315,10 +319,13 @@ function EventsPage() {
               </div>
 
               {!!active.pickup_available && (
-                <p className="flex items-center gap-1.5 text-sm font-bold text-clover mt-4">
+                <Link
+                  to="/shop"
+                  className="flex items-center gap-1.5 text-sm font-bold text-clover mt-4 hover:underline w-fit"
+                >
                   <ShoppingBag size={15} />
                   Order pickup available!
-                </p>
+                </Link>
               )}
 
               <p className="mt-4 text-foreground/80 leading-relaxed">

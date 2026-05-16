@@ -211,8 +211,7 @@ function CartPage() {
               ) : (
                 pickupEvents.map((e) => {
                   const dt = new Date(e.start_time);
-                  const dateStr = dt.toLocaleDateString("en", { month: "short", day: "numeric", timeZone: "UTC" });
-                  const timeStr = dt.toLocaleTimeString("en", { hour: "numeric", minute: "2-digit", timeZone: "UTC" });
+                  const timeStr = dt.toLocaleTimeString("en", { hour: "numeric", minute: "2-digit" });
                   const isSelected = selectedPickupId === e.id;
                   return (
                     <button
@@ -225,8 +224,8 @@ function CartPage() {
                       }`}
                     >
                       <div className={`flex-shrink-0 w-12 text-center ${isSelected ? "text-clover" : "text-brown"}`}>
-                        <div className="font-display text-2xl leading-none">{dt.getUTCDate()}</div>
-                        <div className="font-marker text-xs">{dt.toLocaleString("en", { month: "short", timeZone: "UTC" })}</div>
+                        <div className="font-display text-2xl leading-none">{dt.getDate()}</div>
+                        <div className="font-marker text-xs">{dt.toLocaleString("en", { month: "short" })}</div>
                       </div>
                       <div className="min-w-0">
                         <p className={`font-marker text-base leading-tight ${isSelected ? "text-clover" : "text-brown"}`}>{e.location_name.split(",")[0]}</p>

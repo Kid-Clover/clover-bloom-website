@@ -43,7 +43,7 @@ export const createCheckout = createServerFn()
     });
 
     const prePopulatedData: Record<string, unknown> = {};
-    if (user?.email) prePopulatedData.buyer_email = user.email;
+    if (user?.email && !data.pickup) prePopulatedData.buyer_email = user.email;
 
     const body = {
       idempotency_key: crypto.randomUUID(),

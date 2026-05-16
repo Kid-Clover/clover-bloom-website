@@ -31,7 +31,7 @@ export const getUpcomingEventsPreview = createServerFn().handler(async () => {
       `SELECT
         e.id, e.title, e.description, e.short_description,
         e.location_name, e.start_time, e.end_time, e.requires_sign_up,
-        et.name AS type
+        e.pickup_available, et.name AS type
        FROM events e
        JOIN event_types et ON e.event_type_id = et.id
        WHERE e.start_time >= datetime('now')
@@ -62,7 +62,7 @@ export const getUpcomingEvents = createServerFn().handler(async () => {
       `SELECT
         e.id, e.title, e.description, e.short_description,
         e.location_name, e.start_time, e.end_time, e.requires_sign_up,
-        et.name AS type
+        e.pickup_available, et.name AS type
        FROM events e
        JOIN event_types et ON e.event_type_id = et.id
        WHERE e.start_time >= datetime('now')

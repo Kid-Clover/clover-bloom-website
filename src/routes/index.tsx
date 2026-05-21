@@ -10,7 +10,6 @@ import { useRef } from "react";
 import { products } from "@/data/products";
 import { getUpcomingEventsPreview } from "@/lib/events.server";
 import heroBasket from "@/assets/hero-basket.jpg";
-import heroHerbs from "@/assets/hero-herbs.jpg";
 import heroKidFlower1 from "@/assets/hero-kid-flower-1.jpg";
 import heroKidFlower2 from "@/assets/hero-kid-flower-2.jpg";
 import heroKidFlower3 from "@/assets/hero-kid-flower-3.jpg";
@@ -44,7 +43,6 @@ export const Route = createFileRoute("/")({
 
 const heroImages = [
   { src: heroBasket, alt: "Basket of freshly harvested herbs" },
-  { src: heroHerbs, alt: "Dried herbs being measured for blending" },
   { src: heroKidFlower1, alt: "Child holding a yellow flower" },
   { src: heroKidFlower2, alt: "Child reaching for purple flowers in the garden" },
   { src: heroKidFlower3, alt: "Child holding freshly picked purple flowers" },

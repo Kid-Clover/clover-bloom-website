@@ -215,15 +215,21 @@ function ProductModal({
           />
         )}
 
-        <Button
-          onClick={handleAdd}
-          disabled={!canAdd}
-          size="lg"
-          className="h-12 w-full rounded-full border-2 border-brown text-base shadow-doodle"
-        >
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          {added ? "Added!" : needsModifiers && !canAdd ? `Choose ${product.modifiers!.requiredCount} simples` : "Add to cart"}
-        </Button>
+        {product.soldOut ? (
+          <div className="h-12 w-full rounded-full border-2 border-red-400 flex items-center justify-center font-marker text-red-500 text-lg">
+            Sold out
+          </div>
+        ) : (
+          <Button
+            onClick={handleAdd}
+            disabled={!canAdd}
+            size="lg"
+            className="h-12 w-full rounded-full border-2 border-brown text-base shadow-doodle"
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            {added ? "Added!" : needsModifiers && !canAdd ? `Choose ${product.modifiers!.requiredCount} simples` : "Add to cart"}
+          </Button>
+        )}
 
         {added && (
           <div className="mt-3 text-center">
@@ -291,7 +297,10 @@ function ShopPage() {
                 <p className="line-clamp-2 text-sm text-brown/75">{p.description}</p>
                 <div className="mt-auto flex items-center justify-between pt-4">
                   <span className="font-display text-2xl text-brown">${p.price}</span>
-                  <span className="font-marker text-brown">add to cart →</span>
+                  {p.soldOut
+                    ? <span className="font-marker text-sm text-red-500 border border-red-400 rounded-full px-3 py-1">Sold out</span>
+                    : <span className="font-marker text-brown">add to cart →</span>
+                  }
                 </div>
               </div>
             </button>

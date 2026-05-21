@@ -23,6 +23,7 @@ export type Product = {
   color: "clover" | "lavender" | "yellow-crayon" | "olive";
   imageKey: string;
   modifiers: ModifierGroup | null;
+  soldOut: boolean;
 };
 
 export const getProducts = createServerFn().handler(async (): Promise<Product[]> => {
@@ -31,7 +32,7 @@ export const getProducts = createServerFn().handler(async (): Promise<Product[]>
   const { results: rows } = await db
     .prepare(
       `SELECT id, name, tagline, description, ingredients, price_cents,
-              square_url, square_variation_id, color, image_key
+              square_url, square_variation_id, color, image_key, sold_out
        FROM products WHERE active = 1 ORDER BY sort_order`
     )
     .all<{
@@ -45,6 +46,7 @@ export const getProducts = createServerFn().handler(async (): Promise<Product[]>
       square_variation_id: string;
       color: "clover" | "lavender" | "yellow-crayon" | "olive";
       image_key: string;
+      sold_out: number;
     }>();
 
   const { results: modifierRows } = await db
@@ -85,5 +87,6 @@ export const getProducts = createServerFn().handler(async (): Promise<Product[]>
     color: r.color,
     imageKey: r.image_key,
     modifiers: modifierMap.get(r.id) ?? null,
+    soldOut: r.sold_out === 1,
   }));
 });

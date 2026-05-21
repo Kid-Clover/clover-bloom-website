@@ -141,6 +141,9 @@ function AboutPage() {
               farmers but something in me connected deeply to the earth the day
               I took root of those carrots.
             </p>
+            <p>
+              And all of that has led me to this moment and Kid Clover...
+            </p>
           </div>
         </div>
       </section>

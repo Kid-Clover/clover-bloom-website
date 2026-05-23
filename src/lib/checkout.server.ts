@@ -50,7 +50,16 @@ export const createCheckout = createServerFn()
       idempotency_key: crypto.randomUUID(),
       order: {
         location_id: data.pickup ? data.pickup.squareLocationId : LOCATION_ID,
-        line_items: lineItems,
+        line_items: [
+          ...lineItems,
+          ...(data.pickup
+            ? [{
+                name: `Pickup: ${data.pickup.eventTitle} — ${new Date(data.pickup.pickupAt).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York" })} ET`,
+                quantity: "1",
+                base_price_money: { amount: 0, currency: "USD" },
+              }]
+            : []),
+        ],
         ...(data.pickup
           ? {
               note: `PICKUP ORDER — ${data.pickup.eventTitle} | ${new Date(data.pickup.pickupAt).toLocaleString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York" })} ET | ${data.pickup.locationName}`,

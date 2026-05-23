@@ -82,6 +82,7 @@ function CartPage() {
             squareLocationId: selectedPickup.square_location_id,
             pickupAt: selectedPickup.start_time,
             locationName: selectedPickup.location_name,
+            eventTitle: selectedPickup.title,
           }
         : undefined;
       const url = await createCheckout({ data: { items: cart.items, productMap, pickup } });

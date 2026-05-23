@@ -9,6 +9,7 @@ type PickupDetails = {
   squareLocationId: string;
   pickupAt: string; // ISO 8601 UTC — event start_time
   locationName: string;
+  eventTitle: string;
 };
 
 type CheckoutInput = {
@@ -50,6 +51,11 @@ export const createCheckout = createServerFn()
       order: {
         location_id: data.pickup ? data.pickup.squareLocationId : LOCATION_ID,
         line_items: lineItems,
+        ...(data.pickup
+          ? {
+              note: `PICKUP ORDER — ${data.pickup.eventTitle} | ${new Date(data.pickup.pickupAt).toLocaleString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York" })} ET | ${data.pickup.locationName}`,
+            }
+          : {}),
         ...(data.pickup
           ? {
               fulfillments: [

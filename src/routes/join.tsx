@@ -1,20 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { joinCommunity } from "@/lib/join.server";
+import { getCampaign, type Campaign } from "@/lib/campaigns.server";
 import { useState } from "react";
 import { z } from "zod";
 
 const searchSchema = z.object({
+  campaign_id: z.coerce.number().optional(),
   tags: z.string().optional(),
   redirect: z.string().optional(),
 });
 
 export const Route = createFileRoute("/join")({
   validateSearch: searchSchema,
+  loader: async ({ location }) => {
+    const campaignId = (location.search as { campaign_id?: number }).campaign_id;
+    if (!campaignId) return null;
+    return getCampaign({ data: { id: campaignId } });
+  },
   head: () => ({ meta: [{ title: "Join the Community — Kid Clover" }] }),
   component: JoinPage,
 });
 
+const DEFAULT_TITLE = "Join our community";
+const DEFAULT_SUBTITLE = "stay in the loop";
+const DEFAULT_BODY = "Get updates on new blends, upcoming events, and everything growing at Kid Clover.";
+
 function JoinPage() {
+  const campaign = Route.useLoaderData() as Campaign | null;
   const { tags, redirect } = Route.useSearch();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,7 +34,16 @@ function JoinPage() {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
-  const parsedTags = tags ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
+  const campaignTags = campaign?.tags
+    ? campaign.tags.split(",").map((t: string) => t.trim()).filter(Boolean)
+    : [];
+  const fallbackTags = tags ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
+  const parsedTags = campaignTags.length > 0 ? campaignTags : fallbackTags;
+
+  const redirectUrl = campaign?.redirect_url ?? redirect;
+
+  const title = campaign?.title ?? DEFAULT_TITLE;
+  const subtitle = campaign?.subtitle ?? DEFAULT_BODY;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,8 +56,8 @@ function JoinPage() {
         setLoading(false);
         return;
       }
-      if (redirect) {
-        window.location.href = redirect;
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
       } else {
         setDone(true);
       }
@@ -66,12 +87,12 @@ function JoinPage() {
   return (
     <div className="min-h-screen bg-paper flex flex-col items-center justify-center px-6 py-24">
       <div className="max-w-md w-full">
-        <p className="font-marker text-2xl text-clover mb-2 text-center">stay in the loop</p>
+        <p className="font-marker text-2xl text-clover mb-2 text-center">{DEFAULT_SUBTITLE}</p>
         <h1 className="font-display text-5xl text-brown mb-3 text-center">
-          Join our community
+          {title}
         </h1>
         <p className="text-center text-foreground/70 mb-10 leading-relaxed">
-          Get updates on new blends, upcoming events, and everything growing at Kid Clover.
+          {subtitle}
         </p>
 
         <form

@@ -83,11 +83,53 @@ export const handleAuthCallback = createServerFn().handler(async (): Promise<boo
       name: claims.name ?? null,
       picture: claims.picture ?? null,
     });
+
+    // Mailchimp: upsert member + apply "website" tag (best-effort)
+    try {
+      const [firstName, ...rest] = (claims.name ?? "").trim().split(" ");
+      const lastName = rest.join(" ");
+      const dc = e.MAILCHIMP_API_KEY.split("-")[1];
+      const subscriberHash = await md5(claims.email.toLowerCase().trim());
+      const authHeader = `Basic ${btoa(`anystring:${e.MAILCHIMP_API_KEY}`)}`;
+      const listId = "e096feb89c";
+
+      await fetch(
+        `https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members/${subscriberHash}`,
+        {
+          method: "PUT",
+          headers: { Authorization: authHeader, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email_address: claims.email.toLowerCase().trim(),
+            status_if_new: "subscribed",
+            merge_fields: { FNAME: firstName, LNAME: lastName },
+          }),
+        }
+      );
+
+      await fetch(
+        `https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members/${subscriberHash}/tags`,
+        {
+          method: "POST",
+          headers: { Authorization: authHeader, "Content-Type": "application/json" },
+          body: JSON.stringify({ tags: [{ name: "website", status: "active" }] }),
+        }
+      );
+    } catch {
+      // non-fatal — login still succeeds
+    }
+
     return true;
   } catch {
     return false;
   }
 });
+
+async function md5(message: string): Promise<string> {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest("MD5", msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 export const startLogoutFlow = createServerFn().handler(async (): Promise<string> => {
   clearSessionCookie();

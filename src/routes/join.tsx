@@ -140,7 +140,7 @@ function JoinPage() {
             disabled={loading}
             className="w-full h-12 rounded-full border-2 border-brown bg-clover text-cream font-marker text-xl shadow-doodle hover:bg-clover/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {loading ? "Joining…" : "Join the community →"}
+            {loading ? "Joining…" : (campaign?.cta_text ?? "Join the community →")}
           </button>
 
           <p className="text-xs text-center text-muted-foreground">

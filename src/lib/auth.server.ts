@@ -46,14 +46,31 @@ export const handleAuthCallback = createServerFn().handler(async (): Promise<boo
     };
 
     const db = e.DB;
-    await db
-      .prepare(
-        `INSERT INTO users (auth0_id, email, name, picture) VALUES (?, ?, ?, ?)
-         ON CONFLICT (auth0_id) DO UPDATE SET
-           email = excluded.email, name = excluded.name, picture = excluded.picture`
-      )
-      .bind(claims.sub, claims.email, claims.name ?? null, claims.picture ?? null)
-      .run();
+    // If an email-only row exists (created via /join), merge auth0 data onto it
+    const existing = await db
+      .prepare("SELECT id FROM users WHERE email = ? AND auth0_id IS NULL")
+      .bind(claims.email)
+      .first<{ id: number }>();
+
+    if (existing) {
+      await db
+        .prepare(
+          `UPDATE users SET auth0_id = ?, name = COALESCE(?, name), picture = ?
+           WHERE id = ?`
+        )
+        .bind(claims.sub, claims.name ?? null, claims.picture ?? null, existing.id)
+        .run();
+    } else {
+      await db
+        .prepare(
+          `INSERT INTO users (auth0_id, email, name, picture) VALUES (?, ?, ?, ?)
+           ON CONFLICT (auth0_id) DO UPDATE SET
+             email = excluded.email, name = excluded.name, picture = excluded.picture`
+        )
+        .bind(claims.sub, claims.email, claims.name ?? null, claims.picture ?? null)
+        .run();
+    }
+
     const row = await db
       .prepare("SELECT id FROM users WHERE auth0_id = ?")
       .bind(claims.sub)

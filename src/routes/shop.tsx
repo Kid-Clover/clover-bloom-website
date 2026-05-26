@@ -179,11 +179,13 @@ function ProductModal({
   return (
     <div className="grid md:grid-cols-2">
       <div className={`flex w-full min-w-0 items-center justify-center overflow-hidden aspect-[4/3] md:aspect-auto ${colorBg}`}>
-        <img
-          src={productImages[product.imageKey]}
-          alt={product.name}
-          className="block h-auto w-[70%] max-w-[70%] object-contain object-center md:max-h-[28rem]"
-        />
+        <div className="bg-white rounded-2xl shadow-sm w-[68%] flex items-center justify-center p-4">
+          <img
+            src={productImages[product.imageKey]}
+            alt={product.name}
+            className="block h-auto w-full object-contain object-center md:max-h-[26rem]"
+          />
+        </div>
       </div>
       <div className="relative p-6 md:p-8 md:overflow-y-auto md:max-h-[70vh]">
         <button
@@ -288,13 +290,15 @@ function ShopPage() {
               onClick={() => openProduct(p)}
               className={`group flex w-full min-w-0 flex-col overflow-hidden rounded-3xl border-2 border-brown text-left shadow-doodle transition-transform hover:-translate-y-1 ${colorBg[p.color]}`}
             >
-              <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden ${colorBg[p.color]}`}>
-                <img
-                  src={productImages[p.imageKey]}
-                  alt={p.name}
-                  loading="lazy"
-                  className="block h-auto w-[80%] max-w-[80%] object-contain object-center transition-transform duration-500 group-hover:scale-105"
-                />
+                      <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden ${colorBg[p.color]}`}>
+                <div className="bg-white rounded-2xl shadow-sm w-[78%] flex items-center justify-center p-3">
+                  <img
+                    src={productImages[p.imageKey]}
+                    alt={p.name}
+                    loading="lazy"
+                    className="block h-auto w-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
               </div>
               <div className="flex flex-1 flex-col bg-paper p-5">
                 <p className="font-marker text-lg text-brown/70">{p.tagline}</p>

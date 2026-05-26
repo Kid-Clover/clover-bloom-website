@@ -4,6 +4,7 @@ import { env } from "cloudflare:workers";
 export type ModifierOption = {
   productId: string;
   name: string;
+  soldOut: boolean;
 };
 
 export type ModifierGroup = {
@@ -51,7 +52,7 @@ export const getProducts = createServerFn().handler(async (): Promise<Product[]>
 
   const { results: modifierRows } = await db
     .prepare(
-      `SELECT mg.product_id, mg.required_count, mo.option_product_id, p.name as option_name
+      `SELECT mg.product_id, mg.required_count, mo.option_product_id, p.name as option_name, p.sold_out
        FROM product_modifier_groups mg
        JOIN product_modifier_options mo ON mg.product_id = mo.product_id
        JOIN products p ON mo.option_product_id = p.id
@@ -62,6 +63,7 @@ export const getProducts = createServerFn().handler(async (): Promise<Product[]>
       required_count: number;
       option_product_id: string;
       option_name: string;
+      sold_out: number;
     }>();
 
   const modifierMap = new Map<string, ModifierGroup>();
@@ -72,6 +74,7 @@ export const getProducts = createServerFn().handler(async (): Promise<Product[]>
     modifierMap.get(row.product_id)!.options.push({
       productId: row.option_product_id,
       name: row.option_name,
+      soldOut: row.sold_out === 1,
     });
   }
 

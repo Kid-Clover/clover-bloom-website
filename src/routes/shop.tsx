@@ -114,7 +114,7 @@ function ModifierSelector({
         </span>
       </div>
       <div className="space-y-2">
-        {group.options.map((opt) => {
+        {group.options.filter((opt) => !opt.soldOut).map((opt) => {
           const count = modifiers[opt.productId] ?? 0;
           return (
             <div key={opt.productId} className="flex items-center justify-between">

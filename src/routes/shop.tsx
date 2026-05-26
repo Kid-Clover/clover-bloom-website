@@ -114,15 +114,20 @@ function ModifierSelector({
         </span>
       </div>
       <div className="space-y-2">
-        {group.options.filter((opt) => !opt.soldOut).map((opt) => {
+        {group.options.map((opt) => {
           const count = modifiers[opt.productId] ?? 0;
           return (
-            <div key={opt.productId} className="flex items-center justify-between">
-              <span className="text-sm text-foreground/80">{opt.name}</span>
+            <div key={opt.productId} className={`flex items-center justify-between ${opt.soldOut ? "opacity-50" : ""}`}>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-foreground/80">{opt.name}</span>
+                {opt.soldOut && (
+                  <span className="text-xs font-marker text-red-400">sold out</span>
+                )}
+              </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => adjust(opt.productId, -1)}
-                  disabled={count === 0}
+                  disabled={count === 0 || opt.soldOut}
                   className="h-6 w-6 rounded-full border border-brown flex items-center justify-center hover:bg-brown hover:text-cream transition-colors disabled:opacity-30"
                 >
                   <Minus size={10} />
@@ -130,7 +135,7 @@ function ModifierSelector({
                 <span className="font-marker text-base text-brown w-4 text-center">{count}</span>
                 <button
                   onClick={() => adjust(opt.productId, 1)}
-                  disabled={remaining <= 0}
+                  disabled={remaining <= 0 || opt.soldOut}
                   className="h-6 w-6 rounded-full border border-brown flex items-center justify-center hover:bg-brown hover:text-cream transition-colors disabled:opacity-30"
                 >
                   <Plus size={10} />

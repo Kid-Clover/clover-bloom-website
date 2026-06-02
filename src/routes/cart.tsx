@@ -18,6 +18,7 @@ import crystalCauldron from "@/assets/product-crystal-cauldron.png";
 import dragonflies from "@/assets/product-dragonflies.png";
 import griffinsGold from "@/assets/product-griffins-gold.png";
 import ogressLantern from "@/assets/product-ogress-lantern.png";
+import prismatic from "@/assets/product-prismatic.png";
 
 const productImages: Record<string, string> = {
   "pink-pop-potion": pinkPopPotion,
@@ -31,6 +32,7 @@ const productImages: Record<string, string> = {
   "pixie-dust-peppermint": pixieDust,
   "3-simples": threeSimples,
   "6-simples": sixSimples,
+  "prismatic": prismatic,
 };
 
 export const Route = createFileRoute("/cart")({

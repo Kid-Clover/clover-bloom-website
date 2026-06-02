@@ -17,7 +17,12 @@ export const Route = createFileRoute("/join")({
     if (!campaignId) return null;
     return getCampaign({ data: { id: campaignId } });
   },
-  head: () => ({ meta: [{ title: "Join the Community — Kid Clover" }] }),
+  head: () => ({
+    meta: [
+      { title: "Join the Community — Kid Clover" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: JoinPage,
 });
 

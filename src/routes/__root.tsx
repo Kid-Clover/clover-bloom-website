@@ -45,6 +45,23 @@ export const Route = createRootRoute({
       { property: "og:image:alt", content: "Kid Clover herbal teas for kids" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://drinkkidclover.com/og-image.jpg" },
+      {
+        "script:ld+json": {
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": "Kid Clover",
+          "description": "Durham-born small business making hand-blended herbal tisanes for kids. Smart sips for little lips.",
+          "url": "https://drinkkidclover.com",
+          "logo": "https://drinkkidclover.com/og-image.jpg",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Durham",
+            "addressRegion": "NC",
+            "addressCountry": "US"
+          },
+          "sameAs": ["https://www.instagram.com/drinkkidclover/"],
+        },
+      },
     ],
     links: [
       { rel: "icon", href: "/favicon.ico", sizes: "any" },

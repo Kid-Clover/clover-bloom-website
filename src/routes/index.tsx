@@ -23,16 +23,16 @@ import galleryCalendula from "@/assets/photo-calendula.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kid Clover — Hand-blended herbal teas for kids" },
+      { title: "Kid Clover — Herbal Teas for Kids | Durham, NC" },
       {
         name: "description",
         content:
-          "Kid Clover crafts gentle, joyful herbal tea blends made for little ones. Connecting kids to the magic of plants.",
+          "Kid Clover is a Durham, NC small business crafting gentle, caffeine-free herbal tisanes for kids. Find us at local farmers markets or shop online.",
       },
-      { property: "og:title", content: "Kid Clover" },
+      { property: "og:title", content: "Kid Clover — Herbal Teas for Kids | Durham, NC" },
       {
         property: "og:description",
-        content: "Hand-blended herbal teas for kids.",
+        content: "Durham-born small business making hand-blended herbal tisanes for kids. Smart sips for little lips.",
       },
     ],
     links: [{ rel: "canonical", href: "https://drinkkidclover.com/" }],
@@ -109,10 +109,11 @@ function HomePage() {
             Big love for little plants
           </h2>
           <p className="text-lg md:text-xl leading-relaxed text-foreground/80">
-            Kid Clover began in our backyard, in tiny hands and dirt-stained
-            aprons. We blend gentle, kid-friendly herbal teas that are equal
-            parts delicious and nourishing — and made to spark curiosity about
-            the wild, wonderful world of plants.
+            Kid Clover is a Durham-born small business that started in our backyard,
+            in tiny hands and dirt-stained aprons. We blend gentle, caffeine-free
+            herbal tisanes for the whole family — equal parts delicious and nourishing,
+            and made to spark curiosity about the wild, wonderful world of plants.
+            Find us at local markets around Durham, NC or shop online anytime.
           </p>
         </div>
       </section>

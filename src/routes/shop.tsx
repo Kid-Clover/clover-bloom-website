@@ -36,6 +36,7 @@ const productImages: Record<string, string> = {
   "3-simples": threeSimples,
   "6-simples": sixSimples,
   "prismatic": prismatic,
+  "early-girl": logoStacked, // TODO: replace with real product photo
 };
 
 export const Route = createFileRoute("/shop")({

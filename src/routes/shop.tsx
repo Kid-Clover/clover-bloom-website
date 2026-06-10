@@ -22,6 +22,7 @@ import dragonflies from "@/assets/product-dragonflies.png";
 import griffinsGold from "@/assets/product-griffins-gold.png";
 import ogressLantern from "@/assets/product-ogress-lantern.png";
 import prismatic from "@/assets/product-prismatic.png";
+import earlyGirl from "@/assets/product-early-girl.png";
 
 const productImages: Record<string, string> = {
   "pink-pop-potion": pinkPopPotion,
@@ -36,7 +37,7 @@ const productImages: Record<string, string> = {
   "3-simples": threeSimples,
   "6-simples": sixSimples,
   "prismatic": prismatic,
-  "early-girl": logoStacked, // TODO: replace with real product photo
+  "early-girl": earlyGirl,
 };
 
 export const Route = createFileRoute("/shop")({

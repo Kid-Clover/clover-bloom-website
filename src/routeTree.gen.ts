@@ -9,9 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ThankYouSlowdownRouteImport } from './routes/thank-you-slowdown'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as OrderConfirmedRouteImport } from './routes/order-confirmed'
+import { Route as JoinRouteImport } from './routes/join'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as CartRouteImport } from './routes/cart'
@@ -21,6 +23,11 @@ import { Route as AuthLogoutRouteImport } from './routes/auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 
+const ThankYouSlowdownRoute = ThankYouSlowdownRouteImport.update({
+  id: '/thank-you-slowdown',
+  path: '/thank-you-slowdown',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -34,6 +41,11 @@ const OrdersRoute = OrdersRouteImport.update({
 const OrderConfirmedRoute = OrderConfirmedRouteImport.update({
   id: '/order-confirmed',
   path: '/order-confirmed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryRoute = GalleryRouteImport.update({
@@ -83,9 +95,11 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
+  '/join': typeof JoinRoute
   '/order-confirmed': typeof OrderConfirmedRoute
   '/orders': typeof OrdersRoute
   '/shop': typeof ShopRoute
+  '/thank-you-slowdown': typeof ThankYouSlowdownRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
@@ -96,9 +110,11 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
+  '/join': typeof JoinRoute
   '/order-confirmed': typeof OrderConfirmedRoute
   '/orders': typeof OrdersRoute
   '/shop': typeof ShopRoute
+  '/thank-you-slowdown': typeof ThankYouSlowdownRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
@@ -110,9 +126,11 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
+  '/join': typeof JoinRoute
   '/order-confirmed': typeof OrderConfirmedRoute
   '/orders': typeof OrdersRoute
   '/shop': typeof ShopRoute
+  '/thank-you-slowdown': typeof ThankYouSlowdownRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
@@ -125,9 +143,11 @@ export interface FileRouteTypes {
     | '/cart'
     | '/events'
     | '/gallery'
+    | '/join'
     | '/order-confirmed'
     | '/orders'
     | '/shop'
+    | '/thank-you-slowdown'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
@@ -138,9 +158,11 @@ export interface FileRouteTypes {
     | '/cart'
     | '/events'
     | '/gallery'
+    | '/join'
     | '/order-confirmed'
     | '/orders'
     | '/shop'
+    | '/thank-you-slowdown'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
@@ -151,9 +173,11 @@ export interface FileRouteTypes {
     | '/cart'
     | '/events'
     | '/gallery'
+    | '/join'
     | '/order-confirmed'
     | '/orders'
     | '/shop'
+    | '/thank-you-slowdown'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
@@ -165,9 +189,11 @@ export interface RootRouteChildren {
   CartRoute: typeof CartRoute
   EventsRoute: typeof EventsRoute
   GalleryRoute: typeof GalleryRoute
+  JoinRoute: typeof JoinRoute
   OrderConfirmedRoute: typeof OrderConfirmedRoute
   OrdersRoute: typeof OrdersRoute
   ShopRoute: typeof ShopRoute
+  ThankYouSlowdownRoute: typeof ThankYouSlowdownRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthLogoutRoute: typeof AuthLogoutRoute
@@ -175,6 +201,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/thank-you-slowdown': {
+      id: '/thank-you-slowdown'
+      path: '/thank-you-slowdown'
+      fullPath: '/thank-you-slowdown'
+      preLoaderRoute: typeof ThankYouSlowdownRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -194,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/order-confirmed'
       fullPath: '/order-confirmed'
       preLoaderRoute: typeof OrderConfirmedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery': {
@@ -261,9 +301,11 @@ const rootRouteChildren: RootRouteChildren = {
   CartRoute: CartRoute,
   EventsRoute: EventsRoute,
   GalleryRoute: GalleryRoute,
+  JoinRoute: JoinRoute,
   OrderConfirmedRoute: OrderConfirmedRoute,
   OrdersRoute: OrdersRoute,
   ShopRoute: ShopRoute,
+  ThankYouSlowdownRoute: ThankYouSlowdownRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthLogoutRoute: AuthLogoutRoute,

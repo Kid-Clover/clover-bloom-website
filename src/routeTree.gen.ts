@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ThankYouSummer2026RaffleRouteImport } from './routes/thank-you-summer-2026-raffle'
 import { Route as ThankYouSlowdownRouteImport } from './routes/thank-you-slowdown'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as OrdersRouteImport } from './routes/orders'
@@ -23,6 +24,12 @@ import { Route as AuthLogoutRouteImport } from './routes/auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 
+const ThankYouSummer2026RaffleRoute =
+  ThankYouSummer2026RaffleRouteImport.update({
+    id: '/thank-you-summer-2026-raffle',
+    path: '/thank-you-summer-2026-raffle',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ThankYouSlowdownRoute = ThankYouSlowdownRouteImport.update({
   id: '/thank-you-slowdown',
   path: '/thank-you-slowdown',
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/orders': typeof OrdersRoute
   '/shop': typeof ShopRoute
   '/thank-you-slowdown': typeof ThankYouSlowdownRoute
+  '/thank-you-summer-2026-raffle': typeof ThankYouSummer2026RaffleRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
   '/orders': typeof OrdersRoute
   '/shop': typeof ShopRoute
   '/thank-you-slowdown': typeof ThankYouSlowdownRoute
+  '/thank-you-summer-2026-raffle': typeof ThankYouSummer2026RaffleRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
@@ -131,6 +140,7 @@ export interface FileRoutesById {
   '/orders': typeof OrdersRoute
   '/shop': typeof ShopRoute
   '/thank-you-slowdown': typeof ThankYouSlowdownRoute
+  '/thank-you-summer-2026-raffle': typeof ThankYouSummer2026RaffleRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/shop'
     | '/thank-you-slowdown'
+    | '/thank-you-summer-2026-raffle'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/shop'
     | '/thank-you-slowdown'
+    | '/thank-you-summer-2026-raffle'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
@@ -178,6 +190,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/shop'
     | '/thank-you-slowdown'
+    | '/thank-you-summer-2026-raffle'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
@@ -194,6 +207,7 @@ export interface RootRouteChildren {
   OrdersRoute: typeof OrdersRoute
   ShopRoute: typeof ShopRoute
   ThankYouSlowdownRoute: typeof ThankYouSlowdownRoute
+  ThankYouSummer2026RaffleRoute: typeof ThankYouSummer2026RaffleRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthLogoutRoute: typeof AuthLogoutRoute
@@ -201,6 +215,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/thank-you-summer-2026-raffle': {
+      id: '/thank-you-summer-2026-raffle'
+      path: '/thank-you-summer-2026-raffle'
+      fullPath: '/thank-you-summer-2026-raffle'
+      preLoaderRoute: typeof ThankYouSummer2026RaffleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/thank-you-slowdown': {
       id: '/thank-you-slowdown'
       path: '/thank-you-slowdown'
@@ -306,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrdersRoute: OrdersRoute,
   ShopRoute: ShopRoute,
   ThankYouSlowdownRoute: ThankYouSlowdownRoute,
+  ThankYouSummer2026RaffleRoute: ThankYouSummer2026RaffleRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthLogoutRoute: AuthLogoutRoute,

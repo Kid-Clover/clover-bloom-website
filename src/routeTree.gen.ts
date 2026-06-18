@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ThankYouSummer2026RaffleRouteImport } from './routes/thank-you-summer-2026-raffle'
 import { Route as ThankYouSlowdownRouteImport } from './routes/thank-you-slowdown'
+import { Route as ThankYouEnoRiverRouteImport } from './routes/thank-you-eno-river'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as OrderConfirmedRouteImport } from './routes/order-confirmed'
@@ -33,6 +34,11 @@ const ThankYouSummer2026RaffleRoute =
 const ThankYouSlowdownRoute = ThankYouSlowdownRouteImport.update({
   id: '/thank-you-slowdown',
   path: '/thank-you-slowdown',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ThankYouEnoRiverRoute = ThankYouEnoRiverRouteImport.update({
+  id: '/thank-you-eno-river',
+  path: '/thank-you-eno-river',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/order-confirmed': typeof OrderConfirmedRoute
   '/orders': typeof OrdersRoute
   '/shop': typeof ShopRoute
+  '/thank-you-eno-river': typeof ThankYouEnoRiverRoute
   '/thank-you-slowdown': typeof ThankYouSlowdownRoute
   '/thank-you-summer-2026-raffle': typeof ThankYouSummer2026RaffleRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/order-confirmed': typeof OrderConfirmedRoute
   '/orders': typeof OrdersRoute
   '/shop': typeof ShopRoute
+  '/thank-you-eno-river': typeof ThankYouEnoRiverRoute
   '/thank-you-slowdown': typeof ThankYouSlowdownRoute
   '/thank-you-summer-2026-raffle': typeof ThankYouSummer2026RaffleRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/order-confirmed': typeof OrderConfirmedRoute
   '/orders': typeof OrdersRoute
   '/shop': typeof ShopRoute
+  '/thank-you-eno-river': typeof ThankYouEnoRiverRoute
   '/thank-you-slowdown': typeof ThankYouSlowdownRoute
   '/thank-you-summer-2026-raffle': typeof ThankYouSummer2026RaffleRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/order-confirmed'
     | '/orders'
     | '/shop'
+    | '/thank-you-eno-river'
     | '/thank-you-slowdown'
     | '/thank-you-summer-2026-raffle'
     | '/auth/callback'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/order-confirmed'
     | '/orders'
     | '/shop'
+    | '/thank-you-eno-river'
     | '/thank-you-slowdown'
     | '/thank-you-summer-2026-raffle'
     | '/auth/callback'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/order-confirmed'
     | '/orders'
     | '/shop'
+    | '/thank-you-eno-river'
     | '/thank-you-slowdown'
     | '/thank-you-summer-2026-raffle'
     | '/auth/callback'
@@ -206,6 +218,7 @@ export interface RootRouteChildren {
   OrderConfirmedRoute: typeof OrderConfirmedRoute
   OrdersRoute: typeof OrdersRoute
   ShopRoute: typeof ShopRoute
+  ThankYouEnoRiverRoute: typeof ThankYouEnoRiverRoute
   ThankYouSlowdownRoute: typeof ThankYouSlowdownRoute
   ThankYouSummer2026RaffleRoute: typeof ThankYouSummer2026RaffleRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -227,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/thank-you-slowdown'
       fullPath: '/thank-you-slowdown'
       preLoaderRoute: typeof ThankYouSlowdownRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/thank-you-eno-river': {
+      id: '/thank-you-eno-river'
+      path: '/thank-you-eno-river'
+      fullPath: '/thank-you-eno-river'
+      preLoaderRoute: typeof ThankYouEnoRiverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -326,6 +346,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrderConfirmedRoute: OrderConfirmedRoute,
   OrdersRoute: OrdersRoute,
   ShopRoute: ShopRoute,
+  ThankYouEnoRiverRoute: ThankYouEnoRiverRoute,
   ThankYouSlowdownRoute: ThankYouSlowdownRoute,
   ThankYouSummer2026RaffleRoute: ThankYouSummer2026RaffleRoute,
   AuthCallbackRoute: AuthCallbackRoute,

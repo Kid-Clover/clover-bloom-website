@@ -28,6 +28,16 @@ function ThankYouEnoRiverPage() {
           for all our upcoming markets and pop-ups.
         </p>
 
+        <div className="rounded-3xl border-2 border-dashed border-clover bg-clover/10 p-8 mb-8">
+          <p className="font-marker text-base text-clover mb-2">your welcome gift</p>
+          <p className="font-display text-4xl text-brown mb-1">10% off</p>
+          <p className="text-sm text-foreground/60 mb-4">your next online order</p>
+          <div className="bg-white rounded-xl border-2 border-brown px-6 py-3 inline-block">
+            <span className="font-marker text-2xl text-brown tracking-widest">SOLSTICE123</span>
+          </div>
+          <p className="text-xs text-foreground/50 mt-3">Enter this code at checkout on our website</p>
+        </div>
+
         <Link
           to="/shop"
           className="inline-block font-marker text-xl text-brown border-2 border-brown rounded-full px-8 py-3 hover:bg-brown hover:text-cream transition-colors shadow-doodle"

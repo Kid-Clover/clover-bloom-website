@@ -19,11 +19,17 @@ import { Route as JoinRouteImport } from './routes/join'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AuthLogoutRouteImport } from './routes/auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
+import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminLandingPagesRouteImport } from './routes/admin/landing-pages'
+import { Route as AdminEventsRouteImport } from './routes/admin/events'
+import { Route as AdminCampaignsRouteImport } from './routes/admin/campaigns'
 
 const ThankYouSummer2026RaffleRoute =
   ThankYouSummer2026RaffleRouteImport.update({
@@ -76,6 +82,11 @@ const CartRoute = CartRouteImport.update({
   path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -85,6 +96,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AuthLogoutRoute = AuthLogoutRouteImport.update({
   id: '/auth/logout',
@@ -101,10 +117,31 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProductsRoute = AdminProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLandingPagesRoute = AdminLandingPagesRouteImport.update({
+  id: '/landing-pages',
+  path: '/landing-pages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEventsRoute = AdminEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsRoute = AdminCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/cart': typeof CartRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
@@ -115,9 +152,14 @@ export interface FileRoutesByFullPath {
   '/thank-you-eno-river': typeof ThankYouEnoRiverRoute
   '/thank-you-slowdown': typeof ThankYouSlowdownRoute
   '/thank-you-summer-2026-raffle': typeof ThankYouSummer2026RaffleRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
+  '/admin/events': typeof AdminEventsRoute
+  '/admin/landing-pages': typeof AdminLandingPagesRoute
+  '/admin/products': typeof AdminProductsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -132,14 +174,20 @@ export interface FileRoutesByTo {
   '/thank-you-eno-river': typeof ThankYouEnoRiverRoute
   '/thank-you-slowdown': typeof ThankYouSlowdownRoute
   '/thank-you-summer-2026-raffle': typeof ThankYouSummer2026RaffleRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
+  '/admin/events': typeof AdminEventsRoute
+  '/admin/landing-pages': typeof AdminLandingPagesRoute
+  '/admin/products': typeof AdminProductsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/cart': typeof CartRoute
   '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
@@ -150,15 +198,21 @@ export interface FileRoutesById {
   '/thank-you-eno-river': typeof ThankYouEnoRiverRoute
   '/thank-you-slowdown': typeof ThankYouSlowdownRoute
   '/thank-you-summer-2026-raffle': typeof ThankYouSummer2026RaffleRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
+  '/admin/events': typeof AdminEventsRoute
+  '/admin/landing-pages': typeof AdminLandingPagesRoute
+  '/admin/products': typeof AdminProductsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/cart'
     | '/events'
     | '/gallery'
@@ -169,9 +223,14 @@ export interface FileRouteTypes {
     | '/thank-you-eno-river'
     | '/thank-you-slowdown'
     | '/thank-you-summer-2026-raffle'
+    | '/admin/campaigns'
+    | '/admin/events'
+    | '/admin/landing-pages'
+    | '/admin/products'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -186,13 +245,19 @@ export interface FileRouteTypes {
     | '/thank-you-eno-river'
     | '/thank-you-slowdown'
     | '/thank-you-summer-2026-raffle'
+    | '/admin/campaigns'
+    | '/admin/events'
+    | '/admin/landing-pages'
+    | '/admin/products'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/cart'
     | '/events'
     | '/gallery'
@@ -203,14 +268,20 @@ export interface FileRouteTypes {
     | '/thank-you-eno-river'
     | '/thank-you-slowdown'
     | '/thank-you-summer-2026-raffle'
+    | '/admin/campaigns'
+    | '/admin/events'
+    | '/admin/landing-pages'
+    | '/admin/products'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CartRoute: typeof CartRoute
   EventsRoute: typeof EventsRoute
   GalleryRoute: typeof GalleryRoute
@@ -298,6 +369,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -311,6 +389,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/auth/logout': {
       id: '/auth/logout'
@@ -333,12 +418,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/products': {
+      id: '/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/landing-pages': {
+      id: '/admin/landing-pages'
+      path: '/landing-pages'
+      fullPath: '/admin/landing-pages'
+      preLoaderRoute: typeof AdminLandingPagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/events': {
+      id: '/admin/events'
+      path: '/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AdminEventsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns': {
+      id: '/admin/campaigns'
+      path: '/campaigns'
+      fullPath: '/admin/campaigns'
+      preLoaderRoute: typeof AdminCampaignsRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminCampaignsRoute: typeof AdminCampaignsRoute
+  AdminEventsRoute: typeof AdminEventsRoute
+  AdminLandingPagesRoute: typeof AdminLandingPagesRoute
+  AdminProductsRoute: typeof AdminProductsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCampaignsRoute: AdminCampaignsRoute,
+  AdminEventsRoute: AdminEventsRoute,
+  AdminLandingPagesRoute: AdminLandingPagesRoute,
+  AdminProductsRoute: AdminProductsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   CartRoute: CartRoute,
   EventsRoute: EventsRoute,
   GalleryRoute: GalleryRoute,
@@ -356,12 +488,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

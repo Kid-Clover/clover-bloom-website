@@ -1,4 +1,4 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import { Header, Footer } from "@/components/site-chrome";
 import { getCurrentUser } from "@/lib/auth.server";
 import { CartProvider } from "@/context/cart";
@@ -97,6 +97,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const user = Route.useLoaderData();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  if (pathname.startsWith("/admin")) {
+    return <Outlet />;
+  }
+
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col">

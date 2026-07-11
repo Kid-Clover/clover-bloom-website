@@ -3,8 +3,8 @@ import { handleAuthCallback } from "@/lib/auth.server";
 
 export const Route = createFileRoute("/auth/callback")({
   loader: async () => {
-    await handleAuthCallback();
-    throw redirect({ to: "/", statusCode: 302 });
+    const returnTo = await handleAuthCallback();
+    throw redirect({ href: returnTo, statusCode: 302 });
   },
   component: () => null,
 });

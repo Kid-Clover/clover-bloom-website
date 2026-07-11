@@ -5,7 +5,7 @@ import { LayoutDashboard, Calendar, ShoppingBag, Megaphone, FileText, LogOut } f
 export const Route = createFileRoute("/admin")({
   loader: async () => {
     const { user, isAdmin } = await getAdminStatus();
-    if (!user) throw redirect({ to: "/auth/login", statusCode: 302 });
+    if (!user) throw redirect({ to: "/auth/login", search: { returnTo: "/admin" }, statusCode: 302 });
     return { user, isAdmin };
   },
   component: AdminLayout,

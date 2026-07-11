@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { Auth0, generateState, generateCodeVerifier, decodeIdToken } from "arctic";
-import { setCookie, getCookie } from "@tanstack/react-start/server";
+import { setCookie, getCookie, deleteCookie } from "@tanstack/react-start/server";
 import { env } from "cloudflare:workers";
 import { getSessionUser, setSessionUser, clearSessionCookie, type SessionUser } from "./session.server";
 
@@ -9,7 +9,7 @@ export const getCurrentUser = createServerFn().handler(async (): Promise<Session
   return getSessionUser();
 });
 
-export const startLoginFlow = createServerFn().handler(async (): Promise<string> => {
+export const startLoginFlow = createServerFn().handler(async ({ data }: { data: { returnTo?: string } }): Promise<string> => {
   const request = getRequest();
   const e = env as Cloudflare.Env;
   const callbackUrl = new URL("/auth/callback", request.url).toString();
@@ -21,10 +21,16 @@ export const startLoginFlow = createServerFn().handler(async (): Promise<string>
   setCookie("auth_state", state, cookieOpts);
   setCookie("auth_cv", codeVerifier, cookieOpts);
 
+  // Only store safe relative paths to prevent open redirects
+  const returnTo = data?.returnTo;
+  if (returnTo && returnTo.startsWith("/") && !returnTo.startsWith("//")) {
+    setCookie("auth_return_to", returnTo, cookieOpts);
+  }
+
   return auth0.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]).toString();
 });
 
-export const handleAuthCallback = createServerFn().handler(async (): Promise<boolean> => {
+export const handleAuthCallback = createServerFn().handler(async (): Promise<string> => {
   const request = getRequest();
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
@@ -32,8 +38,8 @@ export const handleAuthCallback = createServerFn().handler(async (): Promise<boo
   const storedState = getCookie("auth_state");
   const codeVerifier = getCookie("auth_cv");
 
-  if (!code || !returnedState || !storedState || !codeVerifier) return false;
-  if (returnedState !== storedState) return false;
+  if (!code || !returnedState || !storedState || !codeVerifier) return "/";
+  if (returnedState !== storedState) return "/";
 
   try {
     const e = env as Cloudflare.Env;
@@ -84,6 +90,9 @@ export const handleAuthCallback = createServerFn().handler(async (): Promise<boo
       picture: claims.picture ?? null,
     });
 
+    const returnTo = getCookie("auth_return_to") ?? "/";
+    deleteCookie("auth_return_to");
+
     // Mailchimp: upsert member + apply "website" tag (best-effort)
     try {
       const [firstName, ...rest] = (claims.name ?? "").trim().split(" ");
@@ -118,9 +127,9 @@ export const handleAuthCallback = createServerFn().handler(async (): Promise<boo
       // non-fatal — login still succeeds
     }
 
-    return true;
+    return returnTo;
   } catch {
-    return false;
+    return "/";
   }
 });
 

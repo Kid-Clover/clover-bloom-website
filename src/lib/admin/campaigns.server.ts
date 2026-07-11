@@ -8,6 +8,8 @@ export type AdminCampaign = {
   cta_text: string | null;
   tags: string | null;
   redirect_url: string | null;
+  landing_page_id: number | null;
+  landing_page_slug: string | null;
   created_at: string;
 };
 
@@ -18,15 +20,18 @@ export type CampaignInput = {
   cta_text?: string;
   tags?: string;
   redirect_url?: string;
+  landing_page_id?: number;
 };
 
 export const adminGetAllCampaigns = createServerFn().handler(async () => {
   const db = (env as Cloudflare.Env).DB;
   const { results } = await db
     .prepare(
-      `SELECT id, title, subtitle, cta_text, tags, redirect_url, created_at
-       FROM campaigns
-       ORDER BY created_at DESC`
+      `SELECT c.id, c.title, c.subtitle, c.cta_text, c.tags, c.redirect_url,
+              c.landing_page_id, lp.slug AS landing_page_slug, c.created_at
+       FROM campaigns c
+       LEFT JOIN landing_pages lp ON lp.id = c.landing_page_id
+       ORDER BY c.created_at DESC`
     )
     .all<AdminCampaign>();
   return results;
@@ -39,7 +44,8 @@ export const adminSaveCampaign = createServerFn().handler(
       await db
         .prepare(
           `UPDATE campaigns
-           SET title = ?, subtitle = ?, cta_text = ?, tags = ?, redirect_url = ?
+           SET title = ?, subtitle = ?, cta_text = ?, tags = ?,
+               redirect_url = ?, landing_page_id = ?
            WHERE id = ?`
         )
         .bind(
@@ -48,21 +54,23 @@ export const adminSaveCampaign = createServerFn().handler(
           data.cta_text ?? null,
           data.tags ?? null,
           data.redirect_url ?? null,
+          data.landing_page_id ?? null,
           data.id
         )
         .run();
     } else {
       await db
         .prepare(
-          `INSERT INTO campaigns (title, subtitle, cta_text, tags, redirect_url)
-           VALUES (?, ?, ?, ?, ?)`
+          `INSERT INTO campaigns (title, subtitle, cta_text, tags, redirect_url, landing_page_id)
+           VALUES (?, ?, ?, ?, ?, ?)`
         )
         .bind(
           data.title,
           data.subtitle ?? null,
           data.cta_text ?? null,
           data.tags ?? null,
-          data.redirect_url ?? null
+          data.redirect_url ?? null,
+          data.landing_page_id ?? null
         )
         .run();
     }

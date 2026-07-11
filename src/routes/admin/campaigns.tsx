@@ -5,17 +5,25 @@ import {
   adminGetAllCampaigns, adminSaveCampaign, adminDeleteCampaign,
   type AdminCampaign,
 } from "@/lib/admin/campaigns.server";
+import { adminGetAllLandingPages, type LandingPage } from "@/lib/admin/landing-pages.server";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const BASE_URL = "https://drinkkidclover.com";
 
 export const Route = createFileRoute("/admin/campaigns")({
-  loader: async () => adminGetAllCampaigns(),
+  loader: async () => {
+    const [campaigns, landingPages] = await Promise.all([
+      adminGetAllCampaigns(),
+      adminGetAllLandingPages(),
+    ]);
+    return { campaigns, landingPages };
+  },
   component: AdminCampaigns,
 });
 
@@ -53,6 +61,7 @@ type FormState = {
   cta_text: string;
   tags: string;
   redirect_url: string;
+  landing_page_id: string; // "none" or numeric string
 };
 
 const BLANK: FormState = {
@@ -61,6 +70,7 @@ const BLANK: FormState = {
   cta_text: "",
   tags: "",
   redirect_url: "",
+  landing_page_id: "none",
 };
 
 function campaignToForm(c: AdminCampaign): FormState {
@@ -70,13 +80,14 @@ function campaignToForm(c: AdminCampaign): FormState {
     cta_text: c.cta_text ?? "",
     tags: c.tags ?? "",
     redirect_url: c.redirect_url ?? "",
+    landing_page_id: c.landing_page_id ? String(c.landing_page_id) : "none",
   };
 }
 
 // ── page ───────────────────────────────────────────────────────────────────
 
 function AdminCampaigns() {
-  const campaigns = Route.useLoaderData();
+  const { campaigns, landingPages } = Route.useLoaderData();
   const router = useRouter();
 
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -106,6 +117,7 @@ function AdminCampaigns() {
     e.preventDefault();
     setSaving(true);
     try {
+      const lpId = form.landing_page_id !== "none" ? Number(form.landing_page_id) : undefined;
       await adminSaveCampaign({
         data: {
           id: editingId ?? undefined,
@@ -114,6 +126,7 @@ function AdminCampaigns() {
           cta_text: form.cta_text || undefined,
           tags: form.tags || undefined,
           redirect_url: form.redirect_url || undefined,
+          landing_page_id: lpId,
         },
       });
       setSheetOpen(false);
@@ -160,7 +173,7 @@ function AdminCampaigns() {
             <tr className="border-b border-gray-100 bg-gray-50">
               <th className="text-left px-4 py-3 font-medium text-gray-600">Campaign</th>
               <th className="text-left px-4 py-3 font-medium text-gray-600">Tags</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Redirect URL</th>
+              <th className="text-left px-4 py-3 font-medium text-gray-600">Destination</th>
               <th className="text-left px-4 py-3 font-medium text-gray-600">Created</th>
               <th className="w-28 px-4 py-3" />
             </tr>
@@ -201,7 +214,16 @@ function AdminCampaigns() {
                       </div>
                     </td>
                     <td className="px-4 py-3 max-w-[200px]">
-                      {c.redirect_url ? (
+                      {c.landing_page_slug ? (
+                        <a
+                          href={`/lp/${c.landing_page_slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-purple-600 hover:underline truncate block"
+                        >
+                          /lp/{c.landing_page_slug}
+                        </a>
+                      ) : c.redirect_url ? (
                         <a
                           href={c.redirect_url}
                           target="_blank"
@@ -300,6 +322,34 @@ function AdminCampaigns() {
                 className="mt-1"
               />
               <p className="text-xs text-gray-400 mt-1">Applied to the subscriber in Mailchimp when they sign up via this campaign</p>
+            </div>
+
+            <div>
+              <Label htmlFor="landing_page">Landing Page</Label>
+              <Select
+                value={form.landing_page_id}
+                onValueChange={(v) => {
+                  set("landing_page_id", v);
+                  if (v !== "none") {
+                    const lp = landingPages.find((p: LandingPage) => String(p.id) === v);
+                    if (lp) set("redirect_url", `${BASE_URL}/lp/${lp.slug}`);
+                  }
+                }}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="None — use redirect URL below" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None — use redirect URL below</SelectItem>
+                  {landingPages.map((lp: LandingPage) => (
+                    <SelectItem key={lp.id} value={String(lp.id)}>
+                      {lp.icon ? `${lp.icon} ` : ""}{lp.title}
+                      <span className="ml-1 text-gray-400 font-mono text-xs">/{lp.slug}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-400 mt-1">Selecting a landing page auto-fills the redirect URL</p>
             </div>
 
             <div>

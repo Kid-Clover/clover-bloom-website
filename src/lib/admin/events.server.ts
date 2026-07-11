@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import { requireAdmin } from "../admin.server";
 
 export type AdminEvent = {
   id: number;
@@ -33,6 +34,7 @@ export type EventInput = {
 };
 
 export const adminGetAllEvents = createServerFn().handler(async () => {
+  await requireAdmin();
   const db = (env as Cloudflare.Env).DB;
   const { results } = await db
     .prepare(
@@ -49,6 +51,7 @@ export const adminGetAllEvents = createServerFn().handler(async () => {
 });
 
 export const adminGetEventTypes = createServerFn().handler(async () => {
+  await requireAdmin();
   const db = (env as Cloudflare.Env).DB;
   const { results } = await db
     .prepare("SELECT id, name FROM event_types ORDER BY name")
@@ -58,6 +61,7 @@ export const adminGetEventTypes = createServerFn().handler(async () => {
 
 export const adminSaveEvent = createServerFn().handler(
   async ({ data }: { data: EventInput }) => {
+    await requireAdmin();
     const db = (env as Cloudflare.Env).DB;
     if (data.id) {
       await db
@@ -101,6 +105,7 @@ export const adminSaveEvent = createServerFn().handler(
 
 export const adminDeleteEvent = createServerFn().handler(
   async ({ data }: { data: { id: number } }) => {
+    await requireAdmin();
     const db = (env as Cloudflare.Env).DB;
     await db.prepare("DELETE FROM events WHERE id = ?").bind(data.id).run();
   }

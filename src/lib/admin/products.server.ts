@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import { requireAdmin } from "../admin.server";
 
 export type AdminProduct = {
   id: string;
@@ -35,6 +36,7 @@ export type ProductInput = {
 };
 
 export const adminGetAllProducts = createServerFn().handler(async () => {
+  await requireAdmin();
   const db = (env as Cloudflare.Env).DB;
   const { results } = await db
     .prepare(
@@ -50,6 +52,7 @@ export const adminGetAllProducts = createServerFn().handler(async () => {
 
 export const adminSaveProduct = createServerFn().handler(
   async ({ data }: { data: ProductInput }) => {
+    await requireAdmin();
     const db = (env as Cloudflare.Env).DB;
     const ingredients = JSON.stringify(data.ingredients);
 
@@ -92,6 +95,7 @@ export const adminSaveProduct = createServerFn().handler(
 
 export const adminDeleteProduct = createServerFn().handler(
   async ({ data }: { data: { id: string } }) => {
+    await requireAdmin();
     const db = (env as Cloudflare.Env).DB;
     await db.prepare("DELETE FROM products WHERE id = ?").bind(data.id).run();
   }

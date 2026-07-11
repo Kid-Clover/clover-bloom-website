@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import { requireAdmin } from "../admin.server";
 import type { LandingPage } from "../landing-pages.server";
 
 export type { LandingPage };
@@ -20,6 +21,7 @@ export type LandingPageInput = {
 };
 
 export const adminGetAllLandingPages = createServerFn().handler(async () => {
+  await requireAdmin();
   const db = (env as Cloudflare.Env).DB;
   const { results } = await db
     .prepare("SELECT * FROM landing_pages ORDER BY created_at DESC")
@@ -29,6 +31,7 @@ export const adminGetAllLandingPages = createServerFn().handler(async () => {
 
 export const adminSaveLandingPage = createServerFn().handler(
   async ({ data }: { data: LandingPageInput }) => {
+    await requireAdmin();
     const db = (env as Cloudflare.Env).DB;
     if (data.id) {
       await db
@@ -66,6 +69,7 @@ export const adminSaveLandingPage = createServerFn().handler(
 
 export const adminDeleteLandingPage = createServerFn().handler(
   async ({ data }: { data: { id: number } }) => {
+    await requireAdmin();
     const db = (env as Cloudflare.Env).DB;
     await db.prepare("DELETE FROM landing_pages WHERE id = ?").bind(data.id).run();
   }

@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import { requireAdmin } from "../admin.server";
 
 export type AdminCampaign = {
   id: number;
@@ -24,6 +25,7 @@ export type CampaignInput = {
 };
 
 export const adminGetAllCampaigns = createServerFn().handler(async () => {
+  await requireAdmin();
   const db = (env as Cloudflare.Env).DB;
   const { results } = await db
     .prepare(
@@ -39,6 +41,7 @@ export const adminGetAllCampaigns = createServerFn().handler(async () => {
 
 export const adminSaveCampaign = createServerFn().handler(
   async ({ data }: { data: CampaignInput }) => {
+    await requireAdmin();
     const db = (env as Cloudflare.Env).DB;
     if (data.id) {
       await db
@@ -79,6 +82,7 @@ export const adminSaveCampaign = createServerFn().handler(
 
 export const adminDeleteCampaign = createServerFn().handler(
   async ({ data }: { data: { id: number } }) => {
+    await requireAdmin();
     const db = (env as Cloudflare.Env).DB;
     await db.prepare("DELETE FROM campaigns WHERE id = ?").bind(data.id).run();
   }

@@ -22,7 +22,7 @@ export const Route = createFileRoute("/admin/products")({
 // ── constants ──────────────────────────────────────────────────────────────
 
 const COLORS = [
-  { value: "clover",        label: "Clover",       dot: "bg-green-500" },
+  { value: "clover",        label: "Clover",       dot: "bg-pink-500" },
   { value: "lavender",      label: "Lavender",     dot: "bg-purple-400" },
   { value: "yellow-crayon", label: "Yellow Crayon",dot: "bg-yellow-400" },
   { value: "olive",         label: "Olive",        dot: "bg-lime-800" },

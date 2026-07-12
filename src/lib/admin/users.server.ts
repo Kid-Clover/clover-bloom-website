@@ -183,10 +183,9 @@ export const adminGetOrdersForUser = createServerFn().handler(
 );
 
 function mapOrder(o: any): AdminUserOrder {
-  const completedRefunds = (o.refunds ?? []).filter((r: any) => r.state === "COMPLETED");
-  const refundedAmount = completedRefunds.reduce(
-    (sum: number, r: any) => sum + (r.amount_money?.amount ?? 0), 0
-  );
+  const totalAmount: number = o.total_money?.amount ?? 0;
+  const netAmount: number = o.net_amounts?.total_money?.amount ?? totalAmount;
+  const refundedAmount = Math.max(0, totalAmount - netAmount);
   return {
     id: o.id,
     createdAt: o.created_at,

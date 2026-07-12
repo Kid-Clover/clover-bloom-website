@@ -97,7 +97,7 @@ function EventsPage() {
 
   useEffect(() => {
     if (eventId) {
-      const found = events.find((e) => e.id === eventId) ?? null;
+      const found = events.find((e: KCEvent) => e.id === eventId) ?? null;
       setActive(found);
     }
   }, [eventId, events]);
@@ -225,7 +225,7 @@ function EventsPage() {
         <div className="mt-12">
           <h2 className="font-display text-3xl text-brown mb-6">All upcoming</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {events.map((e) => {
+            {events.map((e: KCEvent) => {
               const dt = new Date(e.start_time);
               return (
                 <button

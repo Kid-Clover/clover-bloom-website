@@ -58,17 +58,17 @@ function CartPage() {
   const [fulfillment, setFulfillment] = useState<"ship" | "pickup">("ship");
   const [selectedPickupId, setSelectedPickupId] = useState<number | null>(null);
 
-  const selectedPickup = pickupEvents.find((e) => e.id === selectedPickupId) ?? null;
+  const selectedPickup = pickupEvents.find((e: PickupEvent) => e.id === selectedPickupId) ?? null;
 
   const productMap = Object.fromEntries(
-    products.map((p) => [
+    products.map((p: Product) => [
       p.id,
       { name: p.name, squareVariationId: p.squareVariationId, price: p.price },
     ])
   );
 
   const itemsWithProducts = cart.items
-    .map((item, index) => ({ item, index, product: products.find((p) => p.id === item.productId) }))
+    .map((item, index) => ({ item, index, product: products.find((p: Product) => p.id === item.productId) }))
     .filter((x): x is typeof x & { product: Product } => !!x.product);
 
   const subtotal = itemsWithProducts.reduce(
@@ -214,7 +214,7 @@ function CartPage() {
               {pickupEvents.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-3">No upcoming pickup events — check back soon!</p>
               ) : (
-                pickupEvents.map((e) => {
+                pickupEvents.map((e: PickupEvent) => {
                   const dt = new Date(e.start_time);
                   const timeStr = dt.toLocaleTimeString("en", { hour: "numeric", minute: "2-digit" });
                   const isSelected = selectedPickupId === e.id;

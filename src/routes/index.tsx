@@ -8,7 +8,7 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
 import { products } from "@/data/products";
-import { getUpcomingEventsPreview } from "@/lib/events.server";
+import { getUpcomingEventsPreview, type KCEvent } from "@/lib/events.server";
 import heroBasket from "@/assets/hero-basket.jpg";
 import heroKidFlower1 from "@/assets/hero-kid-flower-1.jpg";
 import heroKidFlower2 from "@/assets/hero-kid-flower-2.jpg";
@@ -177,7 +177,7 @@ function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {upcoming.map((e) => {
+            {upcoming.map((e: KCEvent) => {
               const dt = new Date(e.start_time);
               const timeStr = dt.toLocaleTimeString("en", {
                 hour: "numeric",

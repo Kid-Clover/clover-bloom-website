@@ -260,7 +260,7 @@ function ShopPage() {
   const navigate = useNavigate({ from: "/shop" });
 
   const active = useMemo(
-    () => products.find((p) => p.id === productId) ?? null,
+    () => products.find((p: Product) => p.id === productId) ?? null,
     [products, productId]
   );
 
@@ -288,7 +288,7 @@ function ShopPage() {
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
+          {products.map((p: Product) => (
             <button
               key={p.id}
               onClick={() => openProduct(p)}
@@ -326,7 +326,7 @@ function ShopPage() {
           {active && (
             <ProductModal
               product={active}
-              colorBg={colorBg[active.color]}
+              colorBg={colorBg[active.color as Product["color"]]}
               onClose={closeProduct}
             />
           )}

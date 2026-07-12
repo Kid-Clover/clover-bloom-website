@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import logoStacked from "@/assets/logo-stacked.png";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useState } from "react";
-import { Menu, Package, ShoppingCart, User, X } from "lucide-react";
+import { LayoutDashboard, Menu, Package, ShoppingCart, User, X } from "lucide-react";
 import type { SessionUser } from "@/lib/session.server";
 import { useCart } from "@/context/cart";
 import {
@@ -41,7 +41,7 @@ function Avatar({ user }: { user: SessionUser }) {
   );
 }
 
-function DesktopUserWidget({ user }: { user: SessionUser | null }) {
+function DesktopUserWidget({ user, isAdmin }: { user: SessionUser | null; isAdmin: boolean }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="cursor-pointer focus:outline-none text-foreground hover:text-primary transition-colors">
@@ -50,6 +50,13 @@ function DesktopUserWidget({ user }: { user: SessionUser | null }) {
       <DropdownMenuContent align="end">
         {user ? (
           <>
+            {isAdmin && (
+              <DropdownMenuItem asChild className="!text-2xl font-marker">
+                <Link to="/admin" className="cursor-pointer w-full">
+                  Administration
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem asChild className="!text-2xl font-marker">
               <Link to="/orders" className="cursor-pointer w-full">
                 My Orders
@@ -92,7 +99,7 @@ function CartIcon({ onClick }: { onClick?: () => void }) {
   );
 }
 
-function MobileUserWidget({ user, onClose }: { user: SessionUser | null; onClose: () => void }) {
+function MobileUserWidget({ user, isAdmin, onClose }: { user: SessionUser | null; isAdmin: boolean; onClose: () => void }) {
   if (!user) {
     return (
       <Link
@@ -108,6 +115,16 @@ function MobileUserWidget({ user, onClose }: { user: SessionUser | null; onClose
 
   return (
     <div className="flex flex-col gap-3">
+      {isAdmin && (
+        <Link
+          to="/admin"
+          onClick={onClose}
+          className="font-marker text-2xl text-foreground hover:text-primary flex items-center gap-3"
+        >
+          <LayoutDashboard size={22} />
+          Administration
+        </Link>
+      )}
       <Link
         to="/orders"
         onClick={onClose}
@@ -128,7 +145,7 @@ function MobileUserWidget({ user, onClose }: { user: SessionUser | null; onClose
   );
 }
 
-export function Header({ user }: { user: SessionUser | null }) {
+export function Header({ user, isAdmin }: { user: SessionUser | null; isAdmin: boolean }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -151,7 +168,7 @@ export function Header({ user }: { user: SessionUser | null }) {
             </Link>
           ))}
           <CartIcon />
-          <DesktopUserWidget user={user} />
+          <DesktopUserWidget user={user} isAdmin={isAdmin} />
         </nav>
 
         <div className="md:hidden flex items-center gap-3">
@@ -180,7 +197,7 @@ export function Header({ user }: { user: SessionUser | null }) {
               {item.label}
             </Link>
           ))}
-          <MobileUserWidget user={user} onClose={() => setOpen(false)} />
+          <MobileUserWidget user={user} isAdmin={isAdmin} onClose={() => setOpen(false)} />
         </nav>
       )}
     </header>

@@ -1,6 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import { Header, Footer } from "@/components/site-chrome";
-import { getCurrentUser } from "@/lib/auth.server";
+import { getAdminStatus } from "@/lib/admin.server";
 import { CartProvider } from "@/context/cart";
 
 import appCss from "../styles.css?url";
@@ -28,7 +28,7 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  loader: () => getCurrentUser(),
+  loader: () => getAdminStatus(),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -96,7 +96,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  const user = Route.useLoaderData();
+  const { user, isAdmin } = Route.useLoaderData();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   if (pathname.startsWith("/admin")) {
@@ -106,7 +106,7 @@ function RootComponent() {
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col">
-        <Header user={user} />
+        <Header user={user} isAdmin={isAdmin} />
         <main className="flex-1">
           <Outlet />
         </main>

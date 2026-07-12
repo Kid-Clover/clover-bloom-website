@@ -195,7 +195,13 @@ function AdminUsers() {
                       {u.order_count} order{u.order_count !== 1 ? "s" : ""}
                     </button>
                   ) : (
-                    <span className="text-xs text-gray-300">—</span>
+                    <button
+                      onClick={() => setOrdersUser(u)}
+                      className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded px-2 py-1 transition-colors"
+                    >
+                      <ShoppingBag size={11} />
+                      View
+                    </button>
                   )}
                 </td>
               </tr>

@@ -3,7 +3,6 @@ import { env } from "cloudflare:workers";
 import { requireAdmin } from "./require-admin.server";
 
 const SQUARE_API = "https://connect.squareup.com/v2";
-const LOCATION_ID = "L4TWM1M1RC52V";
 
 export type AdminUser = {
   id: number;
@@ -94,21 +93,30 @@ export const adminGetOrdersForUser = createServerFn().handler(
     }
 
     if (customerIds.length > 0) {
-      const ordersRes = await fetch(`${SQUARE_API}/orders/search`, {
-        method: "POST", headers: h,
-        body: JSON.stringify({
-          location_ids: [LOCATION_ID],
-          query: {
-            filter: { customer_filter: { customer_ids: customerIds } },
-            sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
-          },
-        }),
-      });
-      const ordersJson = await ordersRes.json() as { orders?: any[] };
-      for (const o of ordersJson.orders ?? []) {
-        if (!seenIds.has(o.id)) {
-          allOrders.push(mapOrder(o));
-          seenIds.add(o.id);
+      // Fetch all active location IDs so in-person Square orders are included
+      const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
+      const locJson = await locRes.json() as { locations?: Array<{ id: string; status?: string }> };
+      const locationIds = (locJson.locations ?? [])
+        .filter((l) => l.status === "ACTIVE")
+        .map((l) => l.id);
+
+      if (locationIds.length > 0) {
+        const ordersRes = await fetch(`${SQUARE_API}/orders/search`, {
+          method: "POST", headers: h,
+          body: JSON.stringify({
+            location_ids: locationIds,
+            query: {
+              filter: { customer_filter: { customer_ids: customerIds } },
+              sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
+            },
+          }),
+        });
+        const ordersJson = await ordersRes.json() as { orders?: any[] };
+        for (const o of ordersJson.orders ?? []) {
+          if (!seenIds.has(o.id)) {
+            allOrders.push(mapOrder(o));
+            seenIds.add(o.id);
+          }
         }
       }
     }

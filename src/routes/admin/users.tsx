@@ -143,7 +143,7 @@ function AdminUsers() {
           { label: "Total users", value: users.length },
           { label: "Auth0 accounts", value: authCount },
           { label: "Email sign-ups only", value: emailCount },
-          { label: "Square orders (all locations)", value: squareOrderCount },
+          { label: "Website orders", value: squareOrderCount },
         ].map(({ label, value }) => (
           <div key={label} className="bg-white rounded-xl border border-gray-200 px-5 py-4">
             <p className="text-2xl font-bold text-gray-900">{value}</p>

@@ -21,8 +21,8 @@ export type AdminUserOrder = {
   id: string;
   createdAt: string;
   state: string;
+  isRefunded: boolean;
   totalMoney: { amount: number; currency: string };
-  refundedAmount: number;
   lineItems: Array<{ name: string; quantity: string; totalMoney: { amount: number; currency: string } }>;
 };
 
@@ -50,29 +50,43 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
     )
     .all<AdminUser>();
 
-  // Count Square orders across all locations for all registered users.
-  // We use the same email→customer ID lookup the per-user modal uses.
   const h = {
     Authorization: `Bearer ${e.SQUARE_ACCESS_TOKEN}`,
     "Content-Type": "application/json",
     "Square-Version": "2025-01-23",
   };
 
-  // Resolve Square customer IDs: use stored one if available, otherwise search by email
-  const customerIdSets = await Promise.all(
-    results.map(async (u) => {
-      if (u.square_customer_id) return [u.square_customer_id];
+  // Resolve Square customer IDs sequentially to avoid hitting Cloudflare's
+  // concurrent outbound connection limit. Cache discovered IDs back to DB.
+  const allCustomerIds: string[] = [];
+  for (const u of results) {
+    if (u.square_customer_id) {
+      allCustomerIds.push(u.square_customer_id);
+      continue;
+    }
+    try {
       const res = await fetch(`${SQUARE_API}/customers/search`, {
         method: "POST", headers: h,
         body: JSON.stringify({ query: { filter: { email_address: { exact: u.email } } } }),
       });
       const json = await res.json() as { customers?: Array<{ id: string }> };
-      return (json.customers ?? []).map((c) => c.id);
-    })
-  );
-  const allCustomerIds = [...new Set(customerIdSets.flat())];
+      const ids = (json.customers ?? []).map((c) => c.id);
+      if (ids.length > 0) {
+        allCustomerIds.push(ids[0]);
+        // Persist so future page loads skip this lookup
+        await db
+          .prepare("UPDATE users SET square_customer_id = ? WHERE id = ?")
+          .bind(ids[0], u.id)
+          .run();
+      }
+    } catch {
+      // Non-fatal — skip this user
+    }
+  }
 
-  // Fetch all active location IDs once
+  const uniqueCustomerIds = [...new Set(allCustomerIds)];
+
+  // Fetch all active location IDs
   const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
   const locJson = await locRes.json() as { locations?: Array<{ id: string; status?: string }> };
   const locationIds = (locJson.locations ?? [])
@@ -80,13 +94,13 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
     .map((l) => l.id);
 
   let squareOrderCount = 0;
-  if (allCustomerIds.length > 0 && locationIds.length > 0) {
+  if (uniqueCustomerIds.length > 0 && locationIds.length > 0) {
     let cursor: string | undefined;
     do {
       const body: Record<string, unknown> = {
         location_ids: locationIds,
         limit: 500,
-        query: { filter: { customer_filter: { customer_ids: allCustomerIds } } },
+        query: { filter: { customer_filter: { customer_ids: uniqueCustomerIds } } },
       };
       if (cursor) body.cursor = cursor;
       const res = await fetch(`${SQUARE_API}/orders/search`, {
@@ -147,10 +161,16 @@ export const adminGetOrdersForUser = createServerFn().handler(
       });
       const custJson = await custRes.json() as { customers?: any[] };
       customerIds = (custJson.customers ?? []).map((c: any) => c.id);
+      // Cache the discovered customer ID
+      if (customerIds.length > 0) {
+        await e.DB
+          .prepare("UPDATE users SET square_customer_id = ? WHERE id = ?")
+          .bind(customerIds[0], data.userId)
+          .run();
+      }
     }
 
     if (customerIds.length > 0) {
-      // Fetch all active location IDs so in-person Square orders are included
       const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
       const locJson = await locRes.json() as { locations?: Array<{ id: string; status?: string }> };
       const locationIds = (locJson.locations ?? [])
@@ -183,15 +203,16 @@ export const adminGetOrdersForUser = createServerFn().handler(
 );
 
 function mapOrder(o: any): AdminUserOrder {
-  const totalAmount: number = o.total_money?.amount ?? 0;
-  const netAmount: number = o.net_amounts?.total_money?.amount ?? totalAmount;
-  const refundedAmount = Math.max(0, totalAmount - netAmount);
+  // A refunded shipment order has its fulfillment canceled — same signal
+  // the public order history page uses. net_amounts does not reflect refunds.
+  const fulfillmentState: string = o.fulfillments?.[0]?.state ?? "";
+  const isRefunded = fulfillmentState === "CANCELED";
   return {
     id: o.id,
     createdAt: o.created_at,
     state: o.state ?? "COMPLETED",
+    isRefunded,
     totalMoney: o.total_money ?? { amount: 0, currency: "USD" },
-    refundedAmount,
     lineItems: (o.line_items ?? []).map((item: any) => ({
       name: item.name,
       quantity: item.quantity,

@@ -77,13 +77,9 @@ function OrdersDialog({ user, onClose }: OrdersDialogProps) {
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-gray-400">{fmtTime(order.createdAt)}</span>
                     <div className="flex items-center gap-2">
-                      {order.refundedAmount >= order.totalMoney.amount && order.refundedAmount > 0 ? (
+                      {order.isRefunded ? (
                         <span className="text-xs px-2 py-0.5 rounded font-medium bg-orange-50 text-orange-700">
                           Refunded
-                        </span>
-                      ) : order.refundedAmount > 0 ? (
-                        <span className="text-xs px-2 py-0.5 rounded font-medium bg-orange-50 text-orange-700">
-                          Partial refund
                         </span>
                       ) : (
                         <span className={`text-xs px-2 py-0.5 rounded font-medium ${
@@ -97,11 +93,6 @@ function OrdersDialog({ user, onClose }: OrdersDialogProps) {
                       <span className="text-sm font-semibold text-gray-900">
                         ${(order.totalMoney.amount / 100).toFixed(2)}
                       </span>
-                      {order.refundedAmount > 0 && (
-                        <span className="text-xs text-orange-600 font-medium">
-                          −${(order.refundedAmount / 100).toFixed(2)}
-                        </span>
-                      )}
                     </div>
                   </div>
                   <ul className="space-y-1">

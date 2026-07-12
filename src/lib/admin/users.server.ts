@@ -50,12 +50,55 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
     )
     .all<AdminUser>();
 
-  const countRow = await db
-    .prepare("SELECT COUNT(DISTINCT order_id) AS count FROM user_orders")
-    .first<{ count: number }>();
-  const websiteOrderCount = countRow?.count ?? 0;
+  // Count Square orders across all locations for all registered users.
+  // We use the same email→customer ID lookup the per-user modal uses.
+  const h = {
+    Authorization: `Bearer ${e.SQUARE_ACCESS_TOKEN}`,
+    "Content-Type": "application/json",
+    "Square-Version": "2025-01-23",
+  };
 
-  return { users: results, squareOrderCount: websiteOrderCount };
+  // Resolve Square customer IDs: use stored one if available, otherwise search by email
+  const customerIdSets = await Promise.all(
+    results.map(async (u) => {
+      if (u.square_customer_id) return [u.square_customer_id];
+      const res = await fetch(`${SQUARE_API}/customers/search`, {
+        method: "POST", headers: h,
+        body: JSON.stringify({ query: { filter: { email_address: { exact: u.email } } } }),
+      });
+      const json = await res.json() as { customers?: Array<{ id: string }> };
+      return (json.customers ?? []).map((c) => c.id);
+    })
+  );
+  const allCustomerIds = [...new Set(customerIdSets.flat())];
+
+  // Fetch all active location IDs once
+  const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
+  const locJson = await locRes.json() as { locations?: Array<{ id: string; status?: string }> };
+  const locationIds = (locJson.locations ?? [])
+    .filter((l) => l.status === "ACTIVE")
+    .map((l) => l.id);
+
+  let squareOrderCount = 0;
+  if (allCustomerIds.length > 0 && locationIds.length > 0) {
+    let cursor: string | undefined;
+    do {
+      const body: Record<string, unknown> = {
+        location_ids: locationIds,
+        limit: 500,
+        query: { filter: { customer_filter: { customer_ids: allCustomerIds } } },
+      };
+      if (cursor) body.cursor = cursor;
+      const res = await fetch(`${SQUARE_API}/orders/search`, {
+        method: "POST", headers: h, body: JSON.stringify(body),
+      });
+      const json = await res.json() as { orders?: unknown[]; cursor?: string };
+      squareOrderCount += (json.orders ?? []).length;
+      cursor = json.cursor;
+    } while (cursor);
+  }
+
+  return { users: results, squareOrderCount };
 });
 
 export const adminGetOrdersForUser = createServerFn().handler(

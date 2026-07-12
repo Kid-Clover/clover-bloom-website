@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ShieldCheck, ShoppingBag, Loader2, X } from "lucide-react";
 import {
   adminGetAllUsers, adminGetOrdersForUser,
-  type AdminUser, type AdminUserOrder,
+  type AdminUser, type AdminUserOrder, type AdminUsersPayload,
 } from "@/lib/admin/users.server";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -77,16 +77,31 @@ function OrdersDialog({ user, onClose }: OrdersDialogProps) {
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-gray-400">{fmtTime(order.createdAt)}</span>
                     <div className="flex items-center gap-2">
-                      <span className={`text-xs px-2 py-0.5 rounded font-medium ${
-                        order.state === "COMPLETED" ? "bg-green-50 text-green-700" :
-                        order.state === "CANCELED" ? "bg-red-50 text-red-600" :
-                        "bg-gray-100 text-gray-500"
-                      }`}>
-                        {order.state}
-                      </span>
+                      {order.refundedAmount >= order.totalMoney.amount && order.refundedAmount > 0 ? (
+                        <span className="text-xs px-2 py-0.5 rounded font-medium bg-orange-50 text-orange-700">
+                          Refunded
+                        </span>
+                      ) : order.refundedAmount > 0 ? (
+                        <span className="text-xs px-2 py-0.5 rounded font-medium bg-orange-50 text-orange-700">
+                          Partial refund
+                        </span>
+                      ) : (
+                        <span className={`text-xs px-2 py-0.5 rounded font-medium ${
+                          order.state === "COMPLETED" ? "bg-green-50 text-green-700" :
+                          order.state === "CANCELED" ? "bg-red-50 text-red-600" :
+                          "bg-gray-100 text-gray-500"
+                        }`}>
+                          {order.state}
+                        </span>
+                      )}
                       <span className="text-sm font-semibold text-gray-900">
                         ${(order.totalMoney.amount / 100).toFixed(2)}
                       </span>
+                      {order.refundedAmount > 0 && (
+                        <span className="text-xs text-orange-600 font-medium">
+                          −${(order.refundedAmount / 100).toFixed(2)}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <ul className="space-y-1">
@@ -109,12 +124,11 @@ function OrdersDialog({ user, onClose }: OrdersDialogProps) {
 }
 
 function AdminUsers() {
-  const users = Route.useLoaderData();
+  const { users, squareOrderCount } = Route.useLoaderData() as AdminUsersPayload;
   const [ordersUser, setOrdersUser] = useState<AdminUser | null>(null);
 
   const authCount  = users.filter((u: AdminUser) => u.auth0_id).length;
   const emailCount = users.filter((u: AdminUser) => !u.auth0_id).length;
-  const buyerCount = users.filter((u: AdminUser) => u.order_count > 0).length;
 
   return (
     <div className="p-8">
@@ -124,12 +138,12 @@ function AdminUsers() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-4 gap-4 mb-6">
         {[
           { label: "Total users", value: users.length },
           { label: "Auth0 accounts", value: authCount },
           { label: "Email sign-ups only", value: emailCount },
-          { label: "Has purchased", value: buyerCount },
+          { label: "Square orders (all locations)", value: squareOrderCount },
         ].map(({ label, value }) => (
           <div key={label} className="bg-white rounded-xl border border-gray-200 px-5 py-4">
             <p className="text-2xl font-bold text-gray-900">{value}</p>

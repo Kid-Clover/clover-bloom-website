@@ -22,12 +22,20 @@ export type AdminUserOrder = {
   createdAt: string;
   state: string;
   totalMoney: { amount: number; currency: string };
+  refundedAmount: number;
   lineItems: Array<{ name: string; quantity: string; totalMoney: { amount: number; currency: string } }>;
 };
 
-export const adminGetAllUsers = createServerFn().handler(async (): Promise<AdminUser[]> => {
+export type AdminUsersPayload = {
+  users: AdminUser[];
+  squareOrderCount: number;
+};
+
+export const adminGetAllUsers = createServerFn().handler(async (): Promise<AdminUsersPayload> => {
   await requireAdmin();
-  const db = (env as Cloudflare.Env).DB;
+  const e = env as Cloudflare.Env;
+  const db = e.DB;
+
   const { results } = await db
     .prepare(
       `SELECT u.id, u.auth0_id, u.email, u.name, u.picture,
@@ -41,7 +49,35 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
        ORDER BY u.created_at DESC`
     )
     .all<AdminUser>();
-  return results;
+
+  // Count all Square orders across every active location
+  const h = {
+    Authorization: `Bearer ${e.SQUARE_ACCESS_TOKEN}`,
+    "Content-Type": "application/json",
+    "Square-Version": "2025-01-23",
+  };
+  const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
+  const locJson = await locRes.json() as { locations?: Array<{ id: string; status?: string }> };
+  const locationIds = (locJson.locations ?? [])
+    .filter((l) => l.status === "ACTIVE")
+    .map((l) => l.id);
+
+  let squareOrderCount = 0;
+  if (locationIds.length > 0) {
+    let cursor: string | undefined;
+    do {
+      const body: Record<string, unknown> = { location_ids: locationIds, limit: 500 };
+      if (cursor) body.cursor = cursor;
+      const res = await fetch(`${SQUARE_API}/orders/search`, {
+        method: "POST", headers: h, body: JSON.stringify(body),
+      });
+      const json = await res.json() as { orders?: unknown[]; cursor?: string };
+      squareOrderCount += (json.orders ?? []).length;
+      cursor = json.cursor;
+    } while (cursor);
+  }
+
+  return { users: results, squareOrderCount };
 });
 
 export const adminGetOrdersForUser = createServerFn().handler(
@@ -126,11 +162,16 @@ export const adminGetOrdersForUser = createServerFn().handler(
 );
 
 function mapOrder(o: any): AdminUserOrder {
+  const completedRefunds = (o.refunds ?? []).filter((r: any) => r.state === "COMPLETED");
+  const refundedAmount = completedRefunds.reduce(
+    (sum: number, r: any) => sum + (r.amount_money?.amount ?? 0), 0
+  );
   return {
     id: o.id,
     createdAt: o.created_at,
     state: o.state ?? "COMPLETED",
     totalMoney: o.total_money ?? { amount: 0, currency: "USD" },
+    refundedAmount,
     lineItems: (o.line_items ?? []).map((item: any) => ({
       name: item.name,
       quantity: item.quantity,

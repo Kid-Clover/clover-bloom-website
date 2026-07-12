@@ -98,6 +98,12 @@ export const handleAuthCallback = createServerFn().handler(async (): Promise<str
     const returnTo = getCookie("auth_return_to") ?? "/";
     deleteCookie("auth_return_to");
 
+    // If user has no real display name, send them to the profile completion page first
+    const needsName = !claims.name || claims.name.toLowerCase() === claims.email.toLowerCase();
+    const finalDest = needsName
+      ? `/auth/complete-profile${returnTo !== "/" ? `?returnTo=${encodeURIComponent(returnTo)}` : ""}`
+      : returnTo;
+
     // Mailchimp: upsert member + apply "website" tag (best-effort)
     try {
       const [firstName, ...rest] = (claims.name ?? "").trim().split(" ");
@@ -132,7 +138,7 @@ export const handleAuthCallback = createServerFn().handler(async (): Promise<str
       // non-fatal — login still succeeds
     }
 
-    return returnTo;
+    return finalDest;
   } catch {
     return "/";
   }

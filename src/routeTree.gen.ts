@@ -26,6 +26,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as LpSlugRouteImport } from './routes/lp/$slug'
 import { Route as AuthLogoutRouteImport } from './routes/auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthCompleteProfileRouteImport } from './routes/auth/complete-profile'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
@@ -119,6 +120,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCompleteProfileRoute = AuthCompleteProfileRouteImport.update({
+  id: '/auth/complete-profile',
+  path: '/auth/complete-profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/admin/products': typeof AdminProductsRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/complete-profile': typeof AuthCompleteProfileRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/lp/$slug': typeof LpSlugRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/admin/products': typeof AdminProductsRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/complete-profile': typeof AuthCompleteProfileRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/lp/$slug': typeof LpSlugRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/admin/products': typeof AdminProductsRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/complete-profile': typeof AuthCompleteProfileRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/lp/$slug': typeof LpSlugRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/users'
     | '/auth/callback'
+    | '/auth/complete-profile'
     | '/auth/login'
     | '/auth/logout'
     | '/lp/$slug'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/users'
     | '/auth/callback'
+    | '/auth/complete-profile'
     | '/auth/login'
     | '/auth/logout'
     | '/lp/$slug'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/users'
     | '/auth/callback'
+    | '/auth/complete-profile'
     | '/auth/login'
     | '/auth/logout'
     | '/lp/$slug'
@@ -317,6 +329,7 @@ export interface RootRouteChildren {
   ThankYouSlowdownRoute: typeof ThankYouSlowdownRoute
   ThankYouSummer2026RaffleRoute: typeof ThankYouSummer2026RaffleRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthCompleteProfileRoute: typeof AuthCompleteProfileRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthLogoutRoute: typeof AuthLogoutRoute
   LpSlugRoute: typeof LpSlugRoute
@@ -443,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/complete-profile': {
+      id: '/auth/complete-profile'
+      path: '/auth/complete-profile'
+      fullPath: '/auth/complete-profile'
+      preLoaderRoute: typeof AuthCompleteProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -523,6 +543,7 @@ const rootRouteChildren: RootRouteChildren = {
   ThankYouSlowdownRoute: ThankYouSlowdownRoute,
   ThankYouSummer2026RaffleRoute: ThankYouSummer2026RaffleRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  AuthCompleteProfileRoute: AuthCompleteProfileRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthLogoutRoute: AuthLogoutRoute,
   LpSlugRoute: LpSlugRoute,
@@ -530,3 +551,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

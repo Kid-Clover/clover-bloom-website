@@ -23,7 +23,7 @@ export const joinCommunity = createServerFn()
     await e.DB
       .prepare(
         `INSERT INTO users (email, name) VALUES (?, ?)
-         ON CONFLICT (email) DO NOTHING`
+         ON CONFLICT (email) DO UPDATE SET name = COALESCE(users.name, excluded.name)`
       )
       .bind(email.toLowerCase().trim(), name.trim())
       .run();

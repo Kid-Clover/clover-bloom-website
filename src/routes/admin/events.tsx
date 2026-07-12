@@ -1,9 +1,10 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import {
   adminGetAllEvents, adminGetEventTypes, adminSaveEvent, adminDeleteEvent,
-  type AdminEvent, type EventType,
+  adminGetSquareLocations,
+  type AdminEvent, type EventType, type SquareLocation,
 } from "@/lib/admin/events.server";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -96,6 +97,18 @@ function AdminEvents() {
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  const [squareLocations, setSquareLocations] = useState<SquareLocation[] | null>(null);
+  const [locationsLoading, setLocationsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!sheetOpen || squareLocations !== null || locationsLoading) return;
+    setLocationsLoading(true);
+    adminGetSquareLocations()
+      .then(setSquareLocations)
+      .catch(() => setSquareLocations([]))
+      .finally(() => setLocationsLoading(false));
+  }, [sheetOpen]);
 
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -357,14 +370,38 @@ function AdminEvents() {
 
             {form.pickup_available && (
               <div>
-                <Label htmlFor="square_location_id">Square Location ID</Label>
-                <Input
-                  id="square_location_id"
-                  value={form.square_location_id}
-                  onChange={(e) => set("square_location_id", e.target.value)}
-                  placeholder="Square location ID for pickup orders"
-                  className="mt-1"
-                />
+                <Label htmlFor="square_location_id">Business Location</Label>
+                {locationsLoading ? (
+                  <div className="mt-1 flex items-center gap-2 h-9 px-3 border border-input rounded-md text-sm text-muted-foreground">
+                    <Loader2 size={13} className="animate-spin" />
+                    Loading Square locations…
+                  </div>
+                ) : squareLocations && squareLocations.length > 0 ? (
+                  <Select
+                    value={form.square_location_id || "__none__"}
+                    onValueChange={(v) => set("square_location_id", v === "__none__" ? "" : v)}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select a location…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__" className="text-muted-foreground">— None —</SelectItem>
+                      {squareLocations.map((loc) => (
+                        <SelectItem key={loc.id} value={loc.id}>
+                          {loc.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    id="square_location_id"
+                    value={form.square_location_id}
+                    onChange={(e) => set("square_location_id", e.target.value)}
+                    placeholder="Square location ID for pickup orders"
+                    className="mt-1"
+                  />
+                )}
               </div>
             )}
 

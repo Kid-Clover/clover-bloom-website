@@ -33,6 +33,52 @@ export type EventInput = {
   square_location_id?: string;
 };
 
+export type SquareLocation = {
+  id: string;
+  name: string;
+  label: string; // "Name — City, ST"
+};
+
+type SquareLocationRaw = {
+  id: string;
+  status?: string;
+  name?: string;
+  address?: {
+    locality?: string;
+    administrative_district_level_1?: string;
+  };
+};
+
+export const adminGetSquareLocations = createServerFn().handler(async (): Promise<SquareLocation[]> => {
+  await requireAdmin();
+  const token = (env as Cloudflare.Env).SQUARE_ACCESS_TOKEN;
+
+  const res = await fetch("https://connect.squareup.com/v2/locations", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Square-Version": "2025-01-23",
+    },
+  });
+
+  if (!res.ok) throw new Error(`Square API error: ${res.status}`);
+
+  const body = await res.json() as { locations?: SquareLocationRaw[] };
+
+  return (body.locations ?? [])
+    .filter((l) => l.status === "ACTIVE")
+    .map((l) => {
+      const city = l.address?.locality;
+      const state = l.address?.administrative_district_level_1;
+      const suffix = [city, state].filter(Boolean).join(", ");
+      return {
+        id: l.id,
+        name: l.name ?? l.id,
+        label: suffix ? `${l.name ?? l.id} — ${suffix}` : (l.name ?? l.id),
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+});
+
 export const adminGetAllEvents = createServerFn().handler(async () => {
   await requireAdmin();
   const db = (env as Cloudflare.Env).DB;

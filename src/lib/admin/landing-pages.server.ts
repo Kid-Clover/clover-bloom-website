@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { requireAdmin } from "../admin.server";
+import { requireAdmin } from "./require-admin.server";
 import type { LandingPage } from "../landing-pages.server";
 
 export type { LandingPage };

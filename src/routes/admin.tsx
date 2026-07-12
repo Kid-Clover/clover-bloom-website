@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect, Link } from "@tanstack/react-router";
 import { getAdminStatus } from "@/lib/admin.server";
-import { LayoutDashboard, Calendar, ShoppingBag, Megaphone, FileText, LogOut } from "lucide-react";
+import { LayoutDashboard, Calendar, ShoppingBag, Megaphone, FileText, Users, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   loader: async () => {
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { to: "/admin/products" as const, label: "Products", icon: ShoppingBag },
   { to: "/admin/campaigns" as const, label: "Campaigns", icon: Megaphone },
   { to: "/admin/landing-pages" as const, label: "Landing Pages", icon: FileText },
+  { to: "/admin/users" as const, label: "Users", icon: Users },
 ];
 
 const base = "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors";

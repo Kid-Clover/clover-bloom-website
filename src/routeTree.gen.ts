@@ -27,6 +27,7 @@ import { Route as LpSlugRouteImport } from './routes/lp/$slug'
 import { Route as AuthLogoutRouteImport } from './routes/auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
 import { Route as AdminLandingPagesRouteImport } from './routes/admin/landing-pages'
 import { Route as AdminEventsRouteImport } from './routes/admin/events'
@@ -123,6 +124,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProductsRoute = AdminProductsRouteImport.update({
   id: '/products',
   path: '/products',
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/admin/events': typeof AdminEventsRoute
   '/admin/landing-pages': typeof AdminLandingPagesRoute
   '/admin/products': typeof AdminProductsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/admin/events': typeof AdminEventsRoute
   '/admin/landing-pages': typeof AdminLandingPagesRoute
   '/admin/products': typeof AdminProductsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/admin/events': typeof AdminEventsRoute
   '/admin/landing-pages': typeof AdminLandingPagesRoute
   '/admin/products': typeof AdminProductsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/admin/events'
     | '/admin/landing-pages'
     | '/admin/products'
+    | '/admin/users'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/admin/events'
     | '/admin/landing-pages'
     | '/admin/products'
+    | '/admin/users'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/admin/events'
     | '/admin/landing-pages'
     | '/admin/products'
+    | '/admin/users'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/logout'
@@ -438,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/products': {
       id: '/admin/products'
       path: '/products'
@@ -474,6 +493,7 @@ interface AdminRouteChildren {
   AdminEventsRoute: typeof AdminEventsRoute
   AdminLandingPagesRoute: typeof AdminLandingPagesRoute
   AdminProductsRoute: typeof AdminProductsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -482,6 +502,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEventsRoute: AdminEventsRoute,
   AdminLandingPagesRoute: AdminLandingPagesRoute,
   AdminProductsRoute: AdminProductsRoute,
+  AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 

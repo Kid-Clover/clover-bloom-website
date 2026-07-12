@@ -82,6 +82,11 @@ export const handleAuthCallback = createServerFn().handler(async (): Promise<str
       .bind(claims.sub)
       .first<{ id: number }>();
 
+    await db
+      .prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?")
+      .bind(row!.id)
+      .run();
+
     await setSessionUser({
       id: row!.id,
       auth0Id: claims.sub,

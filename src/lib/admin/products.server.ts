@@ -93,6 +93,62 @@ export const adminSaveProduct = createServerFn().handler(
   }
 );
 
+export type SquareCatalogVariation = {
+  variationId: string;
+  itemName: string;
+  variationName: string;
+};
+
+type SquareCatalogObject = {
+  id: string;
+  type: string;
+  item_data?: {
+    name?: string;
+    variations?: Array<{
+      id: string;
+      item_variation_data?: { name?: string };
+    }>;
+  };
+};
+
+export const adminGetSquareCatalogVariations = createServerFn().handler(async (): Promise<SquareCatalogVariation[]> => {
+  await requireAdmin();
+  const token = (env as Cloudflare.Env).SQUARE_ACCESS_TOKEN;
+  const variations: SquareCatalogVariation[] = [];
+  let cursor: string | undefined;
+
+  do {
+    const url = new URL("https://connect.squareup.com/v2/catalog/list");
+    url.searchParams.set("types", "ITEM");
+    if (cursor) url.searchParams.set("cursor", cursor);
+
+    const res = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Square-Version": "2025-01-23",
+      },
+    });
+
+    if (!res.ok) throw new Error(`Square API error: ${res.status}`);
+
+    const body = await res.json() as { objects?: SquareCatalogObject[]; cursor?: string };
+    cursor = body.cursor;
+
+    for (const item of body.objects ?? []) {
+      const itemName = item.item_data?.name ?? "Unknown";
+      for (const v of item.item_data?.variations ?? []) {
+        variations.push({
+          variationId: v.id,
+          itemName,
+          variationName: v.item_variation_data?.name ?? "Regular",
+        });
+      }
+    }
+  } while (cursor);
+
+  return variations.sort((a, b) => a.itemName.localeCompare(b.itemName));
+});
+
 export const adminDeleteProduct = createServerFn().handler(
   async ({ data }: { data: { id: string } }) => {
     await requireAdmin();

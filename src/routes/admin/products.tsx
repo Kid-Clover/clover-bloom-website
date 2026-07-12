@@ -1,9 +1,10 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import {
   adminGetAllProducts, adminSaveProduct, adminDeleteProduct,
-  type AdminProduct,
+  adminGetSquareCatalogVariations,
+  type AdminProduct, type SquareCatalogVariation,
 } from "@/lib/admin/products.server";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -12,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Route = createFileRoute("/admin/products")({
   loader: async () => adminGetAllProducts(),
@@ -94,6 +95,18 @@ function AdminProducts() {
   const [deleteTarget, setDeleteTarget] = useState<AdminProduct | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const [catalogVariations, setCatalogVariations] = useState<SquareCatalogVariation[] | null>(null);
+  const [catalogLoading, setCatalogLoading] = useState(false);
+
+  useEffect(() => {
+    if (!sheetOpen || catalogVariations !== null || catalogLoading) return;
+    setCatalogLoading(true);
+    adminGetSquareCatalogVariations()
+      .then(setCatalogVariations)
+      .catch(() => setCatalogVariations([]))
+      .finally(() => setCatalogLoading(false));
+  }, [sheetOpen]);
 
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -374,7 +387,51 @@ function AdminProducts() {
 
             <div>
               <Label htmlFor="square_variation_id">Square Variation ID</Label>
-              <Input id="square_variation_id" value={form.square_variation_id} onChange={(e) => set("square_variation_id", e.target.value)} className="mt-1 font-mono text-xs" placeholder="Optional — required for cart checkout" />
+              {catalogLoading ? (
+                <div className="mt-1 flex items-center gap-2 h-9 px-3 border border-input rounded-md text-sm text-muted-foreground">
+                  <Loader2 size={13} className="animate-spin" />
+                  Loading Square catalog…
+                </div>
+              ) : catalogVariations && catalogVariations.length > 0 ? (
+                (() => {
+                  const grouped = catalogVariations.reduce<Record<string, SquareCatalogVariation[]>>(
+                    (acc, v) => { (acc[v.itemName] ??= []).push(v); return acc; },
+                    {}
+                  );
+                  return (
+                    <Select
+                      value={form.square_variation_id || "__none__"}
+                      onValueChange={(v) => set("square_variation_id", v === "__none__" ? "" : v)}
+                    >
+                      <SelectTrigger className="mt-1 font-mono text-xs">
+                        <SelectValue placeholder="Select a variation…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__none__" className="text-muted-foreground">— None —</SelectItem>
+                        {Object.entries(grouped).map(([itemName, vars]) => (
+                          <SelectGroup key={itemName}>
+                            <SelectLabel className="font-semibold">{itemName}</SelectLabel>
+                            {vars.map((v) => (
+                              <SelectItem key={v.variationId} value={v.variationId} className="font-mono text-xs pl-6">
+                                <span className="text-muted-foreground mr-2">{v.variationName}</span>
+                                {v.variationId}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  );
+                })()
+              ) : (
+                <Input
+                  id="square_variation_id"
+                  value={form.square_variation_id}
+                  onChange={(e) => set("square_variation_id", e.target.value)}
+                  className="mt-1 font-mono text-xs"
+                  placeholder="Optional — required for cart checkout"
+                />
+              )}
             </div>
 
             <div className="flex gap-6 pt-1">

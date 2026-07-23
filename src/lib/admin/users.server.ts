@@ -100,7 +100,10 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
       const body: Record<string, unknown> = {
         location_ids: locationIds,
         limit: 500,
-        query: { filter: { customer_filter: { customer_ids: uniqueCustomerIds } } },
+        query: { filter: {
+          customer_filter: { customer_ids: uniqueCustomerIds },
+          date_time_filter: { created_at: { start_at: "2020-01-01T00:00:00Z" } },
+        } },
       };
       if (cursor) body.cursor = cursor;
       const res = await fetch(`${SQUARE_API}/orders/search`, {

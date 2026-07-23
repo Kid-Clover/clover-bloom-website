@@ -76,7 +76,10 @@ export const adminGetAllOrders = createServerFn().handler(async (): Promise<Admi
         location_ids: locationIds,
         limit: 500,
         query: {
-          filter: { customer_filter: { customer_ids: [customerId] } },
+          filter: {
+              customer_filter: { customer_ids: [customerId] },
+              date_time_filter: { created_at: { start_at: "2020-01-01T00:00:00Z" } },
+            },
           sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
         },
       };

@@ -74,15 +74,25 @@ function OrderRow({ order }: { order: AdminOrderRecord }) {
       {expanded && (
         <tr className="bg-gray-50 border-b border-gray-100">
           <td colSpan={6} className="px-6 py-3">
-            <ul className="space-y-1 mb-2">
+            <ul className="space-y-1">
               {order.lineItems.map((item, i) => (
                 <li key={i} className="flex justify-between text-xs text-gray-600">
                   <span>{item.quantity}× {item.name}</span>
-                  <span className="text-gray-400">{fmtMoney(item.totalMoney.amount)}</span>
+                  <span>{fmtMoney(item.totalMoney.amount)}</span>
                 </li>
               ))}
             </ul>
-            <p className="text-xs text-gray-300 font-mono">{order.id}</p>
+            {order.shippingMoney && (
+              <div className="flex justify-between text-xs text-gray-400 mt-1 pt-1 border-t border-gray-200">
+                <span>Shipping</span>
+                <span>{fmtMoney(order.shippingMoney.amount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-xs font-semibold text-gray-700 mt-1 pt-1 border-t border-gray-200">
+              <span>Total</span>
+              <span>{fmtMoney(order.totalMoney.amount)}</span>
+            </div>
+            <p className="text-xs text-gray-300 font-mono mt-2">{order.id}</p>
           </td>
         </tr>
       )}

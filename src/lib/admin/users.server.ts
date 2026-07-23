@@ -23,6 +23,7 @@ export type AdminUserOrder = {
   state: string;
   isRefunded: boolean;
   totalMoney: { amount: number; currency: string };
+  shippingMoney: { amount: number; currency: string } | null;
   lineItems: Array<{ name: string; quantity: string; totalMoney: { amount: number; currency: string } }>;
 };
 
@@ -148,6 +149,9 @@ export const adminGetOrdersForUser = createServerFn().handler(
           state: o.state ?? "OPEN",
           isRefunded: fulfillment?.state === "CANCELED",
           totalMoney: o.total_money ?? { amount: 0, currency: "USD" },
+          shippingMoney: o.total_service_charge_money?.amount
+            ? o.total_service_charge_money
+            : null,
           lineItems: (o.line_items ?? []).map((item: any) => ({
             name: item.name,
             quantity: item.quantity,

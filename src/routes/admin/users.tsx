@@ -103,6 +103,16 @@ function OrdersDialog({ user, onClose }: OrdersDialogProps) {
                       </li>
                     ))}
                   </ul>
+                  {order.shippingMoney && (
+                    <div className="flex justify-between text-xs text-gray-400 mt-1 pt-1 border-t border-gray-200">
+                      <span>Shipping</span>
+                      <span>${(order.shippingMoney.amount / 100).toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-xs font-semibold text-gray-600 mt-1 pt-1 border-t border-gray-200">
+                    <span>Total</span>
+                    <span>${(order.totalMoney.amount / 100).toFixed(2)}</span>
+                  </div>
                   <p className="text-xs text-gray-300 font-mono mt-2">{order.id}</p>
                 </div>
               ))}

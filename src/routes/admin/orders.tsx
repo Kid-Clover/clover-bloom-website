@@ -105,7 +105,7 @@ function AdminOrders() {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Orders</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            All orders from registered users ·{" "}
+            All online orders (website + app) ·{" "}
             <Link to="/admin/users" className="text-blue-500 hover:underline">
               back to users
             </Link>

@@ -56,54 +56,26 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
     "Square-Version": "2025-01-23",
   };
 
-  // Resolve Square customer IDs sequentially to avoid hitting Cloudflare's
-  // concurrent outbound connection limit. Cache discovered IDs back to DB.
-  const allCustomerIds: string[] = [];
-  for (const u of results) {
-    if (u.square_customer_id) {
-      allCustomerIds.push(u.square_customer_id);
-      continue;
-    }
-    try {
-      const res = await fetch(`${SQUARE_API}/customers/search`, {
-        method: "POST", headers: h,
-        body: JSON.stringify({ query: { filter: { email_address: { exact: u.email } } } }),
-      });
-      const json = await res.json() as { customers?: Array<{ id: string }> };
-      const ids = (json.customers ?? []).map((c) => c.id);
-      if (ids.length > 0) {
-        allCustomerIds.push(ids[0]);
-        // Persist so future page loads skip this lookup
-        await db
-          .prepare("UPDATE users SET square_customer_id = ? WHERE id = ?")
-          .bind(ids[0], u.id)
-          .run();
-      }
-    } catch {
-      // Non-fatal — skip this user
-    }
-  }
-
-  const uniqueCustomerIds = [...new Set(allCustomerIds)];
-
-  // Fetch all active location IDs
   const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
   const locJson = await locRes.json() as { locations?: Array<{ id: string; status?: string }> };
   const locationIds = (locJson.locations ?? [])
     .filter((l) => l.status === "ACTIVE")
     .map((l) => l.id);
 
+  // Count all SHIPMENT/PICKUP orders — the same set the orders page shows
   let squareOrderCount = 0;
-  if (uniqueCustomerIds.length > 0 && locationIds.length > 0) {
+  if (locationIds.length > 0) {
     let cursor: string | undefined;
     do {
       const body: Record<string, unknown> = {
         location_ids: locationIds,
         limit: 500,
-        query: { filter: {
-          customer_filter: { customer_ids: uniqueCustomerIds },
-          date_time_filter: { created_at: { start_at: "2020-01-01T00:00:00Z" } },
-        } },
+        query: {
+          filter: {
+            fulfillment_filter: { fulfillment_types: ["SHIPMENT", "PICKUP"] },
+            date_time_filter: { created_at: { start_at: "2020-01-01T00:00:00Z" } },
+          },
+        },
       };
       if (cursor) body.cursor = cursor;
       const res = await fetch(`${SQUARE_API}/orders/search`, {
@@ -128,98 +100,63 @@ export const adminGetOrdersForUser = createServerFn().handler(
       "Square-Version": "2025-01-23",
     };
 
-    const storedRows = await e.DB
-      .prepare("SELECT order_id FROM user_orders WHERE user_id = ?")
-      .bind(data.userId)
-      .all<{ order_id: string }>();
-    const storedOrderIds = storedRows.results.map((r) => r.order_id);
+    const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
+    const locJson = await locRes.json() as { locations?: Array<{ id: string; status?: string }> };
+    const locationIds = (locJson.locations ?? [])
+      .filter((l) => l.status === "ACTIVE")
+      .map((l) => l.id);
 
-    const userRow = await e.DB
-      .prepare("SELECT square_customer_id FROM users WHERE id = ?")
-      .bind(data.userId)
-      .first<{ square_customer_id: string | null }>();
+    if (locationIds.length === 0) return [];
 
+    // Search all SHIPMENT/PICKUP orders and filter by recipient email
     const allOrders: AdminUserOrder[] = [];
-    const seenIds = new Set<string>();
+    const targetEmail = data.email.toLowerCase();
 
-    if (storedOrderIds.length > 0) {
-      const batchRes = await fetch(`${SQUARE_API}/orders/batch-retrieve`, {
-        method: "POST", headers: h,
-        body: JSON.stringify({ order_ids: storedOrderIds }),
+    let cursor: string | undefined;
+    do {
+      const body: Record<string, unknown> = {
+        location_ids: locationIds,
+        limit: 500,
+        query: {
+          filter: {
+            fulfillment_filter: { fulfillment_types: ["SHIPMENT", "PICKUP"] },
+            date_time_filter: { created_at: { start_at: "2020-01-01T00:00:00Z" } },
+          },
+          sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
+        },
+      };
+      if (cursor) body.cursor = cursor;
+
+      const res = await fetch(`${SQUARE_API}/orders/search`, {
+        method: "POST", headers: h, body: JSON.stringify(body),
       });
-      const batchJson = await batchRes.json() as { orders?: any[] };
-      for (const o of batchJson.orders ?? []) {
-        allOrders.push(mapOrder(o));
-        seenIds.add(o.id);
-      }
-    }
+      const json = await res.json() as { orders?: any[]; cursor?: string };
 
-    let customerIds: string[] = [];
-    if (userRow?.square_customer_id) {
-      customerIds = [userRow.square_customer_id];
-    } else {
-      const custRes = await fetch(`${SQUARE_API}/customers/search`, {
-        method: "POST", headers: h,
-        body: JSON.stringify({ query: { filter: { email_address: { exact: data.email } } } }),
-      });
-      const custJson = await custRes.json() as { customers?: any[] };
-      customerIds = (custJson.customers ?? []).map((c: any) => c.id);
-      // Cache the discovered customer ID
-      if (customerIds.length > 0) {
-        await e.DB
-          .prepare("UPDATE users SET square_customer_id = ? WHERE id = ?")
-          .bind(customerIds[0], data.userId)
-          .run();
-      }
-    }
+      for (const o of json.orders ?? []) {
+        const fulfillment = o.fulfillments?.[0];
+        const recipient =
+          fulfillment?.shipment_details?.recipient ??
+          fulfillment?.pickup_details?.recipient;
+        const recipientEmail = (recipient?.email_address ?? "").toLowerCase();
+        if (recipientEmail !== targetEmail) continue;
 
-    if (customerIds.length > 0) {
-      const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
-      const locJson = await locRes.json() as { locations?: Array<{ id: string; status?: string }> };
-      const locationIds = (locJson.locations ?? [])
-        .filter((l) => l.status === "ACTIVE")
-        .map((l) => l.id);
-
-      if (locationIds.length > 0) {
-        const ordersRes = await fetch(`${SQUARE_API}/orders/search`, {
-          method: "POST", headers: h,
-          body: JSON.stringify({
-            location_ids: locationIds,
-            query: {
-              filter: { customer_filter: { customer_ids: customerIds } },
-              sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
-            },
-          }),
+        allOrders.push({
+          id: o.id,
+          createdAt: o.created_at,
+          state: o.state ?? "OPEN",
+          isRefunded: fulfillment?.state === "CANCELED",
+          totalMoney: o.total_money ?? { amount: 0, currency: "USD" },
+          lineItems: (o.line_items ?? []).map((item: any) => ({
+            name: item.name,
+            quantity: item.quantity,
+            totalMoney: item.total_money ?? { amount: 0, currency: "USD" },
+          })),
         });
-        const ordersJson = await ordersRes.json() as { orders?: any[] };
-        for (const o of ordersJson.orders ?? []) {
-          if (!seenIds.has(o.id)) {
-            allOrders.push(mapOrder(o));
-            seenIds.add(o.id);
-          }
-        }
       }
-    }
+
+      cursor = json.cursor;
+    } while (cursor);
 
     return allOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 );
-
-function mapOrder(o: any): AdminUserOrder {
-  // A refunded shipment order has its fulfillment canceled — same signal
-  // the public order history page uses. net_amounts does not reflect refunds.
-  const fulfillmentState: string = o.fulfillments?.[0]?.state ?? "";
-  const isRefunded = fulfillmentState === "CANCELED";
-  return {
-    id: o.id,
-    createdAt: o.created_at,
-    state: o.state ?? "COMPLETED",
-    isRefunded,
-    totalMoney: o.total_money ?? { amount: 0, currency: "USD" },
-    lineItems: (o.line_items ?? []).map((item: any) => ({
-      name: item.name,
-      quantity: item.quantity,
-      totalMoney: item.total_money ?? { amount: 0, currency: "USD" },
-    })),
-  };
-}

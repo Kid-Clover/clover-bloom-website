@@ -16,7 +16,7 @@ export type AdminOrderRecord = {
   userName: string | null;
 };
 
-type UserRow = { id: number; email: string; name: string | null; square_customer_id: string | null };
+type UserRow = { id: number; email: string; name: string | null };
 
 export const adminGetAllOrders = createServerFn().handler(async (): Promise<AdminOrderRecord[]> => {
   await requireAdmin();
@@ -24,8 +24,13 @@ export const adminGetAllOrders = createServerFn().handler(async (): Promise<Admi
   const db = e.DB;
 
   const { results: users } = await db
-    .prepare("SELECT id, email, name, square_customer_id FROM users")
+    .prepare("SELECT id, email, name FROM users")
     .all<UserRow>();
+
+  const emailToUser = new Map<string, UserRow>();
+  for (const u of users) {
+    emailToUser.set(u.email.toLowerCase(), u);
+  }
 
   const h = {
     Authorization: `Bearer ${e.SQUARE_ACCESS_TOKEN}`,
@@ -33,83 +38,68 @@ export const adminGetAllOrders = createServerFn().handler(async (): Promise<Admi
     "Square-Version": "2025-01-23",
   };
 
-  // Resolve Square customer IDs sequentially, caching discoveries to DB
-  const customerToUser = new Map<string, UserRow>();
-  for (const u of users) {
-    if (u.square_customer_id) {
-      customerToUser.set(u.square_customer_id, u);
-      continue;
-    }
-    try {
-      const res = await fetch(`${SQUARE_API}/customers/search`, {
-        method: "POST", headers: h,
-        body: JSON.stringify({ query: { filter: { email_address: { exact: u.email } } } }),
-      });
-      const json = await res.json() as { customers?: Array<{ id: string }> };
-      const cid = json.customers?.[0]?.id;
-      if (cid) {
-        customerToUser.set(cid, u);
-        await db.prepare("UPDATE users SET square_customer_id = ? WHERE id = ?").bind(cid, u.id).run();
-      }
-    } catch {
-      // skip
-    }
-  }
-
-  if (customerToUser.size === 0) return [];
-
-  // Fetch all active location IDs
   const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
   const locJson = await locRes.json() as { locations?: Array<{ id: string; status?: string }> };
   const locationIds = (locJson.locations ?? []).filter((l) => l.status === "ACTIVE").map((l) => l.id);
   if (locationIds.length === 0) return [];
 
-  // Search orders one customer at a time — Square does not return customer_id
-  // on order objects, so a bulk search cannot be mapped back to a specific user.
+  // Fetch all SHIPMENT and PICKUP orders — these are the website/online orders.
+  // customer_id is null on all of them; recipient email is in fulfillment details.
   const allOrders: AdminOrderRecord[] = [];
   const seenIds = new Set<string>();
 
-  for (const [customerId, user] of customerToUser) {
-    let cursor: string | undefined;
-    do {
-      const body: Record<string, unknown> = {
-        location_ids: locationIds,
-        limit: 500,
-        query: {
-          filter: {
-              customer_filter: { customer_ids: [customerId] },
-              date_time_filter: { created_at: { start_at: "2020-01-01T00:00:00Z" } },
-            },
-          sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
+  let cursor: string | undefined;
+  do {
+    const body: Record<string, unknown> = {
+      location_ids: locationIds,
+      limit: 500,
+      query: {
+        filter: {
+          fulfillment_filter: { fulfillment_types: ["SHIPMENT", "PICKUP"] },
+          date_time_filter: { created_at: { start_at: "2020-01-01T00:00:00Z" } },
         },
-      };
-      if (cursor) body.cursor = cursor;
-      const res = await fetch(`${SQUARE_API}/orders/search`, {
-        method: "POST", headers: h, body: JSON.stringify(body),
-      });
-      const json = await res.json() as { orders?: any[]; cursor?: string };
-      for (const o of json.orders ?? []) {
-        if (seenIds.has(o.id)) continue;
-        seenIds.add(o.id);
-        allOrders.push({
-          id: o.id,
-          createdAt: o.created_at,
-          state: o.state ?? "COMPLETED",
-          isRefunded: o.fulfillments?.[0]?.state === "CANCELED",
-          totalMoney: o.total_money ?? { amount: 0, currency: "USD" },
-          lineItems: (o.line_items ?? []).map((item: any) => ({
-            name: item.name,
-            quantity: item.quantity,
-            totalMoney: item.total_money ?? { amount: 0, currency: "USD" },
-          })),
-          userId: user.id,
-          userEmail: user.email,
-          userName: user.name,
-        });
-      }
-      cursor = json.cursor;
-    } while (cursor);
-  }
+        sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
+      },
+    };
+    if (cursor) body.cursor = cursor;
 
-  return allOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const res = await fetch(`${SQUARE_API}/orders/search`, {
+      method: "POST", headers: h, body: JSON.stringify(body),
+    });
+    const json = await res.json() as { orders?: any[]; cursor?: string };
+
+    for (const o of json.orders ?? []) {
+      if (seenIds.has(o.id)) continue;
+      seenIds.add(o.id);
+
+      const fulfillment = o.fulfillments?.[0];
+      const recipient =
+        fulfillment?.shipment_details?.recipient ??
+        fulfillment?.pickup_details?.recipient;
+      const recipientEmail = (recipient?.email_address ?? "").toLowerCase() || null;
+      const recipientName = recipient?.display_name ?? null;
+
+      const user = recipientEmail ? emailToUser.get(recipientEmail) : undefined;
+
+      allOrders.push({
+        id: o.id,
+        createdAt: o.created_at,
+        state: o.state ?? "OPEN",
+        isRefunded: fulfillment?.state === "CANCELED",
+        totalMoney: o.total_money ?? { amount: 0, currency: "USD" },
+        lineItems: (o.line_items ?? []).map((item: any) => ({
+          name: item.name,
+          quantity: item.quantity,
+          totalMoney: item.total_money ?? { amount: 0, currency: "USD" },
+        })),
+        userId: user?.id ?? null,
+        userEmail: recipientEmail ?? user?.email ?? null,
+        userName: user?.name ?? recipientName,
+      });
+    }
+
+    cursor = json.cursor;
+  } while (cursor);
+
+  return allOrders;
 });

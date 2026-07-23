@@ -145,7 +145,7 @@ function AdminUsers() {
           className="bg-white rounded-xl border border-gray-200 px-5 py-4 hover:border-gray-400 hover:shadow-sm transition-all"
         >
           <p className="text-2xl font-bold text-gray-900">{squareOrderCount}</p>
-          <p className="text-xs text-gray-400 mt-0.5">Orders (registered users) →</p>
+          <p className="text-xs text-gray-400 mt-0.5">Online orders →</p>
         </Link>
       </div>
 

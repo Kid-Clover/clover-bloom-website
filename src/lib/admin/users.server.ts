@@ -73,6 +73,7 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
         query: {
           filter: {
             fulfillment_filter: { fulfillment_types: ["SHIPMENT", "PICKUP"] },
+            state_filter: { states: ["OPEN", "COMPLETED", "CANCELED"] },
             date_time_filter: { created_at: { start_at: "2020-01-01T00:00:00Z" } },
           },
         },
@@ -120,6 +121,7 @@ export const adminGetOrdersForUser = createServerFn().handler(
         query: {
           filter: {
             fulfillment_filter: { fulfillment_types: ["SHIPMENT", "PICKUP"] },
+            state_filter: { states: ["OPEN", "COMPLETED", "CANCELED"] },
             date_time_filter: { created_at: { start_at: "2020-01-01T00:00:00Z" } },
           },
           sort: { sort_field: "CREATED_AT", sort_order: "DESC" },

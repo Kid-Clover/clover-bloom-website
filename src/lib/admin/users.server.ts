@@ -128,12 +128,11 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
     isGuest: true,
   }));
 
-  // Registered users first, then guests sorted by first order date descending
-  const guests = guestUsers.sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  const allUsers = [...results, ...guestUsers].sort((a, b) =>
+    a.email.toLowerCase().localeCompare(b.email.toLowerCase())
   );
 
-  return { users: [...results, ...guests], squareOrderCount };
+  return { users: allUsers, squareOrderCount };
 });
 
 export const adminGetOrdersForUser = createServerFn().handler(

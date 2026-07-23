@@ -139,7 +139,7 @@ function AdminOrders() {
         </div>
         <div className="bg-white rounded-xl border border-gray-200 px-5 py-4">
           <p className="text-2xl font-bold text-gray-900">{fmtMoney(totalRevenue)}</p>
-          <p className="text-xs text-gray-400 mt-0.5">Net revenue</p>
+          <p className="text-xs text-gray-400 mt-0.5">Gross revenue</p>
         </div>
       </div>
 

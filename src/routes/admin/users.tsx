@@ -129,7 +129,8 @@ function AdminUsers() {
   const [ordersUser, setOrdersUser] = useState<AdminUser | null>(null);
 
   const authCount  = users.filter((u: AdminUser) => u.auth0_id).length;
-  const emailCount = users.filter((u: AdminUser) => !u.auth0_id).length;
+  const emailCount = users.filter((u: AdminUser) => !u.auth0_id && !u.isGuest).length;
+  const guestCount = users.filter((u: AdminUser) => u.isGuest).length;
 
   return (
     <div className="p-8">
@@ -141,9 +142,10 @@ function AdminUsers() {
       {/* Summary cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total users", value: users.length },
+          { label: "Registered users", value: users.length - guestCount },
           { label: "Auth0 accounts", value: authCount },
           { label: "Email sign-ups only", value: emailCount },
+          { label: "Guest checkouts", value: guestCount },
         ].map(({ label, value }) => (
           <div key={label} className="bg-white rounded-xl border border-gray-200 px-5 py-4">
             <p className="text-2xl font-bold text-gray-900">{value}</p>
@@ -173,7 +175,7 @@ function AdminUsers() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {users.map((u: AdminUser) => (
-              <tr key={u.id} className="hover:bg-gray-50">
+              <tr key={u.isGuest ? `guest-${u.email}` : u.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     {u.picture ? (
@@ -191,7 +193,9 @@ function AdminUsers() {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-1">
-                    {u.auth0_id ? (
+                    {u.isGuest ? (
+                      <span className="text-xs bg-purple-50 text-purple-700 rounded px-1.5 py-0.5 font-medium">Guest</span>
+                    ) : u.auth0_id ? (
                       <span className="text-xs bg-blue-50 text-blue-700 rounded px-1.5 py-0.5 font-medium">Auth0</span>
                     ) : (
                       <span className="text-xs bg-gray-100 text-gray-500 rounded px-1.5 py-0.5">Email only</span>
@@ -204,8 +208,12 @@ function AdminUsers() {
                     )}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-gray-500 text-xs">{fmt(u.created_at)}</td>
-                <td className="px-4 py-3 text-gray-500 text-xs">{fmtTime(u.last_login_at)}</td>
+                <td className="px-4 py-3 text-gray-500 text-xs">
+                  {u.isGuest ? (
+                    <span className="text-gray-400 italic">first order {fmt(u.created_at)}</span>
+                  ) : fmt(u.created_at)}
+                </td>
+                <td className="px-4 py-3 text-gray-500 text-xs">{u.isGuest ? "—" : fmtTime(u.last_login_at)}</td>
                 <td className="px-4 py-3">
                   {u.order_count > 0 ? (
                     <button

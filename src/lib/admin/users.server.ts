@@ -15,6 +15,7 @@ export type AdminUser = {
   square_customer_id: string | null;
   order_count: number;
   is_admin: number;
+  isGuest?: boolean;
 };
 
 export type AdminUserOrder = {
@@ -51,6 +52,8 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
     )
     .all<AdminUser>();
 
+  const registeredEmails = new Set(results.map((u) => u.email.toLowerCase()));
+
   const h = {
     Authorization: `Bearer ${e.SQUARE_ACCESS_TOKEN}`,
     "Content-Type": "application/json",
@@ -63,8 +66,10 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
     .filter((l) => l.status === "ACTIVE")
     .map((l) => l.id);
 
-  // Count all SHIPMENT/PICKUP orders — the same set the orders page shows
   let squareOrderCount = 0;
+  // email → { count, name, firstSeen }
+  const guestMap = new Map<string, { count: number; name: string | null; firstSeen: string }>();
+
   if (locationIds.length > 0) {
     let cursor: string | undefined;
     do {
@@ -83,13 +88,52 @@ export const adminGetAllUsers = createServerFn().handler(async (): Promise<Admin
       const res = await fetch(`${SQUARE_API}/orders/search`, {
         method: "POST", headers: h, body: JSON.stringify(body),
       });
-      const json = await res.json() as { orders?: unknown[]; cursor?: string };
-      squareOrderCount += (json.orders ?? []).length;
+      const json = await res.json() as { orders?: any[]; cursor?: string };
+
+      for (const o of json.orders ?? []) {
+        squareOrderCount++;
+
+        const fulfillment = o.fulfillments?.[0];
+        const recipient =
+          fulfillment?.shipment_details?.recipient ??
+          fulfillment?.pickup_details?.recipient;
+        const email = ((recipient?.email_address ?? "") as string).toLowerCase();
+        const name = (recipient?.display_name ?? null) as string | null;
+
+        if (email && !registeredEmails.has(email)) {
+          const existing = guestMap.get(email);
+          guestMap.set(email, {
+            count: (existing?.count ?? 0) + 1,
+            name: existing?.name ?? name,
+            firstSeen: existing?.firstSeen ?? o.created_at,
+          });
+        }
+      }
+
       cursor = json.cursor;
     } while (cursor);
   }
 
-  return { users: results, squareOrderCount };
+  const guestUsers: AdminUser[] = [...guestMap.entries()].map(([email, { count, name, firstSeen }]) => ({
+    id: 0,
+    auth0_id: null,
+    email,
+    name,
+    picture: null,
+    created_at: firstSeen,
+    last_login_at: null,
+    square_customer_id: null,
+    order_count: count,
+    is_admin: 0,
+    isGuest: true,
+  }));
+
+  // Registered users first, then guests sorted by first order date descending
+  const guests = guestUsers.sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+
+  return { users: [...results, ...guests], squareOrderCount };
 });
 
 export const adminGetOrdersForUser = createServerFn().handler(
@@ -110,7 +154,6 @@ export const adminGetOrdersForUser = createServerFn().handler(
 
     if (locationIds.length === 0) return [];
 
-    // Search all SHIPMENT/PICKUP orders and filter by recipient email
     const allOrders: AdminUserOrder[] = [];
     const targetEmail = data.email.toLowerCase();
 

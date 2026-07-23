@@ -51,15 +51,9 @@ function OrderRow({ order }: { order: AdminOrderRecord }) {
       >
         <td className="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{fmt(order.createdAt)}</td>
         <td className="px-4 py-3">
-          {order.userEmail ? (
-            <div>
-              <p className="text-sm font-medium text-gray-900 leading-tight">
-                {order.userName && order.userName !== order.userEmail ? order.userName : "—"}
-              </p>
-              <p className="text-xs text-gray-400">{order.userEmail}</p>
-            </div>
-          ) : (
-            <span className="text-xs text-gray-300 italic">Unknown</span>
+          <p className="text-sm text-gray-900">{order.userEmail}</p>
+          {order.userName && order.userName !== order.userEmail && (
+            <p className="text-xs text-gray-400">{order.userName}</p>
           )}
         </td>
         <td className="px-4 py-3 text-xs text-gray-500">

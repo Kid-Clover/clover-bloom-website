@@ -56,8 +56,7 @@ export const adminGetAllOrders = createServerFn().handler(async (): Promise<Admi
     }
   }
 
-  const customerIds = [...customerToUser.keys()];
-  if (customerIds.length === 0) return [];
+  if (customerToUser.size === 0) return [];
 
   // Fetch all active location IDs
   const locRes = await fetch(`${SQUARE_API}/locations`, { headers: h });
@@ -65,43 +64,49 @@ export const adminGetAllOrders = createServerFn().handler(async (): Promise<Admi
   const locationIds = (locJson.locations ?? []).filter((l) => l.status === "ACTIVE").map((l) => l.id);
   if (locationIds.length === 0) return [];
 
-  // Fetch all orders for our customers across all locations
+  // Search orders one customer at a time — Square does not return customer_id
+  // on order objects, so a bulk search cannot be mapped back to a specific user.
   const allOrders: AdminOrderRecord[] = [];
-  let cursor: string | undefined;
-  do {
-    const body: Record<string, unknown> = {
-      location_ids: locationIds,
-      limit: 500,
-      query: {
-        filter: { customer_filter: { customer_ids: customerIds } },
-        sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
-      },
-    };
-    if (cursor) body.cursor = cursor;
-    const res = await fetch(`${SQUARE_API}/orders/search`, {
-      method: "POST", headers: h, body: JSON.stringify(body),
-    });
-    const json = await res.json() as { orders?: any[]; cursor?: string };
-    for (const o of json.orders ?? []) {
-      const user = customerToUser.get(o.customer_id);
-      allOrders.push({
-        id: o.id,
-        createdAt: o.created_at,
-        state: o.state ?? "COMPLETED",
-        isRefunded: o.fulfillments?.[0]?.state === "CANCELED",
-        totalMoney: o.total_money ?? { amount: 0, currency: "USD" },
-        lineItems: (o.line_items ?? []).map((item: any) => ({
-          name: item.name,
-          quantity: item.quantity,
-          totalMoney: item.total_money ?? { amount: 0, currency: "USD" },
-        })),
-        userId: user?.id ?? null,
-        userEmail: user?.email ?? null,
-        userName: user?.name ?? null,
+  const seenIds = new Set<string>();
+
+  for (const [customerId, user] of customerToUser) {
+    let cursor: string | undefined;
+    do {
+      const body: Record<string, unknown> = {
+        location_ids: locationIds,
+        limit: 500,
+        query: {
+          filter: { customer_filter: { customer_ids: [customerId] } },
+          sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
+        },
+      };
+      if (cursor) body.cursor = cursor;
+      const res = await fetch(`${SQUARE_API}/orders/search`, {
+        method: "POST", headers: h, body: JSON.stringify(body),
       });
-    }
-    cursor = json.cursor;
-  } while (cursor);
+      const json = await res.json() as { orders?: any[]; cursor?: string };
+      for (const o of json.orders ?? []) {
+        if (seenIds.has(o.id)) continue;
+        seenIds.add(o.id);
+        allOrders.push({
+          id: o.id,
+          createdAt: o.created_at,
+          state: o.state ?? "COMPLETED",
+          isRefunded: o.fulfillments?.[0]?.state === "CANCELED",
+          totalMoney: o.total_money ?? { amount: 0, currency: "USD" },
+          lineItems: (o.line_items ?? []).map((item: any) => ({
+            name: item.name,
+            quantity: item.quantity,
+            totalMoney: item.total_money ?? { amount: 0, currency: "USD" },
+          })),
+          userId: user.id,
+          userEmail: user.email,
+          userName: user.name,
+        });
+      }
+      cursor = json.cursor;
+    } while (cursor);
+  }
 
   return allOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 });

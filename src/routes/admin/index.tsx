@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Calendar, ShoppingBag, Megaphone, FileText, Users } from "lucide-react";
+import { Calendar, ShoppingBag, Megaphone, FileText, Users, Receipt } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -11,6 +11,7 @@ const SECTIONS = [
   { to: "/admin/campaigns" as const, label: "Campaigns", icon: Megaphone, description: "Create and track marketing campaigns" },
   { to: "/admin/landing-pages" as const, label: "Landing Pages", icon: FileText, description: "Build custom thank-you and campaign pages" },
   { to: "/admin/users" as const, label: "Users", icon: Users, description: "View accounts, logins, and order history" },
+  { to: "/admin/orders" as const, label: "Orders", icon: Receipt, description: "All orders from registered users" },
 ];
 
 function AdminDashboard() {

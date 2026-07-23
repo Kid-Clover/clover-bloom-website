@@ -30,6 +30,7 @@ import { Route as AuthCompleteProfileRouteImport } from './routes/auth/complete-
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminOrdersRouteImport } from './routes/admin/orders'
 import { Route as AdminLandingPagesRouteImport } from './routes/admin/landing-pages'
 import { Route as AdminEventsRouteImport } from './routes/admin/events'
 import { Route as AdminCampaignsRouteImport } from './routes/admin/campaigns'
@@ -140,6 +141,11 @@ const AdminProductsRoute = AdminProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLandingPagesRoute = AdminLandingPagesRouteImport.update({
   id: '/landing-pages',
   path: '/landing-pages',
@@ -173,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/admin/campaigns': typeof AdminCampaignsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/landing-pages': typeof AdminLandingPagesRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/admin/campaigns': typeof AdminCampaignsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/landing-pages': typeof AdminLandingPagesRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/admin/campaigns': typeof AdminCampaignsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/landing-pages': typeof AdminLandingPagesRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns'
     | '/admin/events'
     | '/admin/landing-pages'
+    | '/admin/orders'
     | '/admin/products'
     | '/admin/users'
     | '/auth/callback'
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns'
     | '/admin/events'
     | '/admin/landing-pages'
+    | '/admin/orders'
     | '/admin/products'
     | '/admin/users'
     | '/auth/callback'
@@ -304,6 +315,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns'
     | '/admin/events'
     | '/admin/landing-pages'
+    | '/admin/orders'
     | '/admin/products'
     | '/admin/users'
     | '/auth/callback'
@@ -484,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProductsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/landing-pages': {
       id: '/admin/landing-pages'
       path: '/landing-pages'
@@ -512,6 +531,7 @@ interface AdminRouteChildren {
   AdminCampaignsRoute: typeof AdminCampaignsRoute
   AdminEventsRoute: typeof AdminEventsRoute
   AdminLandingPagesRoute: typeof AdminLandingPagesRoute
+  AdminOrdersRoute: typeof AdminOrdersRoute
   AdminProductsRoute: typeof AdminProductsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -521,6 +541,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCampaignsRoute: AdminCampaignsRoute,
   AdminEventsRoute: AdminEventsRoute,
   AdminLandingPagesRoute: AdminLandingPagesRoute,
+  AdminOrdersRoute: AdminOrdersRoute,
   AdminProductsRoute: AdminProductsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,

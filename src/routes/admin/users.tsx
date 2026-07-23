@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ShieldCheck, ShoppingBag, Loader2, X } from "lucide-react";
 import {
@@ -134,13 +134,19 @@ function AdminUsers() {
           { label: "Total users", value: users.length },
           { label: "Auth0 accounts", value: authCount },
           { label: "Email sign-ups only", value: emailCount },
-          { label: "Orders (registered users)", value: squareOrderCount },
         ].map(({ label, value }) => (
           <div key={label} className="bg-white rounded-xl border border-gray-200 px-5 py-4">
             <p className="text-2xl font-bold text-gray-900">{value}</p>
             <p className="text-xs text-gray-400 mt-0.5">{label}</p>
           </div>
         ))}
+        <Link
+          to="/admin/orders"
+          className="bg-white rounded-xl border border-gray-200 px-5 py-4 hover:border-gray-400 hover:shadow-sm transition-all"
+        >
+          <p className="text-2xl font-bold text-gray-900">{squareOrderCount}</p>
+          <p className="text-xs text-gray-400 mt-0.5">Orders (registered users) →</p>
+        </Link>
       </div>
 
       {/* Table */}

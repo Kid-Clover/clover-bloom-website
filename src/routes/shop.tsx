@@ -24,6 +24,7 @@ import ogressLantern from "@/assets/product-ogress-lantern.png";
 import prismatic from "@/assets/product-prismatic.png";
 import earlyGirl from "@/assets/product-early-girl.png";
 import napOnTap from "@/assets/product-nap-on-tap.png";
+import southside from "@/assets/product-southside.png";
 
 const productImages: Record<string, string> = {
   "pink-pop-potion": pinkPopPotion,
@@ -40,6 +41,7 @@ const productImages: Record<string, string> = {
   "prismatic": prismatic,
   "early-girl": earlyGirl,
   "nap-on-tap": napOnTap,
+  "southside": southside,
 };
 
 export const Route = createFileRoute("/shop")({

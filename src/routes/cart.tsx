@@ -20,6 +20,7 @@ import griffinsGold from "@/assets/product-griffins-gold.png";
 import ogressLantern from "@/assets/product-ogress-lantern.png";
 import prismatic from "@/assets/product-prismatic.png";
 import earlyGirl from "@/assets/product-early-girl.png";
+import napOnTap from "@/assets/product-nap-on-tap.png";
 
 const productImages: Record<string, string> = {
   "pink-pop-potion": pinkPopPotion,
@@ -35,6 +36,7 @@ const productImages: Record<string, string> = {
   "6-simples": sixSimples,
   "prismatic": prismatic,
   "early-girl": earlyGirl,
+  "nap-on-tap": napOnTap,
 };
 
 export const Route = createFileRoute("/cart")({

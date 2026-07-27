@@ -157,6 +157,45 @@ function ModifierSelector({
   );
 }
 
+function VariationSelector({
+  product,
+  selectedId,
+  onSelect,
+}: {
+  product: Product;
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <div className="mb-6">
+      <p className="mb-2 font-marker text-lg text-clover">choose a size</p>
+      <div className="space-y-2">
+        {product.variations.map((v) => {
+          const selected = v.id === selectedId;
+          return (
+            <button
+              key={v.id}
+              type="button"
+              onClick={() => !v.soldOut && onSelect(v.id)}
+              disabled={v.soldOut}
+              className={`flex w-full items-center justify-between rounded-xl border-2 px-4 py-2.5 text-left transition-colors disabled:opacity-50 ${
+                selected ? "border-brown bg-brown/5" : "border-brown/20"
+              }`}
+            >
+              <span className="flex items-center gap-2 text-sm text-foreground/80">
+                <span className={`h-4 w-4 shrink-0 rounded-full border-2 ${selected ? "border-brown bg-brown" : "border-brown/40"}`} />
+                {v.name}
+                {v.soldOut && <span className="font-marker text-xs text-red-400">sold out</span>}
+              </span>
+              <span className="font-display text-lg text-brown">${v.price}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function ProductModal({
   product,
   colorBg,
@@ -170,13 +209,28 @@ function ProductModal({
   const [modifiers, setModifiers] = useState<CartModifiers>({});
   const [added, setAdded] = useState(false);
 
+  const hasVariations = product.variations.length > 0;
+  const [selectedVariationId, setSelectedVariationId] = useState<string | null>(
+    () => product.variations.find((v) => !v.soldOut)?.id ?? product.variations[0]?.id ?? null
+  );
+  const selectedVariation = hasVariations
+    ? product.variations.find((v) => v.id === selectedVariationId) ?? null
+    : null;
+  const allVariationsSoldOut = hasVariations && product.variations.every((v) => v.soldOut);
+  const displayPrice = selectedVariation ? selectedVariation.price : product.price;
+  const isSoldOut = hasVariations ? allVariationsSoldOut : product.soldOut;
+
   const needsModifiers = !!product.modifiers;
   const modifierTotal = Object.values(modifiers).reduce((a, b) => a + b, 0);
-  const canAdd = !needsModifiers || modifierTotal === product.modifiers!.requiredCount;
+  const canAdd = needsModifiers
+    ? modifierTotal === product.modifiers!.requiredCount
+    : hasVariations
+      ? selectedVariationId !== null
+      : true;
 
   function handleAdd() {
     addItem({
-      productId: product.id,
+      productId: hasVariations ? (selectedVariationId as string) : product.id,
       quantity: 1,
       ...(needsModifiers ? { modifiers } : {}),
     });
@@ -205,8 +259,16 @@ function ProductModal({
         </button>
         <p className="font-marker text-xl text-clover">{product.tagline}</p>
         <h2 className="mb-2 font-display text-4xl text-brown">{product.name}</h2>
-        <p className="mb-4 font-display text-3xl text-brown">${product.price}</p>
+        <p className="mb-4 font-display text-3xl text-brown">${displayPrice}</p>
         <p className="mb-5 leading-relaxed text-foreground/80">{product.description}</p>
+
+        {hasVariations && (
+          <VariationSelector
+            product={product}
+            selectedId={selectedVariationId}
+            onSelect={setSelectedVariationId}
+          />
+        )}
 
         {!needsModifiers && (
           <div className="mb-6">
@@ -230,7 +292,7 @@ function ProductModal({
           />
         )}
 
-        {product.soldOut ? (
+        {isSoldOut ? (
           <div className="h-12 w-full rounded-full border-2 border-red-400 flex items-center justify-center font-marker text-red-500 text-lg">
             Sold out
           </div>
@@ -263,9 +325,11 @@ function ShopPage() {
   const { product: productId } = Route.useSearch();
   const navigate = useNavigate({ from: "/shop" });
 
+  const gridProducts = useMemo(() => products.filter((p: Product) => !p.parentId), [products]);
+
   const active = useMemo(
-    () => products.find((p: Product) => p.id === productId) ?? null,
-    [products, productId]
+    () => gridProducts.find((p: Product) => p.id === productId) ?? null,
+    [gridProducts, productId]
   );
 
   const openProduct = (p: Product) => navigate({ search: { product: p.id } });
@@ -292,36 +356,43 @@ function ShopPage() {
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p: Product) => (
-            <button
-              key={p.id}
-              onClick={() => openProduct(p)}
-              className={`group flex w-full min-w-0 flex-col overflow-hidden rounded-3xl border-2 border-brown text-left shadow-doodle transition-transform hover:-translate-y-1 ${colorBg[p.color]}`}
-            >
-                      <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden ${colorBg[p.color]}`}>
-                <div className="bg-white rounded-2xl shadow-sm w-[78%] flex items-center justify-center p-3">
-                  <img
-                    src={productImages[p.imageKey]}
-                    alt={p.name}
-                    loading="lazy"
-                    className="block h-auto w-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
-                  />
+          {gridProducts.map((p: Product) => {
+            const hasVariations = p.variations.length > 0;
+            const fromPrice = hasVariations ? Math.min(...p.variations.map((v) => v.price)) : p.price;
+            const soldOut = hasVariations ? p.variations.every((v) => v.soldOut) : p.soldOut;
+            return (
+              <button
+                key={p.id}
+                onClick={() => openProduct(p)}
+                className={`group flex w-full min-w-0 flex-col overflow-hidden rounded-3xl border-2 border-brown text-left shadow-doodle transition-transform hover:-translate-y-1 ${colorBg[p.color]}`}
+              >
+                        <div className={`flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden ${colorBg[p.color]}`}>
+                  <div className="bg-white rounded-2xl shadow-sm w-[78%] flex items-center justify-center p-3">
+                    <img
+                      src={productImages[p.imageKey]}
+                      alt={p.name}
+                      loading="lazy"
+                      className="block h-auto w-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-1 flex-col bg-paper p-5">
-                <p className="font-marker text-lg text-brown/70">{p.tagline}</p>
-                <h3 className="mb-2 font-display text-3xl leading-tight text-brown">{p.name}</h3>
-                <p className="line-clamp-2 text-sm text-brown/75">{p.description}</p>
-                <div className="mt-auto flex items-center justify-between pt-4">
-                  <span className="font-display text-2xl text-brown">${p.price}</span>
-                  {p.soldOut
-                    ? <span className="font-marker text-sm text-red-500 border border-red-400 rounded-full px-3 py-1">Sold out</span>
-                    : <span className="font-marker text-brown">add to cart →</span>
-                  }
+                <div className="flex flex-1 flex-col bg-paper p-5">
+                  <p className="font-marker text-lg text-brown/70">{p.tagline}</p>
+                  <h3 className="mb-2 font-display text-3xl leading-tight text-brown">{p.name}</h3>
+                  <p className="line-clamp-2 text-sm text-brown/75">{p.description}</p>
+                  <div className="mt-auto flex items-center justify-between pt-4">
+                    <span className="font-display text-2xl text-brown">
+                      {hasVariations ? `From $${fromPrice}` : `$${fromPrice}`}
+                    </span>
+                    {soldOut
+                      ? <span className="font-marker text-sm text-red-500 border border-red-400 rounded-full px-3 py-1">Sold out</span>
+                      : <span className="font-marker text-brown">add to cart →</span>
+                    }
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </section>
 

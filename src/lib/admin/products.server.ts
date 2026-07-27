@@ -16,6 +16,7 @@ export type AdminProduct = {
   sort_order: number;
   active: number;
   sold_out: number;
+  parent_id: string | null;
 };
 
 export type ProductInput = {
@@ -32,6 +33,7 @@ export type ProductInput = {
   sort_order: number;
   active: boolean;
   sold_out: boolean;
+  parent_id?: string;
   isNew: boolean; // true = INSERT, false = UPDATE
 };
 
@@ -42,7 +44,7 @@ export const adminGetAllProducts = createServerFn().handler(async () => {
     .prepare(
       `SELECT id, name, tagline, description, ingredients, price_cents,
               square_url, square_variation_id, color, image_key,
-              sort_order, active, sold_out
+              sort_order, active, sold_out, parent_id
        FROM products
        ORDER BY sort_order, name`
     )
@@ -62,14 +64,15 @@ export const adminSaveProduct = createServerFn().handler(
           `INSERT INTO products
             (id, name, tagline, description, ingredients, price_cents,
              square_url, square_variation_id, color, image_key,
-             sort_order, active, sold_out)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+             sort_order, active, sold_out, parent_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         )
         .bind(
           data.id, data.name, data.tagline, data.description, ingredients,
           data.price_cents, data.square_url, data.square_variation_id ?? null,
           data.color, data.image_key,
-          data.sort_order, data.active ? 1 : 0, data.sold_out ? 1 : 0
+          data.sort_order, data.active ? 1 : 0, data.sold_out ? 1 : 0,
+          data.parent_id ?? null
         )
         .run();
     } else {
@@ -78,7 +81,8 @@ export const adminSaveProduct = createServerFn().handler(
           `UPDATE products SET
             name = ?, tagline = ?, description = ?, ingredients = ?,
             price_cents = ?, square_url = ?, square_variation_id = ?,
-            color = ?, image_key = ?, sort_order = ?, active = ?, sold_out = ?
+            color = ?, image_key = ?, sort_order = ?, active = ?, sold_out = ?,
+            parent_id = ?
            WHERE id = ?`
         )
         .bind(
@@ -86,6 +90,7 @@ export const adminSaveProduct = createServerFn().handler(
           data.price_cents, data.square_url, data.square_variation_id ?? null,
           data.color, data.image_key,
           data.sort_order, data.active ? 1 : 0, data.sold_out ? 1 : 0,
+          data.parent_id ?? null,
           data.id
         )
         .run();

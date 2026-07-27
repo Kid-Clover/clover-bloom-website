@@ -45,6 +45,7 @@ type FormState = {
   sort_order: string;
   active: boolean;
   sold_out: boolean;
+  parent_id: string;
 };
 
 const BLANK: FormState = {
@@ -61,6 +62,7 @@ const BLANK: FormState = {
   sort_order: "0",
   active: true,
   sold_out: false,
+  parent_id: "",
 };
 
 function productToForm(p: AdminProduct): FormState {
@@ -79,6 +81,7 @@ function productToForm(p: AdminProduct): FormState {
     sort_order: String(p.sort_order),
     active: Boolean(p.active),
     sold_out: Boolean(p.sold_out),
+    parent_id: p.parent_id ?? "",
   };
 }
 
@@ -148,6 +151,7 @@ function AdminProducts() {
           sort_order: parseInt(form.sort_order, 10) || 0,
           active: form.active,
           sold_out: form.sold_out,
+          parent_id: form.parent_id || undefined,
         },
       });
       setSheetOpen(false);
@@ -213,11 +217,18 @@ function AdminProducts() {
             ) : (
               products.map((p: AdminProduct) => {
                 const colorMeta = COLORS.find((c) => c.value === p.color);
+                const parent = p.parent_id ? products.find((x) => x.id === p.parent_id) : null;
                 return (
                   <tr key={p.id} className={!p.active ? "opacity-45" : ""}>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900">{p.name}</p>
+                      <p className="font-medium text-gray-900">
+                        {parent && <span className="text-gray-300 mr-1">↳</span>}
+                        {p.name}
+                      </p>
                       <p className="text-xs text-gray-400 font-mono">{p.id}</p>
+                      {parent && (
+                        <p className="text-xs text-gray-400 mt-0.5">variant of {parent.name}</p>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-gray-700">
                       ${(p.price_cents / 100).toFixed(2)}
@@ -378,6 +389,29 @@ function AdminProducts() {
                 <Label htmlFor="sort_order">Sort Order</Label>
                 <Input id="sort_order" type="number" value={form.sort_order} onChange={(e) => set("sort_order", e.target.value)} className="mt-1" />
               </div>
+            </div>
+
+            <div>
+              <Label htmlFor="parent_id">
+                Parent Product
+                <span className="ml-1 text-xs text-gray-400 font-normal">(set this to make it a size/variant of another product)</span>
+              </Label>
+              <Select
+                value={form.parent_id || "__none__"}
+                onValueChange={(v) => set("parent_id", v === "__none__" ? "" : v)}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="— None (standalone product) —" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__" className="text-muted-foreground">— None (standalone product) —</SelectItem>
+                  {products
+                    .filter((p) => p.id !== form.id && !p.parent_id)
+                    .map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>

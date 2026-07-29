@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import logoStacked from "@/assets/logo-stacked.png";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useState } from "react";
-import { LayoutDashboard, Menu, Package, ShoppingCart, User, X } from "lucide-react";
+import { Instagram, LayoutDashboard, Menu, Package, ShoppingCart, User, X } from "lucide-react";
 import type { SessionUser } from "@/lib/session.server";
 import { useCart } from "@/context/cart";
 import {
@@ -19,6 +19,8 @@ const navItems = [
   { to: "/events", label: "Events" },
   { to: "/gallery", label: "Gallery" },
 ] as const;
+
+const INSTAGRAM_URL = "https://www.instagram.com/drinkkidclover/";
 
 function Avatar({ user }: { user: SessionUser }) {
   const initials = (user.name ?? user.email)
@@ -167,6 +169,15 @@ export function Header({ user, isAdmin }: { user: SessionUser | null; isAdmin: b
               {item.label}
             </Link>
           ))}
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Follow Kid Clover on Instagram"
+            className="text-foreground hover:text-primary transition-colors"
+          >
+            <Instagram size={24} />
+          </a>
           <CartIcon />
           <DesktopUserWidget user={user} isAdmin={isAdmin} />
         </nav>
@@ -197,6 +208,16 @@ export function Header({ user, isAdmin }: { user: SessionUser | null; isAdmin: b
               {item.label}
             </Link>
           ))}
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
+            className="font-marker text-2xl text-foreground hover:text-primary flex items-center gap-3"
+          >
+            <Instagram size={22} />
+            Follow us
+          </a>
           <MobileUserWidget user={user} isAdmin={isAdmin} onClose={() => setOpen(false)} />
         </nav>
       )}

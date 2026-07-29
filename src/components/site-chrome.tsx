@@ -254,6 +254,16 @@ export function Footer() {
               lesley@drinkkidclover.com
             </a>
             <br />
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 mt-2 hover:text-primary"
+            >
+              <Instagram size={14} />
+              @drinkkidclover
+            </a>
+            <br />
             Find us at the farmers market every Saturday.
           </p>
         </div>

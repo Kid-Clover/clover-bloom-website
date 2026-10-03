@@ -25,6 +25,7 @@ import prismatic from "@/assets/product-prismatic.png";
 import earlyGirl from "@/assets/product-early-girl.png";
 import napOnTap from "@/assets/product-nap-on-tap.png";
 import southside from "@/assets/product-southside.png";
+import saturdayMorning from "@/assets/product-saturday-morning.png";
 
 const productImages: Record<string, string> = {
   "pink-pop-potion": pinkPopPotion,
@@ -42,6 +43,7 @@ const productImages: Record<string, string> = {
   "early-girl": earlyGirl,
   "nap-on-tap": napOnTap,
   "southside": southside,
+  "saturday-morning": saturdayMorning,
 };
 
 export const Route = createFileRoute("/shop")({

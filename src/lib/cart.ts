@@ -54,3 +54,5 @@ export function updateQuantity(cart: Cart, index: number, quantity: number): Car
 export function removeItem(cart: Cart, index: number): Cart {
   return { items: cart.items.filter((_, i) => i !== index) };
 }
+
+export const FLAT_SHIPPING_CENTS = 700;

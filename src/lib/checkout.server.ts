@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { getSessionUser } from "./session.server";
-import type { CartItem } from "./cart";
+import { FLAT_SHIPPING_CENTS, type CartItem } from "./cart";
 
 const LOCATION_ID = "L4TWM1M1RC52V";
 
@@ -86,6 +86,14 @@ export const createCheckout = createServerFn()
       checkout_options: {
         redirect_url: "https://drinkkidclover.com/order-confirmed",
         ask_for_shipping_address: !data.pickup,
+        ...(!data.pickup
+          ? {
+              shipping_fee: {
+                name: "Shipping",
+                charge: { amount: FLAT_SHIPPING_CENTS, currency: "USD" },
+              },
+            }
+          : {}),
       },
       ...(Object.keys(prePopulatedData).length > 0
         ? { pre_populated_data: prePopulatedData }

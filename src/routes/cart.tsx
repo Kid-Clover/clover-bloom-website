@@ -3,6 +3,7 @@ import { getProducts, type Product } from "@/lib/products.server";
 import { getPickupEvents, type PickupEvent } from "@/lib/events.server";
 import { useCart } from "@/context/cart";
 import { createCheckout } from "@/lib/checkout.server";
+import { FLAT_SHIPPING_CENTS } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
 import { Trash2, Minus, Plus, ShoppingBag, Truck, MapPin } from "lucide-react";
 import { useState } from "react";
@@ -262,7 +263,7 @@ function CartPage() {
           {fulfillment === "ship" ? (
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Shipping</span>
-              <span>Calculated at checkout</span>
+              <span>${(FLAT_SHIPPING_CENTS / 100).toFixed(2)}</span>
             </div>
           ) : (
             <div className="flex justify-between text-sm text-muted-foreground">
@@ -272,7 +273,7 @@ function CartPage() {
           )}
           <div className="border-t border-border/60 pt-3 flex justify-between font-display text-2xl text-brown">
             <span>Total</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>${(subtotal + (fulfillment === "ship" ? FLAT_SHIPPING_CENTS / 100 : 0)).toFixed(2)}</span>
           </div>
 
           {checkoutError && (

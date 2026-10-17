@@ -17,6 +17,20 @@ export const Route = createFileRoute("/lp/$slug")({
   component: LandingPageRoute,
 });
 
+// Renders <a href="...">text</a> tags in the body as links; everything else stays plain text.
+function renderBody(body: string) {
+  const parts = body.split(/(<a\s+href="[^"]*">.*?<\/a>)/g);
+  return parts.map((part, i) => {
+    const m = part.match(/^<a\s+href="([^"]*)">(.*?)<\/a>$/);
+    if (!m || !/^(\/|https?:\/\/)/.test(m[1])) return part;
+    return (
+      <a key={i} href={m[1]} className="text-clover underline underline-offset-2 hover:text-clover/80">
+        {m[2]}
+      </a>
+    );
+  });
+}
+
 function LandingPageRoute() {
   const page = Route.useLoaderData();
   const hasCoupon = Boolean(page.coupon_code);
@@ -35,7 +49,7 @@ function LandingPageRoute() {
 
         <h1 className="font-display text-5xl text-brown mb-4">{page.title}</h1>
 
-        <p className="text-lg text-foreground/70 leading-relaxed mb-8">{page.body}</p>
+        <p className="text-lg text-foreground/70 leading-relaxed mb-8">{renderBody(page.body)}</p>
 
         {hasCoupon && (
           <div className="rounded-3xl border-2 border-dashed border-clover bg-clover/10 p-8 mb-8">
